@@ -162,7 +162,7 @@ function formula(lightness: number, chroma: number) {
         <div class="mt-6 flex flex-wrap items-center gap-4">
           <button
             type="button"
-            class="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover active:bg-accent-active"
+            class="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover active:bg-accent-active"
           >
             浅色底按钮
           </button>
@@ -170,7 +170,7 @@ function formula(lightness: number, chroma: number) {
           <span class="dark inline-flex rounded-xl bg-zinc-900 p-3">
             <button
               type="button"
-              class="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover active:bg-accent-active"
+              class="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover active:bg-accent-active"
             >
               深色底按钮
             </button>
