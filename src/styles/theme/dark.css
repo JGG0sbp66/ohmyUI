@@ -15,4 +15,10 @@
   --theme-bg-card: oklch(0.2 0.02 var(--app-hue));
 
   --theme-border: oklch(0.3 0.03 var(--app-hue));
+
+  --theme-fg: oklch(0.95 0.01 var(--app-hue));
+  /* 半透明白，与浅色的半透明黑对称 */
+  --theme-fg-muted: #ffffff80;
+  --theme-fg-subtle: oklch(0.75 0.14 var(--app-hue));
+  --theme-fg-soft: color-mix(in oklch, var(--theme-fg-subtle) 40%, transparent);
 }

@@ -21,4 +21,10 @@
   --theme-bg-card: white;
 
   --theme-border: oklch(0.9 0.02 var(--app-hue));
+
+  --theme-fg: oklch(0.2 0.03 var(--app-hue));
+  /* 半透明黑，不跟随色相 —— 次要文本靠透出底色，才能在任何背景上都协调 */
+  --theme-fg-muted: #00000080;
+  --theme-fg-subtle: oklch(0.65 0.15 var(--app-hue));
+  --theme-fg-soft: color-mix(in oklch, var(--theme-fg-subtle) 40%, transparent);
 }

@@ -18,4 +18,10 @@
 
   /* 分隔线与描边 */
   --color-border: var(--theme-border);
+
+  /* fg 主文本，fg-muted 次要文本，fg-subtle 更弱的文字/图标，fg-soft 占位与提示 */
+  --color-fg: var(--theme-fg);
+  --color-fg-muted: var(--theme-fg-muted);
+  --color-fg-soft: var(--theme-fg-soft);
+  --color-fg-subtle: var(--theme-fg-subtle);
 }

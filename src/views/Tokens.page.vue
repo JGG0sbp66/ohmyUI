@@ -12,8 +12,8 @@ interface Token {
   cls: string;
   variable: string;
   role: string;
-  /** 色块渲染方式：填充，或只画描边（边框色用实心块会误导） */
-  preview: "fill" | "border";
+  /** 预览方式：填充色块、空心描边、或直接把颜色用在文字上 */
+  preview: "fill" | "border" | "text";
   light: Tone;
   dark: Tone;
 }
@@ -82,7 +82,7 @@ const TOKEN_GROUPS: { title: string; note: string; tokens: Token[] }[] = [
   },
   {
     title: "边框色",
-    note: "分隔线与描边，只有一档。浅色下比背景略深、深色下比背景略浅，都是与背景差一档的对比。",
+    note: "分隔线与描边，只有一档。浅色下比背景略深、深色下比背景略浅，都是与背景差一档的对比。实际用时基本都带透明度（/20 ~ /60），满不透明度只留给需要明确边界的容器外框。",
     tokens: [
       {
         cls: "border-border",
@@ -91,6 +91,44 @@ const TOKEN_GROUPS: { title: string; note: string; tokens: Token[] }[] = [
         preview: "border",
         light: { l: 0.9, c: 0.02 },
         dark: { l: 0.3, c: 0.03 },
+      },
+    ],
+  },
+  {
+    title: "文本色",
+    note: "fg-muted 用半透明黑/白而不是固定灰，靠透出底色，所以放在任何背景上都协调。fg-soft 由 fg-subtle 混 40% 透明派生，跟着它一起变。",
+    tokens: [
+      {
+        cls: "text-fg",
+        variable: "--theme-fg",
+        role: "主文本",
+        preview: "text",
+        light: { l: 0.2, c: 0.03 },
+        dark: { l: 0.95, c: 0.01 },
+      },
+      {
+        cls: "text-fg-muted",
+        variable: "--theme-fg-muted",
+        role: "次要文本",
+        preview: "text",
+        light: { literal: "#00000080" },
+        dark: { literal: "#ffffff80" },
+      },
+      {
+        cls: "text-fg-subtle",
+        variable: "--theme-fg-subtle",
+        role: "更弱的文字 / 图标",
+        preview: "text",
+        light: { l: 0.65, c: 0.15 },
+        dark: { l: 0.75, c: 0.14 },
+      },
+      {
+        cls: "text-fg-soft",
+        variable: "--theme-fg-soft",
+        role: "占位 / 提示",
+        preview: "text",
+        light: { literal: "fg-subtle 混 40% 透明" },
+        dark: { literal: "fg-subtle 混 40% 透明" },
       },
     ],
   },
@@ -193,12 +231,10 @@ function toneText(tone: Tone): string {
             class="rounded-xl bg-bg-card p-5 ring-1 ring-zinc-900/10 dark:ring-white/10"
             :class="mode.scope"
           >
-            <h3 class="font-mono text-xs text-zinc-500">{{ mode.label }}</h3>
+            <h3 class="font-mono text-xs text-fg-muted">{{ mode.label }}</h3>
 
             <div v-for="group in TOKEN_GROUPS" :key="group.title" class="mt-5">
-              <p class="font-mono text-xs text-zinc-400 dark:text-zinc-500">
-                {{ group.title }}
-              </p>
+              <p class="font-mono text-xs text-fg-subtle">{{ group.title }}</p>
               <ul class="mt-2.5 space-y-2.5">
                 <li v-for="token in group.tokens" :key="token.cls" class="flex items-center gap-3">
                   <span
@@ -207,15 +243,21 @@ function toneText(tone: Tone): string {
                     :class="token.cls"
                   ></span>
                   <span
-                    v-else
+                    v-else-if="token.preview === 'border'"
                     class="size-11 shrink-0 rounded-lg border-2"
                     :class="token.cls"
                   ></span>
+                  <span
+                    v-else
+                    class="flex size-11 shrink-0 items-center justify-center text-xl font-medium"
+                    :class="token.cls"
+                    aria-hidden="true"
+                  >
+                    Aa
+                  </span>
                   <span class="min-w-0 font-mono text-xs">
-                    <span class="block truncate text-zinc-900 dark:text-zinc-100">
-                      {{ token.cls }}
-                    </span>
-                    <span class="block truncate text-zinc-500">
+                    <span class="block break-words text-fg">{{ token.cls }}</span>
+                    <span class="block break-words text-fg-muted">
                       {{ toneText(token[mode.tone]) }}
                     </span>
                   </span>
