@@ -1,7 +1,7 @@
 <!-- src/views/tokens/Tokens.page.vue -->
 <!-- 往 styles 里加 token 时，同步往 TOKEN_GROUPS 里加一条 -->
 <script setup lang="ts">
-import { useThemeHue } from "@/composables/theme.hook";
+import { useThemeHue } from "@/composables/theme/hue.hook";
 
 import SpecimenPair from "../components/SpecimenPair.vue";
 

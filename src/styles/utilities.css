@@ -1,0 +1,21 @@
+/* 换主题期间压掉逐元素颜色过渡 */
+
+:root {
+  /* 压制期间仍允许过渡的属性：承载颜色的全部剔掉，布局与变换留下，免得掐断别人正在跑的动画 */
+  --theme-shift-keep:
+    opacity, stop-opacity, transform, scale, translate, rotate, width, min-width, max-width, height,
+    max-height, grid-template-rows, grid-template-columns, padding, margin, stroke-dashoffset;
+}
+
+@layer utilities {
+  /*
+    不压的话，带颜色过渡的元素会各按自己的时长去追 --app-hue 的插值，落后且互相错拍。
+    html 自身不被 * 命中，transitions.css 里那条 --app-hue 补间才活得下来。
+    必须 !important：本选择器只有 (0,1,1)，Tailwind 工具类和 scoped 样式都比它高。
+  */
+  html.theme-shifting *,
+  html.theme-shifting ::before,
+  html.theme-shifting ::after {
+    transition-property: var(--theme-shift-keep) !important;
+  }
+}

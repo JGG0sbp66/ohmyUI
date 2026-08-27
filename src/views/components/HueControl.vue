@@ -3,7 +3,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import { useThemeHue } from "@/composables/theme.hook";
+import { useThemeHue } from "@/composables/theme/hue.hook";
 
 /** 色环上的几个落点，一键跳过去 */
 const HUE_MARKS = [
