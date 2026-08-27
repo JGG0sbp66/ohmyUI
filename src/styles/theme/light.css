@@ -1,14 +1,6 @@
-/**
- * theme/light.css — 浅色模式变量（默认）
- */
+/* 浅色模式变量（默认） */
 
-/*
-  把 --app-hue 注册成 <number>，浏览器才会对它做补间。
-  所有语义色都由这一个数推导，改这个数就能整站换色，
-  且因为是同一个数在动，各颜色天然同步，组件不需要自己写颜色过渡。
-
-  必须放在 @layer 之外（@property 不能嵌在层里）。
-*/
+/* 注册成 <number> 浏览器才会补间。必须在 @layer 之外，否则不生效 */
 @property --app-hue {
   syntax: "<number>";
   inherits: true;
@@ -16,10 +8,9 @@
 }
 
 :root {
-  /* 默认 Hue，250 = 蓝色 */
+  /* 250 = 蓝色 */
   --app-hue: 250;
 
-  /* Light Mode 下的主色 */
   --theme-accent: oklch(0.6 0.18 var(--app-hue));
   --theme-accent-hover: oklch(0.55 0.18 var(--app-hue));
   --theme-accent-active: oklch(0.5 0.18 var(--app-hue));

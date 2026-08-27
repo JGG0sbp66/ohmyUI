@@ -1,14 +1,7 @@
-/**
- * theme/tokens.css — Tailwind 语义 token 映射
- *
- * 这里是「契约」：@theme 把语义名字注册成 Tailwind token，
- * 决定了有哪些工具类可用（如 --color-accent 对应 bg-accent / text-accent）。
- * 但它不决定颜色是什么，只把值转交给 --theme-* 变量。
- * 具体色值由 light.css / dark.css 提供。
- */
+/* 语义 token 映射。@theme 决定有哪些工具类，色值由 light.css / dark.css 提供 */
 
 @theme {
-  /* 按钮颜色：强调、交互重点 */
+  /* 强调色，交互重点 */
   --color-accent: var(--theme-accent);
   --color-accent-hover: var(--theme-accent-hover);
   --color-accent-active: var(--theme-accent-active);

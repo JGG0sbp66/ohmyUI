@@ -1,8 +1,4 @@
-/**
- * ohmyUI 样式入口
- *
- * 使用方（新项目）只需要 import 这一个文件。
- */
+/* ohmyUI 样式入口。使用方只需 import 这一个文件 */
 
 @import "tailwindcss";
 

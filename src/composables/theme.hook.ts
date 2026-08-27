@@ -2,10 +2,9 @@
 import { createGlobalState } from "@vueuse/core";
 import { ref, watch } from "vue";
 
-/** 色相变量名，对应 styles/theme/light.css 里的声明 */
 const HUE_VAR = "--app-hue";
 
-/** 读 :root 上的当前色相。默认值来自 CSS，不在 JS 里重复一份 */
+/** 读当前色相。默认值来自 CSS，不在 JS 里重复一份 */
 function readHueFromRoot(): number {
   const raw = getComputedStyle(document.documentElement).getPropertyValue(HUE_VAR);
   const parsed = Number.parseFloat(raw);
@@ -13,15 +12,13 @@ function readHueFromRoot(): number {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-/** 写色相。必须写 :root —— 派生 token 声明在那里，写在后代元素上不生效 */
+/** 必须写 :root —— 派生 token 声明在那里，写在后代元素上不生效 */
 function writeHueToRoot(angle: number): void {
   document.documentElement.style.setProperty(HUE_VAR, String(angle));
 }
 
 /**
  * 全站主题色相（0–360）。改这一个数，所有语义色跟着变。
- *
- * 状态跨组件共享，因为 --app-hue 在 :root 上只有一份。
  *
  * @example
  * const { hue } = useThemeHue();
