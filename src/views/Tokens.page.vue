@@ -3,6 +3,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
+import ButtonSecondary from "@/components/button/ButtonSecondary.vue";
 import { useThemeHue } from "@/composables/theme.hook";
 
 /** 色值：跟随 hue 的 oklch，或不跟随的字面量（如 white） */
@@ -290,6 +291,83 @@ function toneText(tone: Tone): string {
               按钮
             </button>
           </span>
+        </div>
+      </section>
+
+      <!-- 组件 -->
+      <section class="mt-16">
+        <h2 class="font-mono text-xs tracking-widest text-zinc-500 uppercase">组件</h2>
+        <p class="mt-2 max-w-xl text-sm/6 text-zinc-400">
+          ButtonSecondary。纯文字按钮，可带前置图标；只有图标的场景用 IconButton。
+          背景层是独立缩放的 <code class="font-mono">::before</code>，hover 时从 90% 弹到
+          100%。组件不输出宽高，布局交给调用方。
+        </p>
+
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          <article
+            v-for="mode in MODES"
+            :key="mode.tone"
+            class="rounded-xl bg-bg-card p-5 ring-1 ring-zinc-900/10 dark:ring-white/10"
+            :class="mode.scope"
+          >
+            <h3 class="font-mono text-xs text-fg-muted">{{ mode.label }}</h3>
+
+            <p class="mt-4 font-mono text-xs text-fg-subtle">状态</p>
+            <div class="mt-2 flex flex-wrap items-center gap-2">
+              <ButtonSecondary text="默认" />
+              <ButtonSecondary text="激活" is-active />
+              <ButtonSecondary text="禁用" disabled />
+              <ButtonSecondary text="带图标">
+                <svg
+                  class="size-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <path d="M12 5v14M5 12h14" stroke-linecap="round" />
+                </svg>
+              </ButtonSecondary>
+            </div>
+
+            <p class="mt-5 font-mono text-xs text-fg-subtle">block + align</p>
+            <div class="mt-2 space-y-1">
+              <ButtonSecondary text="全宽居中" block />
+              <ButtonSecondary text="全宽左对齐" block align="start">
+                <svg
+                  class="size-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" />
+                </svg>
+              </ButtonSecondary>
+              <ButtonSecondary text="带尾部内容" block align="start">
+                <template #suffix>
+                  <svg
+                    class="size-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    aria-hidden="true"
+                  >
+                    <path d="m5 13 4 4L19 7" stroke-linecap="round" />
+                  </svg>
+                </template>
+              </ButtonSecondary>
+            </div>
+
+            <p class="mt-5 font-mono text-xs text-fg-subtle">调用方控制布局（无需 !）</p>
+            <div class="mt-2 flex items-center gap-2">
+              <ButtonSecondary text="h-11" class="h-11" />
+              <ButtonSecondary text="圆角跟随" class="rounded-full" />
+            </div>
+          </article>
         </div>
       </section>
 
