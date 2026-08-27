@@ -1,0 +1,8 @@
+/**
+ * ohmyUI 样式入口
+ *
+ * 使用方（新项目）只需要 import 这一个文件。
+ * 后续会在这里依次接入：设计 token（@theme）、三套主题、过渡与动画。
+ */
+
+@import "tailwindcss";
