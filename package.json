@@ -8,7 +8,9 @@
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
-    "type-check": "vue-tsc --build"
+    "type-check": "vue-tsc --build",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
   },
   "dependencies": {
     "vue": "^3.5.40"
@@ -20,6 +22,7 @@
     "@vitejs/plugin-vue": "^6.0.8",
     "@vue/tsconfig": "^0.9.1",
     "npm-run-all2": "^9.0.2",
+    "oxfmt": "^0.65.0",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.0",
     "vite": "^8.1.5",
