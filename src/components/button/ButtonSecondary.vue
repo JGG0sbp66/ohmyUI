@@ -4,7 +4,7 @@ import { Comment, computed, useSlots, type Slot } from "vue";
 
 const props = withDefaults(
   defineProps<{
-    /** 纯图标场景请用 IconButton，本组件必须有文字 */
+    /** 纯图标场景请用 ButtonIcon，本组件必须有文字 */
     text: string;
     isActive?: boolean;
     disabled?: boolean;

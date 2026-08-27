@@ -3,9 +3,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+import ButtonIcon from "@/components/button/ButtonIcon.vue";
 import ButtonPrimary from "@/components/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/button/ButtonSecondary.vue";
-import IconButton from "@/components/button/IconButton.vue";
 
 import SpecimenPair from "../components/SpecimenPair.vue";
 import PreviewIcon from "./components/PreviewIcon.vue";
@@ -30,13 +30,13 @@ const PROPS = {
     ["type", '"button" | "submit" | "reset"', '"button"', "表单场景传 submit"],
   ],
   ButtonSecondary: [
-    ["text", "string", "必填", "按钮文字。纯图标场景用 IconButton"],
+    ["text", "string", "必填", "按钮文字。纯图标场景用 ButtonIcon"],
     ["isActive", "boolean", "false", "激活态，背景层常显"],
     ["disabled", "boolean", "false", "禁用"],
     ["block", "boolean", "false", "撑满父容器宽度"],
     ["align", '"center" | "start"', '"center"', "内容对齐，菜单项用 start"],
   ],
-  IconButton: [
+  ButtonIcon: [
     ["label", "string", "必填", "无障碍名称，渲染为 aria-label"],
     ["isActive", "boolean", "false", "激活态，背景层常显"],
     ["disabled", "boolean", "false", "禁用"],
@@ -171,9 +171,9 @@ const PROPS = {
       </table>
     </section>
 
-    <!-- IconButton -->
+    <!-- ButtonIcon -->
     <section class="mt-16">
-      <h2 class="font-mono text-sm text-zinc-100">IconButton</h2>
+      <h2 class="font-mono text-sm text-zinc-100">ButtonIcon</h2>
       <p class="mt-2 max-w-xl text-sm/6 text-zinc-400">
         纯图标按钮，宽高 1:1。靠
         <code class="font-mono">aspect-square</code>
@@ -183,20 +183,20 @@ const PROPS = {
       <SpecimenPair class="mt-6">
         <p class="mt-4 font-mono text-xs text-fg-subtle">状态</p>
         <div class="mt-2 flex items-center gap-2">
-          <IconButton label="添加">
+          <ButtonIcon label="添加">
             <PreviewIcon :d="ICON.plus" />
-          </IconButton>
-          <IconButton label="已选中" is-active>
+          </ButtonIcon>
+          <ButtonIcon label="已选中" is-active>
             <PreviewIcon :d="ICON.check" />
-          </IconButton>
-          <IconButton label="不可用" disabled>
+          </ButtonIcon>
+          <ButtonIcon label="不可用" disabled>
             <PreviewIcon :d="ICON.close" />
-          </IconButton>
+          </ButtonIcon>
         </div>
 
         <p class="mt-5 font-mono text-xs text-fg-subtle">扁图标仍为 1:1</p>
         <div class="mt-2 flex items-center gap-2">
-          <IconButton label="菜单">
+          <ButtonIcon label="菜单">
             <svg
               class="h-2 w-5"
               viewBox="0 0 24 12"
@@ -207,14 +207,14 @@ const PROPS = {
             >
               <path d="M2 3h20M2 9h20" stroke-linecap="round" />
             </svg>
-          </IconButton>
+          </ButtonIcon>
         </div>
 
         <p class="mt-5 font-mono text-xs text-fg-subtle">调用方指定尺寸与圆角</p>
         <div class="mt-2 flex items-center gap-2">
-          <IconButton label="大号圆形" class="size-10 rounded-full">
+          <ButtonIcon label="大号圆形" class="size-10 rounded-full">
             <PreviewIcon :d="ICON.plus" />
-          </IconButton>
+          </ButtonIcon>
         </div>
       </SpecimenPair>
 
@@ -228,7 +228,7 @@ const PROPS = {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="row in PROPS.IconButton" :key="row[0]" class="text-zinc-400">
+          <tr v-for="row in PROPS.ButtonIcon" :key="row[0]" class="text-zinc-400">
             <td class="border-b border-zinc-900 py-2.5 pr-4 text-zinc-100">{{ row[0] }}</td>
             <td class="border-b border-zinc-900 py-2.5 pr-4">{{ row[1] }}</td>
             <td class="border-b border-zinc-900 py-2.5 pr-4">{{ row[2] }}</td>

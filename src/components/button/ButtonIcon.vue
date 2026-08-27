@@ -1,4 +1,4 @@
-<!-- src/components/button/IconButton.vue -->
+<!-- src/components/button/ButtonIcon.vue -->
 <script lang="ts" setup>
 import { computed } from "vue";
 
