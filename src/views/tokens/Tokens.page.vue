@@ -51,6 +51,28 @@ const TOKEN_GROUPS: { title: string; note: string; tokens: Token[] }[] = [
     ],
   },
   {
+    title: "危险色",
+    note: "破坏性操作。色相钉死不跟随 --app-hue —— 危险信号的语义来自「红」这个具体颜色，被主题色带走就失效了（想象绿色的删除按钮）。数值取自 Tailwind 的 red-500 / red-600，与 ohmyblog 一致；深色下悬停改用 red-400，因为深底上变亮才是「更明显」的方向。",
+    tokens: [
+      {
+        cls: "bg-danger",
+        variable: "--theme-danger",
+        role: "常态",
+        preview: "fill",
+        light: { literal: "red-500" },
+        dark: { literal: "red-500" },
+      },
+      {
+        cls: "bg-danger-hover",
+        variable: "--theme-danger-hover",
+        role: "悬停",
+        preview: "fill",
+        light: { literal: "red-600（更暗更艳）" },
+        dark: { literal: "red-400（更亮）" },
+      },
+    ],
+  },
+  {
     title: "背景色",
     note: "明暗层级在两种模式下不一样：浅色下 card 最亮、muted 最暗；深色下 muted 最亮、bg 最暗。card 在浅色下钉死纯白，不跟随色相 —— 带色偏的卡片会显脏。",
     tokens: [

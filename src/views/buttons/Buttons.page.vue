@@ -1,11 +1,17 @@
 <!-- src/views/buttons/Buttons.page.vue -->
 <!-- 按钮类组件展示。新增组件时加一个 <section>，并往 PROPS 里补一份签名 -->
 <script setup lang="ts">
+import { ref } from "vue";
+
+import ButtonPrimary from "@/components/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/button/ButtonSecondary.vue";
 import IconButton from "@/components/button/IconButton.vue";
 
 import SpecimenPair from "../components/SpecimenPair.vue";
 import PreviewIcon from "./components/PreviewIcon.vue";
+
+/** 手动切换才能看清加载指示器进出的宽度过渡 */
+const loadingDemo = ref(false);
 
 const ICON = {
   plus: "M12 5v14M5 12h14",
@@ -15,6 +21,14 @@ const ICON = {
 } as const;
 
 const PROPS = {
+  ButtonPrimary: [
+    ["text", "string", "必填", "按钮文字"],
+    ["loading", "boolean", "false", "显示指示器并禁用点击"],
+    ["disabled", "boolean", "false", "禁用"],
+    ["danger", "boolean", "false", "破坏性操作，底色换成危险色"],
+    ["block", "boolean", "false", "撑满父容器宽度"],
+    ["type", '"button" | "submit" | "reset"', '"button"', "表单场景传 submit"],
+  ],
   ButtonSecondary: [
     ["text", "string", "必填", "按钮文字。纯图标场景用 IconButton"],
     ["isActive", "boolean", "false", "激活态，背景层常显"],
@@ -39,8 +53,67 @@ const PROPS = {
       <code class="font-mono text-zinc-300">!</code>。
     </p>
 
-    <!-- ButtonSecondary -->
+    <!-- ButtonPrimary -->
     <section class="mt-10">
+      <h2 class="font-mono text-sm text-zinc-100">ButtonPrimary</h2>
+      <p class="mt-2 max-w-xl text-sm/6 text-zinc-400">
+        实心强调色主按钮。加载中显示指示器并自动禁用点击，指示器的宽度与透明度同步过渡。
+      </p>
+
+      <SpecimenPair class="mt-6">
+        <p class="mt-4 font-mono text-xs text-fg-subtle">状态</p>
+        <div class="mt-2 flex flex-wrap items-center gap-2">
+          <ButtonPrimary text="默认" />
+          <ButtonPrimary text="加载中" loading />
+          <ButtonPrimary text="禁用" disabled />
+        </div>
+
+        <p class="mt-5 font-mono text-xs text-fg-subtle">切换加载态（看宽度过渡）</p>
+        <div class="mt-2 flex items-center gap-2">
+          <ButtonPrimary
+            text="保存"
+            :loading="loadingDemo"
+            class="min-w-24"
+            @click="loadingDemo = !loadingDemo"
+          />
+          <ButtonSecondary text="切回来" @click="loadingDemo = !loadingDemo" />
+        </div>
+
+        <p class="mt-5 font-mono text-xs text-fg-subtle">danger</p>
+        <div class="mt-2 flex flex-wrap items-center gap-2">
+          <ButtonPrimary text="删除" danger />
+          <ButtonPrimary text="删除中" danger loading />
+          <ButtonPrimary text="不可删除" danger disabled />
+        </div>
+
+        <p class="mt-5 font-mono text-xs text-fg-subtle">block</p>
+        <div class="mt-2">
+          <ButtonPrimary text="全宽" block />
+        </div>
+      </SpecimenPair>
+
+      <table class="mt-6 w-full border-collapse text-left font-mono text-xs">
+        <thead>
+          <tr class="text-zinc-500">
+            <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">prop</th>
+            <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">类型</th>
+            <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">默认</th>
+            <th scope="col" class="border-b border-zinc-800 py-2 font-normal">说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="row in PROPS.ButtonPrimary" :key="row[0]" class="text-zinc-400">
+            <td class="border-b border-zinc-900 py-2.5 pr-4 text-zinc-100">{{ row[0] }}</td>
+            <td class="border-b border-zinc-900 py-2.5 pr-4">{{ row[1] }}</td>
+            <td class="border-b border-zinc-900 py-2.5 pr-4">{{ row[2] }}</td>
+            <td class="border-b border-zinc-900 py-2.5">{{ row[3] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ButtonSecondary -->
+    <section class="mt-16">
       <h2 class="font-mono text-sm text-zinc-100">ButtonSecondary</h2>
       <p class="mt-2 max-w-xl text-sm/6 text-zinc-400">
         纯文字按钮，可带前置图标与尾部内容。背景层是独立缩放的
