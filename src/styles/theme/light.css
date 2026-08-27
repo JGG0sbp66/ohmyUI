@@ -15,6 +15,15 @@
   --theme-accent-hover: oklch(0.55 0.18 var(--app-hue));
   --theme-accent-active: oklch(0.5 0.18 var(--app-hue));
 
+  /*
+    色相钉死在红色，不跟随 --app-hue —— 危险信号不能被主题色带走。
+    数值取自 Tailwind 的 red-500 / red-600（ohmyblog 一直用的这两档）。
+    不写成 var(--color-red-500)：Tailwind 只输出被用到的内建 token，
+    没有 red-* 工具类时那个变量压根不存在。
+  */
+  --theme-danger: oklch(0.637 0.237 25.331);
+  --theme-danger-hover: oklch(0.577 0.245 27.325);
+
   --theme-bg: oklch(0.97 0.01 var(--app-hue));
   --theme-bg-muted: oklch(0.95 0.03 var(--app-hue));
   /* 纯白，不跟随 hue —— 卡片带色偏会显脏 */

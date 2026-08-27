@@ -14,6 +14,10 @@
   --color-accent-hover: var(--theme-accent-hover);
   --color-accent-active: var(--theme-accent-active);
 
+  /* 危险色，破坏性操作 */
+  --color-danger: var(--theme-danger);
+  --color-danger-hover: var(--theme-danger-hover);
+
   /* bg 页面主背景，bg-muted 次级区块，bg-card 卡片 */
   --color-bg: var(--theme-bg);
   --color-bg-muted: var(--theme-bg-muted);
