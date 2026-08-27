@@ -9,8 +9,7 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check"
+    "format": "oxfmt"
   },
   "dependencies": {
     "vue": "^3.5.40"
