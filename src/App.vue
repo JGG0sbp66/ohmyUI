@@ -7,6 +7,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+import ButtonSecondary from "./components/button/ButtonSecondary.vue";
 import ButtonsPage from "./views/buttons/Buttons.page.vue";
 import HueControl from "./views/components/HueControl.vue";
 import TokensPage from "./views/tokens/Tokens.page.vue";
@@ -30,21 +31,24 @@ const activePage = () => PAGES.find((page) => page.key === activeKey.value)!.com
 
         <HueControl class="mt-8" />
 
-        <nav class="mt-10 flex gap-1 border-b border-zinc-800" aria-label="预览页面">
-          <button
-            v-for="page in PAGES"
-            :key="page.key"
-            type="button"
-            class="-mb-px border-b-2 px-3 py-2 text-sm transition-colors"
-            :class="
-              activeKey === page.key
-                ? 'border-zinc-100 text-zinc-100'
-                : 'border-transparent text-zinc-500 hover:text-zinc-300'
-            "
-            @click="activeKey = page.key"
-          >
-            {{ page.label }}
-          </button>
+        <!--
+          nav 单独加 .dark：外壳底色是深的，token 得取深色那套才看得见。
+          它不是 SpecimenPair 的祖先，所以并置对照不受影响。
+        -->
+        <nav class="dark mt-10 flex gap-1 border-b border-border/40" aria-label="预览页面">
+          <!-- pb-2 撑出按钮与分隔线之间的空隙，指示器 bottom-0 正好落在分隔线上 -->
+          <div v-for="page in PAGES" :key="page.key" class="relative flex items-center pb-2">
+            <ButtonSecondary
+              :text="page.label"
+              :is-active="activeKey === page.key"
+              @click="activeKey = page.key"
+            />
+            <!-- 绝对定位：不占按钮高度，也不影响兄弟元素布局 -->
+            <div
+              class="absolute right-1 bottom-0 left-1 h-0.75 rounded-t-sm transition-colors"
+              :class="activeKey === page.key ? 'bg-accent' : 'bg-transparent'"
+            />
+          </div>
         </nav>
       </header>
 
