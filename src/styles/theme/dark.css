@@ -1,0 +1,18 @@
+/**
+ * theme/dark.css — 深色模式变量
+ */
+
+/*
+  把 Tailwind 的 dark: 变体重新定义为「.dark 类存在」，
+  而不是默认的 prefers-color-scheme（跟随系统）。
+  下面的 .dark 选择器靠类名切换，两者必须口径一致，
+  否则 dark:xxx 工具类跟着系统走、CSS 变量跟着类名走，会对不上。
+*/
+@variant dark (&:where(.dark, .dark *));
+
+.dark {
+  /* Dark Mode 下的主色 */
+  --theme-accent: oklch(0.65 0.18 var(--app-hue));
+  --theme-accent-hover: oklch(0.7 0.18 var(--app-hue));
+  --theme-accent-active: oklch(0.6 0.18 var(--app-hue));
+}
