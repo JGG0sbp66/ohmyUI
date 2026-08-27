@@ -13,4 +13,6 @@
   --theme-bg: oklch(0.16 0.014 var(--app-hue));
   --theme-bg-muted: oklch(0.25 0.03 var(--app-hue));
   --theme-bg-card: oklch(0.2 0.02 var(--app-hue));
+
+  --theme-border: oklch(0.3 0.03 var(--app-hue));
 }

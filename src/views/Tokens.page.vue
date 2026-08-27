@@ -12,6 +12,8 @@ interface Token {
   cls: string;
   variable: string;
   role: string;
+  /** 色块渲染方式：填充，或只画描边（边框色用实心块会误导） */
+  preview: "fill" | "border";
   light: Tone;
   dark: Tone;
 }
@@ -26,6 +28,7 @@ const TOKEN_GROUPS: { title: string; note: string; tokens: Token[] }[] = [
         cls: "bg-accent",
         variable: "--theme-accent",
         role: "常态",
+        preview: "fill",
         light: { l: 0.6, c: 0.18 },
         dark: { l: 0.65, c: 0.18 },
       },
@@ -33,6 +36,7 @@ const TOKEN_GROUPS: { title: string; note: string; tokens: Token[] }[] = [
         cls: "bg-accent-hover",
         variable: "--theme-accent-hover",
         role: "悬停",
+        preview: "fill",
         light: { l: 0.55, c: 0.18 },
         dark: { l: 0.7, c: 0.18 },
       },
@@ -40,6 +44,7 @@ const TOKEN_GROUPS: { title: string; note: string; tokens: Token[] }[] = [
         cls: "bg-accent-active",
         variable: "--theme-accent-active",
         role: "按下",
+        preview: "fill",
         light: { l: 0.5, c: 0.18 },
         dark: { l: 0.6, c: 0.18 },
       },
@@ -53,6 +58,7 @@ const TOKEN_GROUPS: { title: string; note: string; tokens: Token[] }[] = [
         cls: "bg-bg",
         variable: "--theme-bg",
         role: "页面主背景",
+        preview: "fill",
         light: { l: 0.97, c: 0.01 },
         dark: { l: 0.16, c: 0.014 },
       },
@@ -60,6 +66,7 @@ const TOKEN_GROUPS: { title: string; note: string; tokens: Token[] }[] = [
         cls: "bg-bg-muted",
         variable: "--theme-bg-muted",
         role: "次级区块",
+        preview: "fill",
         light: { l: 0.95, c: 0.03 },
         dark: { l: 0.25, c: 0.03 },
       },
@@ -67,8 +74,23 @@ const TOKEN_GROUPS: { title: string; note: string; tokens: Token[] }[] = [
         cls: "bg-bg-card",
         variable: "--theme-bg-card",
         role: "卡片",
+        preview: "fill",
         light: { literal: "white" },
         dark: { l: 0.2, c: 0.02 },
+      },
+    ],
+  },
+  {
+    title: "边框色",
+    note: "分隔线与描边，只有一档。浅色下比背景略深、深色下比背景略浅，都是与背景差一档的对比。",
+    tokens: [
+      {
+        cls: "border-border",
+        variable: "--theme-border",
+        role: "分隔线 / 描边",
+        preview: "border",
+        light: { l: 0.9, c: 0.02 },
+        dark: { l: 0.3, c: 0.03 },
       },
     ],
   },
@@ -180,7 +202,13 @@ function toneText(tone: Tone): string {
               <ul class="mt-2.5 space-y-2.5">
                 <li v-for="token in group.tokens" :key="token.cls" class="flex items-center gap-3">
                   <span
+                    v-if="token.preview === 'fill'"
                     class="size-11 shrink-0 rounded-lg ring-1 ring-zinc-900/10 dark:ring-white/10"
+                    :class="token.cls"
+                  ></span>
+                  <span
+                    v-else
+                    class="size-11 shrink-0 rounded-lg border-2"
                     :class="token.cls"
                   ></span>
                   <span class="min-w-0 font-mono text-xs">

@@ -15,4 +15,7 @@
   --color-bg: var(--theme-bg);
   --color-bg-muted: var(--theme-bg-muted);
   --color-bg-card: var(--theme-bg-card);
+
+  /* 分隔线与描边 */
+  --color-border: var(--theme-border);
 }
