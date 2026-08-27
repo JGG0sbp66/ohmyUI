@@ -47,7 +47,7 @@ const PROPS = {
 <template>
   <div>
     <p class="max-w-xl text-sm/6 text-zinc-400">
-      两个组件都只输出内在样式（内边距、字号、圆角、颜色、过渡），不输出宽高 ——
+      这一页的组件都只输出内在样式（内边距、字号、圆角、颜色、过渡），不输出宽高 ——
       布局由上下文决定，留给调用方，所以传
       <code class="font-mono text-zinc-300">h-11</code> 之类不需要
       <code class="font-mono text-zinc-300">!</code>。
