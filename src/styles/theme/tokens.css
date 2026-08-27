@@ -1,8 +1,18 @@
 /* 语义 token 映射。@theme 决定有哪些工具类，色值由 light.css / dark.css 提供 */
 
-@theme {
+/*
+  必须用 inline：不带 inline 时 Tailwind 会把 var(--theme-*) 在 :root 上替换掉，
+  子树里改 --theme-* 就失效，.dark 只能加在 <html> 上才管用。
+  inline 让工具类直接引用 --theme-*，替换推迟到用它的元素，子树才能独立切换。
+*/
+@theme inline {
   /* 强调色，交互重点 */
   --color-accent: var(--theme-accent);
   --color-accent-hover: var(--theme-accent-hover);
   --color-accent-active: var(--theme-accent-active);
+
+  /* bg 页面主背景，bg-muted 次级区块，bg-card 卡片 */
+  --color-bg: var(--theme-bg);
+  --color-bg-muted: var(--theme-bg-muted);
+  --color-bg-card: var(--theme-bg-card);
 }

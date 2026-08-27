@@ -8,4 +8,9 @@
   --theme-accent: oklch(0.65 0.18 var(--app-hue));
   --theme-accent-hover: oklch(0.7 0.18 var(--app-hue));
   --theme-accent-active: oklch(0.6 0.18 var(--app-hue));
+
+  /* 深色下卡片比主背景亮，次级区块更亮 —— 层级方向与浅色相反 */
+  --theme-bg: oklch(0.16 0.014 var(--app-hue));
+  --theme-bg-muted: oklch(0.25 0.03 var(--app-hue));
+  --theme-bg-card: oklch(0.2 0.02 var(--app-hue));
 }

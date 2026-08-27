@@ -1,37 +1,84 @@
 <!-- src/views/Tokens.page.vue -->
-<!-- 设计 token 展示页。往 styles 里加 token 时，同步往 TOKENS 里加一条 -->
+<!-- 设计 token 展示页。往 styles 里加 token 时，同步往 TOKEN_GROUPS 里加一条 -->
 <script setup lang="ts">
 import { computed } from "vue";
 
 import { useThemeHue } from "@/composables/theme.hook";
 
+/** 色值：跟随 hue 的 oklch，或不跟随的字面量（如 white） */
+type Tone = { l: number; c: number } | { literal: string };
+
+interface Token {
+  cls: string;
+  variable: string;
+  role: string;
+  light: Tone;
+  dark: Tone;
+}
+
 /** token 定义，数值来自 styles/theme/light.css 与 dark.css。色块与表格共用这份数据 */
-const TOKENS = [
+const TOKEN_GROUPS: { title: string; note: string; tokens: Token[] }[] = [
   {
-    cls: "bg-accent",
-    variable: "--theme-accent",
-    lightL: 0.6,
-    darkL: 0.65,
-    chroma: 0.18,
-    role: "常态",
+    title: "强调色",
+    note: "一套连续的交互态。浅色下悬停变暗、深色下悬停变亮 —— 两种底色上「更明显」的方向是相反的。",
+    tokens: [
+      {
+        cls: "bg-accent",
+        variable: "--theme-accent",
+        role: "常态",
+        light: { l: 0.6, c: 0.18 },
+        dark: { l: 0.65, c: 0.18 },
+      },
+      {
+        cls: "bg-accent-hover",
+        variable: "--theme-accent-hover",
+        role: "悬停",
+        light: { l: 0.55, c: 0.18 },
+        dark: { l: 0.7, c: 0.18 },
+      },
+      {
+        cls: "bg-accent-active",
+        variable: "--theme-accent-active",
+        role: "按下",
+        light: { l: 0.5, c: 0.18 },
+        dark: { l: 0.6, c: 0.18 },
+      },
+    ],
   },
   {
-    cls: "bg-accent-hover",
-    variable: "--theme-accent-hover",
-    lightL: 0.55,
-    darkL: 0.7,
-    chroma: 0.18,
-    role: "悬停",
+    title: "背景色",
+    note: "明暗层级在两种模式下不一样：浅色下 card 最亮、muted 最暗；深色下 muted 最亮、bg 最暗。card 在浅色下钉死纯白，不跟随色相 —— 带色偏的卡片会显脏。",
+    tokens: [
+      {
+        cls: "bg-bg",
+        variable: "--theme-bg",
+        role: "页面主背景",
+        light: { l: 0.97, c: 0.01 },
+        dark: { l: 0.16, c: 0.014 },
+      },
+      {
+        cls: "bg-bg-muted",
+        variable: "--theme-bg-muted",
+        role: "次级区块",
+        light: { l: 0.95, c: 0.03 },
+        dark: { l: 0.25, c: 0.03 },
+      },
+      {
+        cls: "bg-bg-card",
+        variable: "--theme-bg-card",
+        role: "卡片",
+        light: { literal: "white" },
+        dark: { l: 0.2, c: 0.02 },
+      },
+    ],
   },
-  {
-    cls: "bg-accent-active",
-    variable: "--theme-accent-active",
-    lightL: 0.5,
-    darkL: 0.6,
-    chroma: 0.18,
-    role: "按下",
-  },
-] as const;
+];
+
+/** 两种模式共用同一份 markup，靠 .dark 类切换取值 */
+const MODES = [
+  { label: ":root（浅色）", scope: "", tone: "light" as const },
+  { label: ".dark（深色）", scope: "dark", tone: "dark" as const },
+];
 
 /** 色环上的几个落点，一键跳过去 */
 const HUE_MARKS = [
@@ -51,15 +98,14 @@ const trackGradient = computed(() => {
   return `linear-gradient(to right, ${stops.join(", ")})`;
 });
 
-function formula(lightness: number, chroma: number) {
-  return `oklch(${lightness} ${chroma} ${hue.value})`;
+function toneText(tone: Tone): string {
+  return "literal" in tone ? tone.literal : `oklch(${tone.l} ${tone.c} ${hue.value})`;
 }
 </script>
 
 <template>
   <div class="min-h-svh bg-zinc-950 font-sans text-zinc-300 antialiased">
     <div class="mx-auto max-w-4xl px-6 py-14 sm:px-8 sm:py-20">
-      <!-- 色相控制器 -->
       <header>
         <p class="font-mono text-xs tracking-widest text-zinc-500 uppercase">ohmyUI · 设计 token</p>
         <h1 class="mt-3 text-2xl font-medium text-zinc-100 sm:text-3xl">一个数字决定全部颜色</h1>
@@ -70,6 +116,7 @@ function formula(lightness: number, chroma: number) {
           —— 它们不可能失步，因为压根只有一个动画。
         </p>
 
+        <!-- 色相控制器 -->
         <div class="mt-10">
           <label for="hue" class="block">
             <span class="font-mono text-xs tracking-widest text-zinc-500 uppercase"> 色相角 </span>
@@ -109,45 +156,44 @@ function formula(lightness: number, chroma: number) {
         </div>
       </header>
 
-      <!-- 浅深并置对照 -->
+      <!-- 浅深并置对照。两栏 markup 相同，深色栏靠 .dark 类取另一套值 -->
       <section class="mt-16">
         <h2 class="font-mono text-xs tracking-widest text-zinc-500 uppercase">浅色 / 深色</h2>
         <p class="mt-2 max-w-xl text-sm/6 text-zinc-400">
-          两栏色相完全相同，只有亮度不同。注意浅色里悬停变暗、深色里悬停变亮 ——
-          因为两种底色下「更明显」的方向是相反的。
+          两栏色相相同，亮度不同。面板本身就用 <code class="font-mono">bg-bg-card</code>
+          搭的，所以它也在演示自己展示的东西。
         </p>
 
         <div class="mt-6 grid gap-4 sm:grid-cols-2">
-          <!-- 无 .dark 祖先，取 :root 的值 -->
-          <article class="rounded-xl bg-zinc-100 p-5">
-            <h3 class="font-mono text-xs text-zinc-500">:root（浅色）</h3>
-            <ul class="mt-4 space-y-3">
-              <li v-for="token in TOKENS" :key="token.cls" class="flex items-center gap-3">
-                <span class="size-11 shrink-0 rounded-lg" :class="token.cls"></span>
-                <span class="min-w-0 font-mono text-xs text-zinc-600">
-                  <span class="block truncate text-zinc-900">{{ token.cls }}</span>
-                  <span class="block truncate">
-                    {{ formula(token.lightL, token.chroma) }}
-                  </span>
-                </span>
-              </li>
-            </ul>
-          </article>
+          <article
+            v-for="mode in MODES"
+            :key="mode.tone"
+            class="rounded-xl bg-bg-card p-5 ring-1 ring-zinc-900/10 dark:ring-white/10"
+            :class="mode.scope"
+          >
+            <h3 class="font-mono text-xs text-zinc-500">{{ mode.label }}</h3>
 
-          <!-- .dark 类作用于子树，也是新项目里的用法 -->
-          <article class="dark rounded-xl bg-zinc-900 p-5 ring-1 ring-zinc-800">
-            <h3 class="font-mono text-xs text-zinc-500">.dark（深色）</h3>
-            <ul class="mt-4 space-y-3">
-              <li v-for="token in TOKENS" :key="token.cls" class="flex items-center gap-3">
-                <span class="size-11 shrink-0 rounded-lg" :class="token.cls"></span>
-                <span class="min-w-0 font-mono text-xs text-zinc-500">
-                  <span class="block truncate text-zinc-100">{{ token.cls }}</span>
-                  <span class="block truncate">
-                    {{ formula(token.darkL, token.chroma) }}
+            <div v-for="group in TOKEN_GROUPS" :key="group.title" class="mt-5">
+              <p class="font-mono text-xs text-zinc-400 dark:text-zinc-500">
+                {{ group.title }}
+              </p>
+              <ul class="mt-2.5 space-y-2.5">
+                <li v-for="token in group.tokens" :key="token.cls" class="flex items-center gap-3">
+                  <span
+                    class="size-11 shrink-0 rounded-lg ring-1 ring-zinc-900/10 dark:ring-white/10"
+                    :class="token.cls"
+                  ></span>
+                  <span class="min-w-0 font-mono text-xs">
+                    <span class="block truncate text-zinc-900 dark:text-zinc-100">
+                      {{ token.cls }}
+                    </span>
+                    <span class="block truncate text-zinc-500">
+                      {{ toneText(token[mode.tone]) }}
+                    </span>
                   </span>
-                </span>
-              </li>
-            </ul>
+                </li>
+              </ul>
+            </div>
           </article>
         </div>
       </section>
@@ -156,64 +202,60 @@ function formula(lightness: number, chroma: number) {
       <section class="mt-16">
         <h2 class="font-mono text-xs tracking-widest text-zinc-500 uppercase">交互态</h2>
         <p class="mt-2 max-w-xl text-sm/6 text-zinc-400">
-          三个 token 是一套连续的状态。把鼠标移上去、按住不放，能看出它们的关系。
+          把鼠标移上去、按住不放，能看出三个强调色的关系。这里刻意没加颜色过渡 ——
+          过渡会去追不断变化的色相，反而滞后。
         </p>
 
         <div class="mt-6 flex flex-wrap items-center gap-4">
-          <button
-            type="button"
-            class="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover active:bg-accent-active"
+          <span
+            v-for="mode in MODES"
+            :key="mode.tone"
+            class="inline-flex rounded-xl bg-bg-card p-3 ring-1 ring-zinc-900/10 dark:ring-white/10"
+            :class="mode.scope"
           >
-            浅色底按钮
-          </button>
-
-          <span class="dark inline-flex rounded-xl bg-zinc-900 p-3">
             <button
               type="button"
               class="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover active:bg-accent-active"
             >
-              深色底按钮
+              按钮
             </button>
           </span>
         </div>
       </section>
 
       <!-- 工具类与变量对照 -->
-      <section class="mt-16">
+      <section class="mt-16 space-y-8">
         <h2 class="font-mono text-xs tracking-widest text-zinc-500 uppercase">对应关系</h2>
 
-        <div class="mt-6 overflow-x-auto">
-          <table class="w-full border-collapse text-left font-mono text-xs">
-            <thead>
-              <tr class="text-zinc-500">
-                <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">工具类</th>
-                <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">CSS 变量</th>
-                <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">浅色亮度</th>
-                <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">深色亮度</th>
-                <th scope="col" class="border-b border-zinc-800 py-2 font-normal">用途</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="token in TOKENS" :key="token.cls" class="text-zinc-400">
-                <td class="border-b border-zinc-900 py-2.5 pr-4 text-zinc-100">
-                  {{ token.cls }}
-                </td>
-                <td class="border-b border-zinc-900 py-2.5 pr-4">
-                  {{ token.variable }}
-                </td>
-                <td class="border-b border-zinc-900 py-2.5 pr-4 tabular-nums">
-                  {{ token.lightL }}
-                </td>
-                <td class="border-b border-zinc-900 py-2.5 pr-4 tabular-nums">
-                  {{ token.darkL }}
-                </td>
-                <td class="border-b border-zinc-900 py-2.5">{{ token.role }}</td>
-              </tr>
-            </tbody>
-          </table>
+        <div v-for="group in TOKEN_GROUPS" :key="group.title">
+          <h3 class="text-sm text-zinc-200">{{ group.title }}</h3>
+          <p class="mt-1.5 max-w-xl text-xs/5 text-zinc-500">{{ group.note }}</p>
+
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full border-collapse text-left font-mono text-xs">
+              <thead>
+                <tr class="text-zinc-500">
+                  <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">工具类</th>
+                  <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">
+                    CSS 变量
+                  </th>
+                  <th scope="col" class="border-b border-zinc-800 py-2 font-normal">用途</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="token in group.tokens" :key="token.cls" class="text-zinc-400">
+                  <td class="border-b border-zinc-900 py-2.5 pr-4 text-zinc-100">
+                    {{ token.cls }}
+                  </td>
+                  <td class="border-b border-zinc-900 py-2.5 pr-4">{{ token.variable }}</td>
+                  <td class="border-b border-zinc-900 py-2.5">{{ token.role }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <p class="mt-4 text-xs/5 text-zinc-500">
+        <p class="text-xs/5 text-zinc-500">
           前缀可换：<code class="text-zinc-400">bg-</code>、<code class="text-zinc-400">text-</code
           >、<code class="text-zinc-400">border-</code>、<code class="text-zinc-400">ring-</code>
           都能用同一个 token 名。

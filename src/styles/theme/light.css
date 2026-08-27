@@ -14,4 +14,9 @@
   --theme-accent: oklch(0.6 0.18 var(--app-hue));
   --theme-accent-hover: oklch(0.55 0.18 var(--app-hue));
   --theme-accent-active: oklch(0.5 0.18 var(--app-hue));
+
+  --theme-bg: oklch(0.97 0.01 var(--app-hue));
+  --theme-bg-muted: oklch(0.95 0.03 var(--app-hue));
+  /* 纯白，不跟随 hue —— 卡片带色偏会显脏 */
+  --theme-bg-card: white;
 }
