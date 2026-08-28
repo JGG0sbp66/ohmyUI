@@ -361,10 +361,11 @@ onBeforeUnmount(() => {
           <slot>{{ props.content }}</slot>
         </div>
 
+        <!-- 箭头覆盖卡片边框，根部与气泡内部连通，只保留朝外的两条描边。 -->
         <span
           aria-hidden="true"
           :class="[
-            'absolute z-0 size-2 bg-bg-card',
+            'absolute z-20 size-2 bg-bg-card',
             resolvedPlacement === 'top'
               ? '-bottom-1 border-r border-b border-border/60'
               : '-top-1 border-t border-l border-border/60',
