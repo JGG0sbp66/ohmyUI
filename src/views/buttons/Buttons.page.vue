@@ -46,17 +46,17 @@ const PROPS = {
 
 <template>
   <div>
-    <p class="max-w-xl text-sm/6 text-zinc-400">
+    <p class="max-w-xl text-sm/6 text-fg-muted">
       这一页的组件都只输出内在样式（内边距、字号、圆角、颜色、过渡），不输出宽高 ——
       布局由上下文决定，留给调用方，所以传
-      <code class="font-mono text-zinc-300">h-11</code> 之类不需要
-      <code class="font-mono text-zinc-300">!</code>。
+      <code class="font-mono text-fg">h-11</code> 之类不需要
+      <code class="font-mono text-fg">!</code>。
     </p>
 
     <!-- ButtonPrimary -->
     <section class="mt-10">
-      <h2 class="font-mono text-sm text-zinc-100">ButtonPrimary</h2>
-      <p class="mt-2 max-w-xl text-sm/6 text-zinc-400">
+      <h2 class="font-mono text-sm text-fg">ButtonPrimary</h2>
+      <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
         实心强调色主按钮。加载中显示指示器并自动禁用点击，指示器的宽度与透明度同步过渡。
       </p>
 
@@ -94,19 +94,19 @@ const PROPS = {
 
       <table class="mt-6 w-full border-collapse text-left font-mono text-xs">
         <thead>
-          <tr class="text-zinc-500">
-            <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">prop</th>
-            <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">类型</th>
-            <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">默认</th>
-            <th scope="col" class="border-b border-zinc-800 py-2 font-normal">说明</th>
+          <tr class="text-fg-muted">
+            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">prop</th>
+            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">类型</th>
+            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">默认</th>
+            <th scope="col" class="border-b border-border/60 py-2 font-normal">说明</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="row in PROPS.ButtonPrimary" :key="row[0]" class="text-zinc-400">
-            <td class="border-b border-zinc-900 py-2.5 pr-4 text-zinc-100">{{ row[0] }}</td>
-            <td class="border-b border-zinc-900 py-2.5 pr-4">{{ row[1] }}</td>
-            <td class="border-b border-zinc-900 py-2.5 pr-4">{{ row[2] }}</td>
-            <td class="border-b border-zinc-900 py-2.5">{{ row[3] }}</td>
+          <tr v-for="row in PROPS.ButtonPrimary" :key="row[0]" class="text-fg-muted">
+            <td class="border-b border-border/40 py-2.5 pr-4 text-fg">{{ row[0] }}</td>
+            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[1] }}</td>
+            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[2] }}</td>
+            <td class="border-b border-border/40 py-2.5">{{ row[3] }}</td>
           </tr>
         </tbody>
       </table>
@@ -114,8 +114,8 @@ const PROPS = {
 
     <!-- ButtonSecondary -->
     <section class="mt-16">
-      <h2 class="font-mono text-sm text-zinc-100">ButtonSecondary</h2>
-      <p class="mt-2 max-w-xl text-sm/6 text-zinc-400">
+      <h2 class="font-mono text-sm text-fg">ButtonSecondary</h2>
+      <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
         纯文字按钮，可带前置图标与尾部内容。背景层是独立缩放的
         <code class="font-mono">::before</code>，hover 时从 90% 弹到 100%。
       </p>
@@ -153,19 +153,19 @@ const PROPS = {
 
       <table class="mt-6 w-full border-collapse text-left font-mono text-xs">
         <thead>
-          <tr class="text-zinc-500">
-            <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">prop</th>
-            <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">类型</th>
-            <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">默认</th>
-            <th scope="col" class="border-b border-zinc-800 py-2 font-normal">说明</th>
+          <tr class="text-fg-muted">
+            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">prop</th>
+            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">类型</th>
+            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">默认</th>
+            <th scope="col" class="border-b border-border/60 py-2 font-normal">说明</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="row in PROPS.ButtonSecondary" :key="row[0]" class="text-zinc-400">
-            <td class="border-b border-zinc-900 py-2.5 pr-4 text-zinc-100">{{ row[0] }}</td>
-            <td class="border-b border-zinc-900 py-2.5 pr-4">{{ row[1] }}</td>
-            <td class="border-b border-zinc-900 py-2.5 pr-4">{{ row[2] }}</td>
-            <td class="border-b border-zinc-900 py-2.5">{{ row[3] }}</td>
+          <tr v-for="row in PROPS.ButtonSecondary" :key="row[0]" class="text-fg-muted">
+            <td class="border-b border-border/40 py-2.5 pr-4 text-fg">{{ row[0] }}</td>
+            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[1] }}</td>
+            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[2] }}</td>
+            <td class="border-b border-border/40 py-2.5">{{ row[3] }}</td>
           </tr>
         </tbody>
       </table>
@@ -173,8 +173,8 @@ const PROPS = {
 
     <!-- ButtonIcon -->
     <section class="mt-16">
-      <h2 class="font-mono text-sm text-zinc-100">ButtonIcon</h2>
-      <p class="mt-2 max-w-xl text-sm/6 text-zinc-400">
+      <h2 class="font-mono text-sm text-fg">ButtonIcon</h2>
+      <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
         纯图标按钮，宽高 1:1。靠
         <code class="font-mono">aspect-square</code>
         保证，图标不是正方形也不影响。视觉语言与 ButtonSecondary 一致。
@@ -220,19 +220,19 @@ const PROPS = {
 
       <table class="mt-6 w-full border-collapse text-left font-mono text-xs">
         <thead>
-          <tr class="text-zinc-500">
-            <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">prop</th>
-            <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">类型</th>
-            <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">默认</th>
-            <th scope="col" class="border-b border-zinc-800 py-2 font-normal">说明</th>
+          <tr class="text-fg-muted">
+            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">prop</th>
+            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">类型</th>
+            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">默认</th>
+            <th scope="col" class="border-b border-border/60 py-2 font-normal">说明</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="row in PROPS.ButtonIcon" :key="row[0]" class="text-zinc-400">
-            <td class="border-b border-zinc-900 py-2.5 pr-4 text-zinc-100">{{ row[0] }}</td>
-            <td class="border-b border-zinc-900 py-2.5 pr-4">{{ row[1] }}</td>
-            <td class="border-b border-zinc-900 py-2.5 pr-4">{{ row[2] }}</td>
-            <td class="border-b border-zinc-900 py-2.5">{{ row[3] }}</td>
+          <tr v-for="row in PROPS.ButtonIcon" :key="row[0]" class="text-fg-muted">
+            <td class="border-b border-border/40 py-2.5 pr-4 text-fg">{{ row[0] }}</td>
+            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[1] }}</td>
+            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[2] }}</td>
+            <td class="border-b border-border/40 py-2.5">{{ row[3] }}</td>
           </tr>
         </tbody>
       </table>

@@ -19,7 +19,7 @@ const HUE_MARKS = [
 const themeStore = useThemeStore();
 const { hue } = storeToRefs(themeStore);
 
-/** 滑杆轨道：用 accent 的亮度彩度铺满色环 */
+/** 滑杆轨道：用固定亮度和彩度铺满色环，让色相位置不随 mode 漂移 */
 const trackGradient = computed(() => {
   const stops = Array.from({ length: 25 }, (_, i) => `oklch(0.6 0.18 ${i * 15})`);
   return `linear-gradient(to right, ${stops.join(", ")})`;
@@ -29,10 +29,10 @@ const trackGradient = computed(() => {
 <template>
   <div>
     <label for="hue" class="block">
-      <span class="font-mono text-xs tracking-widest text-zinc-500 uppercase">色相角</span>
-      <span class="mt-1 flex items-baseline gap-3 font-mono text-zinc-100" aria-hidden="true">
+      <span class="font-mono text-xs tracking-widest text-fg-subtle uppercase">色相角</span>
+      <span class="mt-1 flex items-baseline gap-3 font-mono text-fg" aria-hidden="true">
         <span class="text-5xl tabular-nums sm:text-6xl">{{ hue }}</span>
-        <span class="text-lg text-zinc-500">度</span>
+        <span class="text-lg text-fg-muted">度</span>
       </span>
     </label>
 
@@ -55,8 +55,8 @@ const trackGradient = computed(() => {
         class="rounded-full border px-3 py-1 font-mono text-xs transition-colors"
         :class="
           hue === mark.value
-            ? 'border-zinc-500 bg-zinc-800 text-zinc-100'
-            : 'border-zinc-800 text-zinc-500 hover:border-zinc-700 hover:text-zinc-300'
+            ? 'border-accent bg-bg-muted text-fg'
+            : 'border-border/60 text-fg-muted hover:border-border hover:text-fg'
         "
         @click="hue = mark.value"
       >
@@ -94,22 +94,22 @@ const trackGradient = computed(() => {
   width: 1.25rem;
   height: 1.25rem;
   margin-top: -0.25rem;
-  border: 3px solid var(--color-zinc-950);
+  border: 3px solid var(--theme-bg);
   border-radius: 9999px;
-  background: white;
+  background: var(--theme-fg);
 }
 
 .hue-slider::-moz-range-thumb {
   width: 1.25rem;
   height: 1.25rem;
-  border: 3px solid var(--color-zinc-950);
+  border: 3px solid var(--theme-bg);
   border-radius: 9999px;
-  background: white;
+  background: var(--theme-fg);
 }
 
 /* 键盘可达 */
 .hue-slider:focus-visible {
-  outline: 2px solid var(--color-zinc-100);
+  outline: 2px solid var(--theme-fg);
   outline-offset: 4px;
   border-radius: 9999px;
 }

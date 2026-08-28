@@ -167,16 +167,16 @@ function toneText(tone: Tone): string {
 
 <template>
   <div>
-    <p class="max-w-xl text-sm/6 text-zinc-400">
+    <p class="max-w-xl text-sm/6 text-fg-muted">
       每个语义色都写成
-      <code class="font-mono text-zinc-300">oklch(亮度 彩度 var(--app-hue))</code>
+      <code class="font-mono text-fg">oklch(亮度 彩度 var(--app-hue))</code>
       。亮度和彩度各自固定，色相共用同一个变量，所以拖色相时只有一个数在变，所有颜色一起转，不可能失步。
     </p>
 
     <!-- 浅深并置对照 -->
     <section class="mt-10">
-      <h2 class="font-mono text-xs tracking-widest text-zinc-500 uppercase">浅色 / 深色</h2>
-      <p class="mt-2 max-w-xl text-sm/6 text-zinc-400">
+      <h2 class="font-mono text-xs tracking-widest text-fg-subtle uppercase">浅色 / 深色</h2>
+      <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
         两栏色相相同，亮度不同。面板本身就用 <code class="font-mono">bg-bg-card</code>
         搭的，所以它也在演示自己展示的东西。
       </p>
@@ -188,7 +188,7 @@ function toneText(tone: Tone): string {
             <li v-for="token in group.tokens" :key="token.cls" class="flex items-center gap-3">
               <span
                 v-if="token.preview === 'fill'"
-                class="size-11 shrink-0 rounded-lg ring-1 ring-zinc-900/10 dark:ring-white/10"
+                class="size-11 shrink-0 rounded-lg ring-1 ring-border/60"
                 :class="token.cls"
               ></span>
               <span
@@ -218,8 +218,8 @@ function toneText(tone: Tone): string {
 
     <!-- 交互态 -->
     <section class="mt-16">
-      <h2 class="font-mono text-xs tracking-widest text-zinc-500 uppercase">交互态</h2>
-      <p class="mt-2 max-w-xl text-sm/6 text-zinc-400">
+      <h2 class="font-mono text-xs tracking-widest text-fg-subtle uppercase">交互态</h2>
+      <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
         把鼠标移上去、按住不放，能看出三个强调色的关系。这里刻意没加颜色过渡 ——
         过渡会去追不断变化的色相，反而滞后。
       </p>
@@ -238,37 +238,37 @@ function toneText(tone: Tone): string {
 
     <!-- 工具类与变量对照 -->
     <section class="mt-16 space-y-8">
-      <h2 class="font-mono text-xs tracking-widest text-zinc-500 uppercase">对应关系</h2>
+      <h2 class="font-mono text-xs tracking-widest text-fg-subtle uppercase">对应关系</h2>
 
       <div v-for="group in TOKEN_GROUPS" :key="group.title">
-        <h3 class="text-sm text-zinc-200">{{ group.title }}</h3>
-        <p class="mt-1.5 max-w-xl text-xs/5 text-zinc-500">{{ group.note }}</p>
+        <h3 class="text-sm text-fg">{{ group.title }}</h3>
+        <p class="mt-1.5 max-w-xl text-xs/5 text-fg-muted">{{ group.note }}</p>
 
         <div class="mt-4 overflow-x-auto">
           <table class="w-full border-collapse text-left font-mono text-xs">
             <thead>
-              <tr class="text-zinc-500">
-                <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">工具类</th>
-                <th scope="col" class="border-b border-zinc-800 py-2 pr-4 font-normal">CSS 变量</th>
-                <th scope="col" class="border-b border-zinc-800 py-2 font-normal">用途</th>
+              <tr class="text-fg-muted">
+                <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">工具类</th>
+                <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">CSS 变量</th>
+                <th scope="col" class="border-b border-border/60 py-2 font-normal">用途</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="token in group.tokens" :key="token.cls" class="text-zinc-400">
-                <td class="border-b border-zinc-900 py-2.5 pr-4 text-zinc-100">
+              <tr v-for="token in group.tokens" :key="token.cls" class="text-fg-muted">
+                <td class="border-b border-border/40 py-2.5 pr-4 text-fg">
                   {{ token.cls }}
                 </td>
-                <td class="border-b border-zinc-900 py-2.5 pr-4">{{ token.variable }}</td>
-                <td class="border-b border-zinc-900 py-2.5">{{ token.role }}</td>
+                <td class="border-b border-border/40 py-2.5 pr-4">{{ token.variable }}</td>
+                <td class="border-b border-border/40 py-2.5">{{ token.role }}</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <p class="text-xs/5 text-zinc-500">
-        前缀可换：<code class="text-zinc-400">bg-</code>、<code class="text-zinc-400">text-</code
-        >、<code class="text-zinc-400">border-</code>、<code class="text-zinc-400">ring-</code>
+      <p class="text-xs/5 text-fg-muted">
+        前缀可换：<code class="text-fg">bg-</code>、<code class="text-fg">text-</code
+        >、<code class="text-fg">border-</code>、<code class="text-fg">ring-</code>
         都能用同一个 token 名。
       </p>
     </section>

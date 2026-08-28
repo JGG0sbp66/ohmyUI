@@ -1,8 +1,8 @@
 <!-- src/App.vue -->
 <!--
-  预览外壳。色相控制器放在这里，切页面时保持可用。
-  外壳使用 zinc 静态色，不跟随主题 token；SpecimenPair 则通过显式
-  .light / .dark scope 保持浅深并置，不受全局 mode 影响。
+  预览外壳。全局控制器放在这里，切换页面时保持可用。
+  展示站自身使用语义主题 token，跟随根节点上的 mode；SpecimenPair 则通过
+  显式 .light / .dark scope 保持浅深并置，不受全局 mode 影响。
 -->
 <script setup lang="ts">
 import { ref } from "vue";
@@ -10,6 +10,7 @@ import { ref } from "vue";
 import ButtonSecondary from "./components/button/ButtonSecondary.vue";
 import ButtonsPage from "./views/buttons/Buttons.page.vue";
 import HueControl from "./views/components/HueControl.vue";
+import ModeControl from "./views/components/ModeControl.vue";
 import TokensPage from "./views/tokens/Tokens.page.vue";
 
 /** 新增分类页时在这里加一条，导航自动跟着长 */
@@ -23,19 +24,24 @@ const activePage = () => PAGES.find((page) => page.key === activeKey.value)!.com
 </script>
 
 <template>
-  <div class="min-h-svh bg-zinc-950 font-sans text-zinc-300 antialiased">
+  <div class="min-h-svh bg-bg font-sans text-fg antialiased">
     <div class="mx-auto max-w-4xl px-6 py-14 sm:px-8 sm:py-20">
       <header>
-        <p class="font-mono text-xs tracking-widest text-zinc-500 uppercase">ohmyUI</p>
-        <h1 class="mt-3 text-2xl font-medium text-zinc-100 sm:text-3xl">一个数字决定全部颜色</h1>
+        <div class="flex flex-wrap items-start justify-between gap-x-8 gap-y-6">
+          <div class="min-w-0">
+            <p class="font-mono text-xs tracking-widest text-fg-subtle uppercase">ohmyUI</p>
+            <h1 class="mt-3 text-2xl font-medium text-fg sm:text-3xl">
+              一个数字决定全部颜色
+            </h1>
+          </div>
+
+          <ModeControl class="shrink-0" />
+        </div>
 
         <HueControl class="mt-8" />
 
-        <!--
-          nav 单独加 .dark：外壳底色是深的，token 得取深色那套才看得见。
-          它不是 SpecimenPair 的祖先，所以并置对照不受影响。
-        -->
-        <nav class="dark mt-10 flex gap-1 border-b border-border/40" aria-label="预览页面">
+        <!-- nav 跟随 root mode；只有 SpecimenPair 内部保留显式浅深 scope -->
+        <nav class="mt-10 flex gap-1 border-b border-border/40" aria-label="预览页面">
           <!-- pb-2 撑出按钮与分隔线之间的空隙，指示器 bottom-0 正好落在分隔线上 -->
           <div v-for="page in PAGES" :key="page.key" class="relative flex items-center pb-2">
             <ButtonSecondary
