@@ -6,9 +6,6 @@
   inline 让工具类直接引用 --theme-*，替换推迟到用它的元素，子树才能独立切换。
 */
 @theme inline {
-  /* 全库动画节奏。组件只声明哪些属性过渡、不写时长，统一取这里（Tailwind 默认 150ms） */
-  --default-transition-duration: 200ms;
-
   /* 强调色，交互重点 */
   --color-accent: var(--theme-accent);
   --color-accent-hover: var(--theme-accent-hover);

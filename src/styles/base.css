@@ -1,7 +1,40 @@
 /* 所有主题共享的运行时默认值 */
 
+@theme {
+  /* 全库动画节奏，统一使用此时长（Tailwind 默认 150ms） */
+  --default-transition-duration: 200ms;
+}
+
 @layer base {
   :root {
     --app-hue: 250;
+  }
+}
+
+/*
+  深浅模式提交新快照时，暂时关闭实时 DOM 的局部 transition。
+  锁只存在于 View Transition 捕获新状态的阶段，ready 后立即移除；组件平时的
+  hover / focus / active 动效不受影响，也不需要维护 transition-property 白名单。
+*/
+html[data-theme-committing],
+html[data-theme-committing] *,
+html[data-theme-committing]::before,
+html[data-theme-committing]::after,
+html[data-theme-committing] *::before,
+html[data-theme-committing] *::after {
+  transition: none !important;
+}
+
+/* 深浅模式由整页快照统一交叉淡入，避免每个组件按自己的时长追色。 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--default-transition-duration);
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
   }
 }
