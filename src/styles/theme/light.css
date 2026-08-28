@@ -7,11 +7,6 @@
   initial-value: 250;
 }
 
-:root {
-  /* 250 = 蓝色 */
-  --app-hue: 250;
-}
-
 :root,
 .light {
   color-scheme: light;

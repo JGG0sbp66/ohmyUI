@@ -216,26 +216,6 @@ function toneText(tone: Tone): string {
       </SpecimenPair>
     </section>
 
-    <!-- 交互态 -->
-    <section class="mt-16">
-      <h2 class="font-mono text-xs tracking-widest text-fg-subtle uppercase">交互态</h2>
-      <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
-        把鼠标移上去、按住不放，能看出三个强调色的关系。这里刻意没加颜色过渡 ——
-        过渡会去追不断变化的色相，反而滞后。
-      </p>
-
-      <SpecimenPair class="mt-6">
-        <div class="mt-4">
-          <button
-            type="button"
-            class="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover active:bg-accent-active"
-          >
-            按钮
-          </button>
-        </div>
-      </SpecimenPair>
-    </section>
-
     <!-- 工具类与变量对照 -->
     <section class="mt-16 space-y-8">
       <h2 class="font-mono text-xs tracking-widest text-fg-subtle uppercase">对应关系</h2>
