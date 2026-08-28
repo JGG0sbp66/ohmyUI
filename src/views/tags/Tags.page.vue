@@ -3,6 +3,8 @@
 import Tag from "@/components/tag/Tag.vue";
 
 import ApiTable from "../components/ApiTable.vue";
+import ComponentDocsSection from "../components/ComponentDocsSection.vue";
+import SpecimenCase from "../components/SpecimenCase.vue";
 import SpecimenPair from "../components/SpecimenPair.vue";
 
 const TAG_API = [
@@ -21,37 +23,39 @@ const TAG_API = [
       隐式增加按钮职责。
     </p>
 
-    <section class="mt-10">
-      <h2 class="font-mono text-sm text-fg">Tag</h2>
-      <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
+    <ComponentDocsSection title="Tag" class="mt-10">
+      <template #description>
         neutral 用于普通分类，accent 表示当前主题下的强调状态，danger 用于风险或破坏性状态。
-      </p>
+      </template>
 
       <SpecimenPair class="mt-6">
-        <p class="mt-4 font-mono text-xs text-fg-subtle">sm · 紧凑列表</p>
-        <div class="mt-2 flex flex-wrap items-center gap-2">
-          <Tag>草稿</Tag>
-          <Tag tone="accent">已发布</Tag>
-          <Tag tone="danger">待删除</Tag>
-        </div>
+        <SpecimenCase label="sm · 紧凑列表" class="mt-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <Tag>草稿</Tag>
+            <Tag tone="accent">已发布</Tag>
+            <Tag tone="danger">待删除</Tag>
+          </div>
+        </SpecimenCase>
 
-        <p class="mt-5 font-mono text-xs text-fg-subtle">md · 常规内容</p>
-        <div class="mt-2 flex flex-wrap items-center gap-2">
-          <Tag size="md">默认</Tag>
-          <Tag tone="accent" size="md">推荐</Tag>
-          <Tag tone="danger" size="md">高风险</Tag>
-        </div>
+        <SpecimenCase label="md · 常规内容" class="mt-5">
+          <div class="flex flex-wrap items-center gap-2">
+            <Tag size="md">默认</Tag>
+            <Tag tone="accent" size="md">推荐</Tag>
+            <Tag tone="danger" size="md">高风险</Tag>
+          </div>
+        </SpecimenCase>
 
-        <p class="mt-5 font-mono text-xs text-fg-subtle">原生属性与内容组合</p>
-        <div class="mt-2 flex flex-wrap items-center gap-2">
-          <Tag tone="accent" title="当前版本">
-            <span class="mr-1 size-1.5 rounded-full bg-current" aria-hidden="true" />
-            v1.0
-          </Tag>
-        </div>
+        <SpecimenCase label="原生属性与内容组合" class="mt-5">
+          <div class="flex flex-wrap items-center gap-2">
+            <Tag tone="accent" title="当前版本">
+              <span class="mr-1 size-1.5 rounded-full bg-current" aria-hidden="true" />
+              v1.0
+            </Tag>
+          </div>
+        </SpecimenCase>
       </SpecimenPair>
 
       <ApiTable caption="Tag Props and Slots" :rows="TAG_API" />
-    </section>
+    </ComponentDocsSection>
   </div>
 </template>

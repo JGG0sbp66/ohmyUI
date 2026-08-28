@@ -3,6 +3,8 @@
 import Card from "@/components/card/Card.vue";
 
 import ApiTable from "../components/ApiTable.vue";
+import ComponentDocsSection from "../components/ComponentDocsSection.vue";
+import SpecimenCase from "../components/SpecimenCase.vue";
 import SpecimenPair from "../components/SpecimenPair.vue";
 
 const CARD_API = [
@@ -24,9 +26,8 @@ const CARD_API = [
       仅与它共享主题 token，不会在内部嵌套 Card。
     </p>
 
-    <section class="mt-10">
-      <h2 class="font-mono text-sm text-fg">Card</h2>
-      <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
+    <ComponentDocsSection title="Card" class="mt-10">
+      <template #description>
         默认以
         <code class="font-mono text-fg">rounded-3xl</code>
         和
@@ -34,33 +35,36 @@ const CARD_API = [
         建立安静而明确的内容边界，
         <code class="font-mono text-fg">bg-bg-card</code>
         负责主题下的层级对比。阴影不属于基础外观，需要强调悬浮关系时由调用方显式添加。
-      </p>
+      </template>
 
-      <SpecimenPair class="mt-6">
-        <p class="mt-4 font-mono text-xs text-fg-subtle">default · p-8</p>
-        <Card class="mt-2">
-          <p class="text-sm font-semibold text-fg">文章概览</p>
-          <p class="mt-2 text-xs/5 text-fg-muted">
-            默认卡片保留 2rem 内边距，并以轻边界安静地区分内容层级。
-          </p>
-        </Card>
+      <SpecimenPair frame="canvas" class="mt-6">
+        <SpecimenCase label="default · p-8" class="mt-4">
+          <Card>
+            <p class="text-sm font-semibold text-fg">文章概览</p>
+            <p class="mt-2 text-xs/5 text-fg-muted">
+              默认卡片保留 2rem 内边距，并以轻边界安静地区分内容层级。
+            </p>
+          </Card>
+        </SpecimenCase>
 
-        <p class="mt-5 font-mono text-xs text-fg-subtle">sm · p-6</p>
-        <Card padding="sm" class="mt-2">
-          <p class="text-sm font-semibold text-fg">紧凑设置</p>
-          <p class="mt-2 text-xs/5 text-fg-muted">较紧凑的 1.5rem 内边距。</p>
-        </Card>
+        <SpecimenCase label="sm · p-6" class="mt-5">
+          <Card padding="sm">
+            <p class="text-sm font-semibold text-fg">紧凑设置</p>
+            <p class="mt-2 text-xs/5 text-fg-muted">较紧凑的 1.5rem 内边距。</p>
+          </Card>
+        </SpecimenCase>
 
-        <p class="mt-5 font-mono text-xs text-fg-subtle">none · 自定义分区</p>
-        <Card padding="none" class="mt-2 overflow-hidden">
-          <div class="bg-accent/10 px-6 py-4 text-sm font-semibold text-accent">无内边距卡片</div>
-          <p class="px-6 py-5 text-xs/5 text-fg-muted">
-            padding=none 只移除内边距，调用方可自行组织分区。
-          </p>
-        </Card>
+        <SpecimenCase label="none · 自定义分区" class="mt-5">
+          <Card padding="none" class="overflow-hidden">
+            <div class="bg-accent/10 px-6 py-4 text-sm font-semibold text-accent">无内边距卡片</div>
+            <p class="px-6 py-5 text-xs/5 text-fg-muted">
+              padding=none 只移除内边距，调用方可自行组织分区。
+            </p>
+          </Card>
+        </SpecimenCase>
       </SpecimenPair>
 
       <ApiTable caption="Card Props and Slots" :rows="CARD_API" />
-    </section>
+    </ComponentDocsSection>
   </div>
 </template>

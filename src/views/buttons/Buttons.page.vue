@@ -1,5 +1,5 @@
 <!-- src/views/buttons/Buttons.page.vue -->
-<!-- 按钮类组件展示。新增组件时加一个 <section>，并往 PROPS 里补一份签名 -->
+<!-- 按钮类组件展示。新增组件时加一个 <ComponentDocsSection>，并往 PROPS 里补一份签名 -->
 <script setup lang="ts">
 import { ref } from "vue";
 
@@ -8,6 +8,9 @@ import ButtonPrimary from "@/components/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/button/ButtonSecondary.vue";
 import ButtonTertiary from "@/components/button/ButtonTertiary.vue";
 
+import ApiTable from "../components/ApiTable.vue";
+import ComponentDocsSection from "../components/ComponentDocsSection.vue";
+import SpecimenCase from "../components/SpecimenCase.vue";
 import SpecimenPair from "../components/SpecimenPair.vue";
 import PreviewIcon from "./components/PreviewIcon.vue";
 
@@ -62,234 +65,174 @@ const PROPS = {
     </p>
 
     <!-- ButtonPrimary -->
-    <section class="mt-10">
-      <h2 class="font-mono text-sm text-fg">ButtonPrimary</h2>
-      <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
+    <ComponentDocsSection title="ButtonPrimary" class="mt-10">
+      <template #description>
         实心强调色主按钮。加载中显示指示器并自动禁用点击，指示器的宽度与透明度同步过渡。
-      </p>
+      </template>
 
       <SpecimenPair class="mt-6">
-        <p class="mt-4 font-mono text-xs text-fg-subtle">状态</p>
-        <div class="mt-2 flex flex-wrap items-center gap-2">
-          <ButtonPrimary text="默认" />
-          <ButtonPrimary text="加载中" loading />
-          <ButtonPrimary text="禁用" disabled />
-        </div>
+        <SpecimenCase label="状态" class="mt-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <ButtonPrimary text="默认" />
+            <ButtonPrimary text="加载中" loading />
+            <ButtonPrimary text="禁用" disabled />
+          </div>
+        </SpecimenCase>
 
-        <p class="mt-5 font-mono text-xs text-fg-subtle">切换加载态（看宽度过渡）</p>
-        <div class="mt-2 flex items-center gap-2">
-          <ButtonPrimary
-            text="保存"
-            :loading="loadingDemo"
-            class="min-w-24"
-            @click="loadingDemo = !loadingDemo"
-          />
-          <ButtonSecondary text="切回来" @click="loadingDemo = !loadingDemo" />
-        </div>
+        <SpecimenCase label="切换加载态（看宽度过渡）" class="mt-5">
+          <div class="flex items-center gap-2">
+            <ButtonPrimary
+              text="保存"
+              :loading="loadingDemo"
+              class="min-w-24"
+              @click="loadingDemo = !loadingDemo"
+            />
+            <ButtonSecondary text="切回来" @click="loadingDemo = !loadingDemo" />
+          </div>
+        </SpecimenCase>
 
-        <p class="mt-5 font-mono text-xs text-fg-subtle">danger</p>
-        <div class="mt-2 flex flex-wrap items-center gap-2">
-          <ButtonPrimary text="删除" danger />
-          <ButtonPrimary text="删除中" danger loading />
-          <ButtonPrimary text="不可删除" danger disabled />
-        </div>
+        <SpecimenCase label="danger" class="mt-5">
+          <div class="flex flex-wrap items-center gap-2">
+            <ButtonPrimary text="删除" danger />
+            <ButtonPrimary text="删除中" danger loading />
+            <ButtonPrimary text="不可删除" danger disabled />
+          </div>
+        </SpecimenCase>
 
-        <p class="mt-5 font-mono text-xs text-fg-subtle">block</p>
-        <div class="mt-2">
-          <ButtonPrimary text="全宽" block />
-        </div>
+        <SpecimenCase label="block" class="mt-5">
+          <div>
+            <ButtonPrimary text="全宽" block />
+          </div>
+        </SpecimenCase>
       </SpecimenPair>
 
-      <table class="mt-6 w-full border-collapse text-left font-mono text-xs">
-        <thead>
-          <tr class="text-fg-muted">
-            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">prop</th>
-            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">类型</th>
-            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">默认</th>
-            <th scope="col" class="border-b border-border/60 py-2 font-normal">说明</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in PROPS.ButtonPrimary" :key="row[0]" class="text-fg-muted">
-            <td class="border-b border-border/40 py-2.5 pr-4 text-fg">{{ row[0] }}</td>
-            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[1] }}</td>
-            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[2] }}</td>
-            <td class="border-b border-border/40 py-2.5">{{ row[3] }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+      <ApiTable caption="ButtonPrimary Props" :rows="PROPS.ButtonPrimary" />
+    </ComponentDocsSection>
 
     <!-- ButtonSecondary -->
-    <section class="mt-16">
-      <h2 class="font-mono text-sm text-fg">ButtonSecondary</h2>
-      <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
+    <ComponentDocsSection title="ButtonSecondary" class="mt-16">
+      <template #description>
         纯文字按钮，可带前置图标与尾部内容。背景层是独立缩放的
         <code class="font-mono">::before</code>，hover 时从 90% 弹到 100%。
-      </p>
+      </template>
 
       <SpecimenPair class="mt-6">
-        <p class="mt-4 font-mono text-xs text-fg-subtle">状态</p>
-        <div class="mt-2 flex flex-wrap items-center gap-2">
-          <ButtonSecondary text="默认" />
-          <ButtonSecondary text="激活" is-active />
-          <ButtonSecondary text="禁用" disabled />
-          <ButtonSecondary text="带图标">
-            <PreviewIcon :d="ICON.plus" />
-          </ButtonSecondary>
-        </div>
+        <SpecimenCase label="状态" class="mt-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <ButtonSecondary text="默认" />
+            <ButtonSecondary text="激活" is-active />
+            <ButtonSecondary text="禁用" disabled />
+            <ButtonSecondary text="带图标">
+              <PreviewIcon :d="ICON.plus" />
+            </ButtonSecondary>
+          </div>
+        </SpecimenCase>
 
-        <p class="mt-5 font-mono text-xs text-fg-subtle">block + align</p>
-        <div class="mt-2 space-y-1">
-          <ButtonSecondary text="全宽居中" block />
-          <ButtonSecondary text="全宽左对齐" block align="start">
-            <PreviewIcon :d="ICON.menu" />
-          </ButtonSecondary>
-          <ButtonSecondary text="带尾部内容" block align="start">
-            <template #suffix>
-              <PreviewIcon :d="ICON.check" />
-            </template>
-          </ButtonSecondary>
-        </div>
+        <SpecimenCase label="block + align" class="mt-5">
+          <div class="space-y-1">
+            <ButtonSecondary text="全宽居中" block />
+            <ButtonSecondary text="全宽左对齐" block align="start">
+              <PreviewIcon :d="ICON.menu" />
+            </ButtonSecondary>
+            <ButtonSecondary text="带尾部内容" block align="start">
+              <template #suffix>
+                <PreviewIcon :d="ICON.check" />
+              </template>
+            </ButtonSecondary>
+          </div>
+        </SpecimenCase>
 
-        <p class="mt-5 font-mono text-xs text-fg-subtle">调用方控制布局</p>
-        <div class="mt-2 flex items-center gap-2">
-          <ButtonSecondary text="h-11" class="h-11" />
-          <ButtonSecondary text="圆角跟随" class="rounded-full" />
-        </div>
+        <SpecimenCase label="调用方控制布局" class="mt-5">
+          <div class="flex items-center gap-2">
+            <ButtonSecondary text="h-11" class="h-11" />
+            <ButtonSecondary text="圆角跟随" class="rounded-full" />
+          </div>
+        </SpecimenCase>
       </SpecimenPair>
 
-      <table class="mt-6 w-full border-collapse text-left font-mono text-xs">
-        <thead>
-          <tr class="text-fg-muted">
-            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">prop</th>
-            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">类型</th>
-            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">默认</th>
-            <th scope="col" class="border-b border-border/60 py-2 font-normal">说明</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in PROPS.ButtonSecondary" :key="row[0]" class="text-fg-muted">
-            <td class="border-b border-border/40 py-2.5 pr-4 text-fg">{{ row[0] }}</td>
-            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[1] }}</td>
-            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[2] }}</td>
-            <td class="border-b border-border/40 py-2.5">{{ row[3] }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+      <ApiTable caption="ButtonSecondary Props" :rows="PROPS.ButtonSecondary" />
+    </ComponentDocsSection>
 
     <!-- ButtonTertiary -->
-    <section class="mt-16">
-      <h2 class="font-mono text-sm text-fg">ButtonTertiary</h2>
-      <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
+    <ComponentDocsSection title="ButtonTertiary" class="mt-16">
+      <template #description>
         最低层级的辅助动作。没有按钮面，常驻短轨负责提示可点击；hover
         或键盘聚焦时，强调轨从中心展开。
-      </p>
+      </template>
 
       <SpecimenPair class="mt-6">
-        <p class="mt-4 font-mono text-xs text-fg-subtle">状态</p>
-        <div class="mt-2 flex flex-wrap items-center gap-2">
-          <ButtonTertiary text="稍后处理" />
-          <ButtonTertiary text="恢复默认" />
-          <ButtonTertiary text="当前选择" is-active />
-          <ButtonTertiary text="移除标签" danger />
-          <ButtonTertiary text="不可用" disabled />
-        </div>
+        <SpecimenCase label="状态" class="mt-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <ButtonTertiary text="稍后处理" />
+            <ButtonTertiary text="恢复默认" />
+            <ButtonTertiary text="当前选择" is-active />
+            <ButtonTertiary text="移除标签" danger />
+            <ButtonTertiary text="不可用" disabled />
+          </div>
+        </SpecimenCase>
 
-        <p class="mt-5 font-mono text-xs text-fg-subtle">三级并列</p>
-        <div class="mt-2 flex flex-wrap items-center gap-2">
-          <ButtonPrimary text="发布" />
-          <ButtonSecondary text="保存草稿" />
-          <ButtonTertiary text="稍后" />
-        </div>
+        <SpecimenCase label="三级并列" class="mt-5">
+          <div class="flex flex-wrap items-center gap-2">
+            <ButtonPrimary text="发布" />
+            <ButtonSecondary text="保存草稿" />
+            <ButtonTertiary text="稍后" />
+          </div>
+        </SpecimenCase>
       </SpecimenPair>
 
-      <table class="mt-6 w-full border-collapse text-left font-mono text-xs">
-        <thead>
-          <tr class="text-fg-muted">
-            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">prop</th>
-            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">类型</th>
-            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">默认</th>
-            <th scope="col" class="border-b border-border/60 py-2 font-normal">说明</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in PROPS.ButtonTertiary" :key="row[0]" class="text-fg-muted">
-            <td class="border-b border-border/40 py-2.5 pr-4 text-fg">{{ row[0] }}</td>
-            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[1] }}</td>
-            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[2] }}</td>
-            <td class="border-b border-border/40 py-2.5">{{ row[3] }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+      <ApiTable caption="ButtonTertiary Props" :rows="PROPS.ButtonTertiary" />
+    </ComponentDocsSection>
 
     <!-- ButtonIcon -->
-    <section class="mt-16">
-      <h2 class="font-mono text-sm text-fg">ButtonIcon</h2>
-      <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
+    <ComponentDocsSection title="ButtonIcon" class="mt-16">
+      <template #description>
         纯图标按钮，宽高 1:1。靠
         <code class="font-mono">aspect-square</code>
         保证，图标不是正方形也不影响。视觉语言与 ButtonSecondary 一致。
-      </p>
+      </template>
 
       <SpecimenPair class="mt-6">
-        <p class="mt-4 font-mono text-xs text-fg-subtle">状态</p>
-        <div class="mt-2 flex items-center gap-2">
-          <ButtonIcon label="添加">
-            <PreviewIcon :d="ICON.plus" />
-          </ButtonIcon>
-          <ButtonIcon label="已选中" is-active>
-            <PreviewIcon :d="ICON.check" />
-          </ButtonIcon>
-          <ButtonIcon label="不可用" disabled>
-            <PreviewIcon :d="ICON.close" />
-          </ButtonIcon>
-        </div>
+        <SpecimenCase label="状态" class="mt-4">
+          <div class="flex items-center gap-2">
+            <ButtonIcon label="添加">
+              <PreviewIcon :d="ICON.plus" />
+            </ButtonIcon>
+            <ButtonIcon label="已选中" is-active>
+              <PreviewIcon :d="ICON.check" />
+            </ButtonIcon>
+            <ButtonIcon label="不可用" disabled>
+              <PreviewIcon :d="ICON.close" />
+            </ButtonIcon>
+          </div>
+        </SpecimenCase>
 
-        <p class="mt-5 font-mono text-xs text-fg-subtle">扁图标仍为 1:1</p>
-        <div class="mt-2 flex items-center gap-2">
-          <ButtonIcon label="菜单">
-            <svg
-              class="h-2 w-5"
-              viewBox="0 0 24 12"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              aria-hidden="true"
-            >
-              <path d="M2 3h20M2 9h20" stroke-linecap="round" />
-            </svg>
-          </ButtonIcon>
-        </div>
+        <SpecimenCase label="扁图标仍为 1:1" class="mt-5">
+          <div class="flex items-center gap-2">
+            <ButtonIcon label="菜单">
+              <svg
+                class="h-2 w-5"
+                viewBox="0 0 24 12"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <path d="M2 3h20M2 9h20" stroke-linecap="round" />
+              </svg>
+            </ButtonIcon>
+          </div>
+        </SpecimenCase>
 
-        <p class="mt-5 font-mono text-xs text-fg-subtle">调用方指定尺寸与圆角</p>
-        <div class="mt-2 flex items-center gap-2">
-          <ButtonIcon label="大号圆形" class="size-10 rounded-full">
-            <PreviewIcon :d="ICON.plus" />
-          </ButtonIcon>
-        </div>
+        <SpecimenCase label="调用方指定尺寸与圆角" class="mt-5">
+          <div class="flex items-center gap-2">
+            <ButtonIcon label="大号圆形" class="size-10 rounded-full">
+              <PreviewIcon :d="ICON.plus" />
+            </ButtonIcon>
+          </div>
+        </SpecimenCase>
       </SpecimenPair>
 
-      <table class="mt-6 w-full border-collapse text-left font-mono text-xs">
-        <thead>
-          <tr class="text-fg-muted">
-            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">prop</th>
-            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">类型</th>
-            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">默认</th>
-            <th scope="col" class="border-b border-border/60 py-2 font-normal">说明</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in PROPS.ButtonIcon" :key="row[0]" class="text-fg-muted">
-            <td class="border-b border-border/40 py-2.5 pr-4 text-fg">{{ row[0] }}</td>
-            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[1] }}</td>
-            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[2] }}</td>
-            <td class="border-b border-border/40 py-2.5">{{ row[3] }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+      <ApiTable caption="ButtonIcon Props" :rows="PROPS.ButtonIcon" />
+    </ComponentDocsSection>
   </div>
 </template>

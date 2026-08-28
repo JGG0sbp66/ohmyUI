@@ -28,7 +28,9 @@ defineProps<{
       </thead>
       <tbody>
         <tr v-for="row in rows" :key="row[0]" class="text-fg-muted">
-          <td class="border-b border-border/40 py-2.5 pr-4 text-fg">{{ row[0] }}</td>
+          <th scope="row" class="border-b border-border/40 py-2.5 pr-4 font-normal text-fg">
+            {{ row[0] }}
+          </th>
           <td class="border-b border-border/40 py-2.5 pr-4">{{ row[1] }}</td>
           <td class="border-b border-border/40 py-2.5 pr-4">{{ row[2] }}</td>
           <td class="border-b border-border/40 py-2.5">{{ row[3] }}</td>

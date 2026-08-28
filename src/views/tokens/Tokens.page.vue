@@ -227,6 +227,11 @@ function toneText(tone: Tone): string {
 
         <div class="mt-4 overflow-x-auto">
           <table class="w-full border-collapse text-left font-mono text-xs">
+            <caption class="sr-only">
+              {{
+                group.title
+              }}：工具类、CSS 变量与用途
+            </caption>
             <thead>
               <tr class="text-fg-muted">
                 <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">工具类</th>
@@ -238,9 +243,9 @@ function toneText(tone: Tone): string {
             </thead>
             <tbody>
               <tr v-for="token in group.tokens" :key="token.cls" class="text-fg-muted">
-                <td class="border-b border-border/40 py-2.5 pr-4 text-fg">
+                <th scope="row" class="border-b border-border/40 py-2.5 pr-4 font-normal text-fg">
                   {{ token.cls }}
-                </td>
+                </th>
                 <td class="border-b border-border/40 py-2.5 pr-4">{{ token.variable }}</td>
                 <td class="border-b border-border/40 py-2.5">{{ token.role }}</td>
               </tr>
