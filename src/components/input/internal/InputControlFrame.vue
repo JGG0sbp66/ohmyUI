@@ -1,0 +1,44 @@
+<!-- src/components/input/internal/InputControlFrame.vue -->
+<script setup lang="ts">
+import type { HTMLAttributes } from "vue";
+
+defineOptions({ inheritAttrs: false });
+
+interface Props {
+  rootClass?: HTMLAttributes["class"];
+  rootStyle?: HTMLAttributes["style"];
+  disabled?: boolean;
+  readonly?: boolean;
+  invalid?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  rootClass: undefined,
+  rootStyle: undefined,
+  disabled: false,
+  readonly: false,
+  invalid: false,
+});
+
+defineSlots<{
+  default(): unknown;
+  prefix?(): unknown;
+  suffix?(): unknown;
+}>();
+</script>
+
+<template>
+  <div
+    :class="[
+      'flex w-full items-center overflow-hidden rounded-xl border border-transparent bg-bg-muted text-fg transition-shadow',
+      props.disabled || props.readonly ? 'cursor-not-allowed opacity-60' : '',
+      props.invalid ? 'ring-2 ring-danger' : 'focus-within:ring-2 focus-within:ring-accent/30',
+      props.rootClass,
+    ]"
+    :style="props.rootStyle"
+  >
+    <slot name="prefix" />
+    <slot />
+    <slot name="suffix" />
+  </div>
+</template>

@@ -31,20 +31,22 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
 });
 
-defineSlots<{
+const slots = defineSlots<{
   default(props: { controlAttrs: FieldControlAttrs }): unknown;
   label?(): unknown;
   hint?(): unknown;
+  description?(): unknown;
 }>();
 
 const generatedId = useId();
 const controlId = computed(() => props.id ?? `input-${generatedId}`);
 const descriptionId = computed(() => `${controlId.value}-description`);
 const errorId = computed(() => `${controlId.value}-error`);
+const hasDescription = computed(() => Boolean(props.description || slots.description));
 
 const describedBy = computed(() => {
   const ids = [
-    props.description ? descriptionId.value : "",
+    hasDescription.value ? descriptionId.value : "",
     props.error ? errorId.value : "",
   ].filter(Boolean);
 
@@ -83,11 +85,11 @@ const controlAttrs = computed<FieldControlAttrs>(() => ({
     <slot :control-attrs="controlAttrs" />
 
     <p
-      v-if="props.description"
+      v-if="hasDescription"
       :id="descriptionId"
       class="mt-1 px-1 text-[10px] leading-tight text-fg-soft"
     >
-      {{ props.description }}
+      <slot name="description">{{ props.description }}</slot>
     </p>
 
     <div
