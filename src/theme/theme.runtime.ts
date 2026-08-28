@@ -11,8 +11,6 @@ import type { ThemeStore } from "./theme.store";
  */
 const HUE_PROPERTY = "--app-hue";
 const THEME_COMMIT_ATTRIBUTE = "data-theme-committing";
-const DARK_MEDIA_QUERY = "(prefers-color-scheme: dark)";
-const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
 /**
  * 安全读取媒体查询。
@@ -29,9 +27,9 @@ function matchesMedia(view: Window | null, query: string): boolean {
   }
 }
 
-/** 将外部输入限制在 CSS Hue 使用的 0～360 范围内。 */
-function normalizeHue(value: number): number {
-  return Math.min(360, Math.max(0, value));
+/** 判断一个值能否作为 CSS Hue 使用。 */
+function isValidHue(value: number): boolean {
+  return Number.isFinite(value) && value >= 0 && value <= 360;
 }
 
 /**
@@ -51,9 +49,9 @@ class HueController {
      * CSS 是默认 Hue 的唯一来源，所以这里不再提供 TypeScript fallback。
      * 缺少样式或值不合法时尽早报错，避免应用带着错误配置悄悄运行。
      */
-    if (raw.length === 0 || !Number.isFinite(parsed) || parsed < 0 || parsed > 360) {
+    if (raw.length === 0 || !isValidHue(parsed)) {
       throw new Error(
-        'Expected "--app-hue" to be a number from 0 to 360. Import the ohmyUI styles before initializing ThemeRuntime.',
+        '无法读取合法的主题色相：请确保初始化 ThemeRuntime 前已导入 ohmyUI 样式，并且 "--app-hue" 是 0～360 的数字。',
       );
     }
 
@@ -83,7 +81,7 @@ class ModeController {
     }
 
     // 根节点没有显式模式时，才使用操作系统的深浅色偏好。
-    return matchesMedia(this.view, DARK_MEDIA_QUERY) ? "dark" : "light";
+    return matchesMedia(this.view, "(prefers-color-scheme: dark)") ? "dark" : "light";
   }
 
   /** 检查目标模式存在，并且其他模式 class 都不存在。 */
@@ -200,8 +198,11 @@ export class ThemeRuntime {
    * 因此这里只同步状态和 CSS 变量，不使用 View Transition 做视觉补间。
    */
   setHue(value: number): void {
-    if (!Number.isFinite(value)) return;
-    this.syncHueState(normalizeHue(value));
+    if (!isValidHue(value)) {
+      throw new RangeError("主题色相必须是 0～360 的有限数字。");
+    }
+
+    this.syncHueState(value);
   }
 
   /**
@@ -232,7 +233,7 @@ export class ThemeRuntime {
     }
 
     const startViewTransition = this.document.startViewTransition?.bind(this.document);
-    const reduceMotion = matchesMedia(this.view, REDUCED_MOTION_QUERY);
+    const reduceMotion = matchesMedia(this.view, "(prefers-reduced-motion: reduce)");
 
     // 浏览器不支持 View Transition，或用户要求减少动态效果时，走无动画提交。
     if (!startViewTransition || reduceMotion) {
@@ -319,7 +320,7 @@ export class ThemeRuntime {
     }
   }
 
-  /** 将 Pinia 中最终的 Hue 校验、规范化并写回根 CSS 变量。 */
+  /** 将 Pinia 中最终的 Hue 严格校验并写回根 CSS 变量。 */
   private reconcileHueFromStore(): void {
     const value = this.store.hue;
 
@@ -329,20 +330,14 @@ export class ThemeRuntime {
       return;
     }
 
-    if (!Number.isFinite(value)) {
-      throw new TypeError("Theme hue must be a finite number.");
-    }
-
-    // 外部可能通过 DevTools/$patch 写入越界值，先收敛回合法范围。
-    const hue = normalizeHue(value);
-    if (hue !== value) {
-      this.syncHueState(hue);
-      return;
+    // 绕过 setHue() 直接写入 Store 的非法值同样不能静默进入 DOM。
+    if (!isValidHue(value)) {
+      throw new RangeError("主题色相必须是 0～360 的有限数字。");
     }
 
     // root 快照不会跟随实时 DOM；直接操作优先，先让任何 Mode 快照退场。
     this.interruptModeTransition();
-    this.hueController.write(hue);
+    this.hueController.write(value);
   }
 
   /** 与 Hue 相同，Store 同步返回后以最终 Mode 收敛根 class 与请求所有权。 */
@@ -403,7 +398,7 @@ export function useThemeRuntime(): ThemeRuntime {
   const runtime = inject(themeRuntimeKey);
 
   if (!runtime) {
-    throw new Error("ThemeRuntime has not been provided.");
+    throw new Error("ThemeRuntime 尚未通过应用依赖注入提供。");
   }
 
   return runtime;

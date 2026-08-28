@@ -15,7 +15,7 @@ export const useThemeStore = defineStore("theme", () => {
   /** Runtime 会在 Vue 挂载前从 CSS 初始化 Hue；提前消费表示安装顺序有误。 */
   const currentHue = computed<number>(() => {
     if (hue.value === null) {
-      throw new Error("ThemeRuntime must be initialized before reading the current hue.");
+      throw new Error("读取当前主题色相前，必须先初始化 ThemeRuntime。");
     }
 
     return hue.value;
