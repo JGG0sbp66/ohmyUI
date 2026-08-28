@@ -3,6 +3,7 @@
 import { computed, ref } from "vue";
 
 import InputField from "@/components/input/InputField.vue";
+import InputNumber from "@/components/input/InputNumber.vue";
 import InputPassword from "@/components/input/InputPassword.vue";
 import InputText from "@/components/input/InputText.vue";
 import InputTextarea from "@/components/input/InputTextarea.vue";
@@ -12,6 +13,8 @@ import SpecimenPair from "../components/SpecimenPair.vue";
 const username = ref("");
 const password = ref("ohmyblog-demo");
 const excerpt = ref("组件只负责多行文本输入，校验与计数由字段层组合。");
+const smtpPort = ref<number | null>(587);
+const recaptchaMinScore = ref<number | null>(0.5);
 
 const EXCERPT_MAX_LENGTH = 120;
 const excerptRemaining = computed(() => EXCERPT_MAX_LENGTH - excerpt.value.length);
@@ -48,6 +51,18 @@ const INPUT_TEXTAREA_PROPS = [
   ["required", "boolean", "false", "原生必填状态"],
   ["invalid", "boolean", "false", "错误视觉与 aria-invalid"],
   ["textareaClass", "HTMLAttributes['class']", "未传", "直接调整内部原生 textarea"],
+] as const;
+
+const INPUT_NUMBER_PROPS = [
+  ["modelValue", "number | null", "null", "合法数字或空值"],
+  ["min", "number", "未传", "原生最小值，不自动截断"],
+  ["max", "number", "未传", "原生最大值，不自动截断"],
+  ["step", 'number | "any"', "1", "原生步进规则"],
+  ["disabled", "boolean", "false", "原生禁用状态"],
+  ["readonly", "boolean", "false", "原生只读状态"],
+  ["required", "boolean", "false", "原生必填状态"],
+  ["invalid", "boolean", "false", "错误视觉与 aria-invalid"],
+  ["inputClass", "HTMLAttributes['class']", "未传", "直接调整内部原生 input"],
 ] as const;
 
 const INPUT_FIELD_PROPS = [
@@ -301,6 +316,98 @@ const INPUT_FIELD_PROPS = [
           </thead>
           <tbody>
             <tr v-for="row in INPUT_TEXTAREA_PROPS" :key="row[0]" class="text-fg-muted">
+              <td class="border-b border-border/40 py-2.5 pr-4 text-fg">{{ row[0] }}</td>
+              <td class="border-b border-border/40 py-2.5 pr-4">{{ row[1] }}</td>
+              <td class="border-b border-border/40 py-2.5 pr-4">{{ row[2] }}</td>
+              <td class="border-b border-border/40 py-2.5">{{ row[3] }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mt-16">
+      <h2 class="font-mono text-sm text-fg">InputNumber</h2>
+      <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
+        InputNumber 保留原生 number 控件，并将外部模型稳定为
+        <code class="font-mono text-fg">number | null</code>
+        。min、max 与 step 只声明原生约束，范围错误和提示仍由 InputField 或业务层决定。
+      </p>
+
+      <SpecimenPair class="mt-6">
+        <p class="mt-4 font-mono text-xs text-fg-subtle">整数、小数与空值</p>
+        <div class="mt-2 space-y-5">
+          <InputField label="SMTP 端口" required>
+            <template #default="{ controlAttrs }">
+              <InputNumber
+                v-bind="controlAttrs"
+                v-model="smtpPort"
+                :min="1"
+                :max="65535"
+                autocomplete="off"
+                placeholder="587"
+              />
+            </template>
+            <template #description>
+              <span class="flex items-center justify-between gap-3">
+                <span>范围 1–65535</span>
+                <span class="font-mono">model: {{ smtpPort ?? "null" }}</span>
+              </span>
+            </template>
+          </InputField>
+
+          <InputField label="最低分数" description="范围 0–1，步长 0.1">
+            <template #default="{ controlAttrs }">
+              <InputNumber
+                v-bind="controlAttrs"
+                v-model="recaptchaMinScore"
+                :min="0"
+                :max="1"
+                :step="0.1"
+                autocomplete="off"
+                placeholder="0.5"
+              />
+            </template>
+          </InputField>
+        </div>
+
+        <p class="mt-5 font-mono text-xs text-fg-subtle">错误与受限状态</p>
+        <div class="mt-2 space-y-5">
+          <InputField label="SMTP 端口" required error="端口必须在 1–65535 之间">
+            <template #default="{ controlAttrs }">
+              <InputNumber v-bind="controlAttrs" :model-value="70000" :min="1" :max="65535" />
+            </template>
+          </InputField>
+
+          <InputField label="只读编号">
+            <template #default="{ controlAttrs }">
+              <InputNumber v-bind="controlAttrs" :model-value="42" readonly />
+            </template>
+          </InputField>
+
+          <InputField label="禁用数值" disabled>
+            <template #default="{ controlAttrs }">
+              <InputNumber v-bind="controlAttrs" :model-value="0" />
+            </template>
+          </InputField>
+        </div>
+      </SpecimenPair>
+
+      <div class="mt-6 overflow-x-auto">
+        <table class="w-full min-w-160 border-collapse text-left font-mono text-xs">
+          <caption class="sr-only">
+            InputNumber Props
+          </caption>
+          <thead>
+            <tr class="text-fg-muted">
+              <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">prop</th>
+              <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">类型</th>
+              <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">默认</th>
+              <th scope="col" class="border-b border-border/60 py-2 font-normal">说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in INPUT_NUMBER_PROPS" :key="row[0]" class="text-fg-muted">
               <td class="border-b border-border/40 py-2.5 pr-4 text-fg">{{ row[0] }}</td>
               <td class="border-b border-border/40 py-2.5 pr-4">{{ row[1] }}</td>
               <td class="border-b border-border/40 py-2.5 pr-4">{{ row[2] }}</td>
