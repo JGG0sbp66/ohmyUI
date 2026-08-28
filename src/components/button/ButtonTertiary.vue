@@ -19,9 +19,23 @@ const props = withDefaults(
   尺寸继续由内容与内边距决定，调用方可直接补 h-* / min-w-*。
 */
 const BASE = `
-  tertiary-button relative inline-flex cursor-pointer items-center gap-2 whitespace-nowrap
+  group/tertiary relative inline-flex cursor-pointer items-center gap-2 whitespace-nowrap
   rounded-md bg-transparent px-2.5 py-2 text-sm leading-tight
-  disabled:cursor-not-allowed
+  transition-[opacity,translate] ease-[cubic-bezier(0.2,0,0,1)]
+  focus:outline-none focus-visible:outline-2 focus-visible:outline-solid
+  focus-visible:outline-offset-2 focus-visible:outline-fg
+  motion-safe:enabled:active:translate-y-px motion-reduce:transition-none
+  disabled:cursor-not-allowed disabled:text-fg-muted
+`;
+
+const RAIL_ACCENT = `
+  absolute inset-0 origin-center rounded-full
+  transition-[opacity,scale] ease-[cubic-bezier(0.2,0,0,1)]
+  group-enabled/tertiary:group-hover/tertiary:scale-y-100
+  group-enabled/tertiary:group-hover/tertiary:opacity-100
+  group-focus-visible/tertiary:scale-y-100 group-focus-visible/tertiary:opacity-100
+  motion-safe:group-enabled/tertiary:group-active/tertiary:scale-y-[0.65]
+  motion-reduce:transition-none
 `;
 </script>
 
@@ -32,7 +46,6 @@ const BASE = `
     :aria-pressed="props.isActive"
     :class="[
       BASE,
-      props.isActive && 'tertiary-button--active',
       props.danger
         ? 'text-danger/80 enabled:hover:text-danger enabled:focus-visible:text-danger'
         : props.isActive
@@ -41,76 +54,17 @@ const BASE = `
     ]"
   >
     <span
-      class="tertiary-rail relative h-3.5 w-0.5 shrink-0 overflow-hidden rounded-full bg-border/60"
+      class="relative h-3.5 w-0.5 shrink-0 overflow-hidden rounded-full bg-border/60 group-disabled/tertiary:opacity-[0.45]"
       aria-hidden="true"
     >
       <span
-        class="tertiary-rail-accent absolute inset-0 rounded-full"
-        :class="props.danger ? 'bg-danger' : 'bg-accent'"
+        :class="[
+          RAIL_ACCENT,
+          props.isActive ? 'scale-y-100 opacity-100' : 'scale-y-[0.35] opacity-0',
+          props.danger ? 'bg-danger' : 'bg-accent',
+        ]"
       ></span>
     </span>
     <span>{{ props.text }}</span>
   </button>
 </template>
-
-<style scoped>
-.tertiary-button,
-.tertiary-rail-accent {
-  transition-duration: var(--default-transition-duration, 200ms);
-  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
-}
-
-.tertiary-button {
-  transition-property: opacity, transform;
-}
-
-.tertiary-rail-accent {
-  opacity: 0;
-  transform: scaleY(0.35);
-  transform-origin: center;
-  transition-property: opacity, transform;
-}
-
-.tertiary-button--active .tertiary-rail-accent,
-.tertiary-button:enabled:hover .tertiary-rail-accent,
-.tertiary-button:focus-visible .tertiary-rail-accent {
-  opacity: 1;
-  transform: scaleY(1);
-}
-
-.tertiary-button:enabled:active {
-  transform: translateY(1px);
-}
-
-.tertiary-button:enabled:active .tertiary-rail-accent {
-  transform: scaleY(0.65);
-}
-
-.tertiary-button:focus {
-  outline: none;
-}
-
-.tertiary-button:focus-visible {
-  outline: 2px solid var(--theme-fg);
-  outline-offset: 2px;
-}
-
-.tertiary-button:disabled {
-  color: var(--theme-fg-muted);
-}
-
-.tertiary-button:disabled .tertiary-rail {
-  opacity: 0.45;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tertiary-button,
-  .tertiary-rail-accent {
-    transition: none;
-  }
-
-  .tertiary-button:enabled:active {
-    transform: none;
-  }
-}
-</style>
