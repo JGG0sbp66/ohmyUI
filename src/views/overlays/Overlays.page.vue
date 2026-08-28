@@ -10,7 +10,7 @@ const TOOLTIP_API = [
   ["content", "string", "必填", "纯文本提示；default slot 可覆盖呈现"],
   ["placement", '"top" | "bottom"', '"top"', "首选方向；空间不足时自动翻转"],
   ["offset", "number", "8", "触发器与箭头尖端的距离（px）"],
-  ["openDelay", "number", "250", "细指针 hover 的显示延迟（ms）"],
+  ["openDelay", "number", "0", "默认立即显示；需要时可设置 hover 延迟（ms）"],
   ["closeDelay", "number", "80", "细指针离开后的关闭延迟（ms）"],
   ["openOnClick", "boolean", "false", "允许点击固定，再次点击或点外部关闭"],
   ["disabled", "boolean", "false", "关闭所有提示交互与 ARIA 关联"],

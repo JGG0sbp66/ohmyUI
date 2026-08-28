@@ -37,7 +37,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   placement: "top",
   offset: 8,
-  openDelay: 250,
+  openDelay: 0,
   closeDelay: 80,
   openOnClick: false,
   disabled: false,
