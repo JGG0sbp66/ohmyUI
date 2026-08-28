@@ -1,4 +1,4 @@
-<!-- src/components/overlay/Tooltip.vue -->
+<!-- src/components/overlay/tooltip/Tooltip.vue -->
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, useId, watch } from "vue";
 import type { ComponentPublicInstance, CSSProperties, HTMLAttributes } from "vue";
@@ -63,6 +63,7 @@ const dismissedWhileFocused = ref(false);
 const positioned = ref(false);
 const resolvedPlacement = ref<Placement>(props.placement);
 const themeScope = ref<"light" | "dark" | undefined>();
+const dialogOwnerId = ref<string | undefined>();
 const position = ref({ top: 0, left: 0, arrowLeft: 12 });
 
 let openTimer: ReturnType<typeof setTimeout> | undefined;
@@ -193,7 +194,10 @@ const handleDocumentKeydown = (event: KeyboardEvent) => {
 };
 
 const updateThemeScope = () => {
-  const scope = triggerElement.value?.closest(".light, .dark");
+  const trigger = triggerElement.value;
+  const scope = trigger?.closest(".light, .dark");
+  const dialogOwner = trigger?.closest<HTMLElement>("[data-ohmyui-dialog-layer]");
+  dialogOwnerId.value = dialogOwner?.dataset.ohmyuiDialogLayer;
   themeScope.value = scope?.classList.contains("dark")
     ? "dark"
     : scope?.classList.contains("light")
@@ -343,6 +347,7 @@ onBeforeUnmount(() => {
         v-show="isOpen"
         :id="tooltipId"
         ref="tooltipElement"
+        :data-dialog-focus-allow="dialogOwnerId"
         role="tooltip"
         :data-placement="resolvedPlacement"
         :class="[

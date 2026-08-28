@@ -1,8 +1,8 @@
 <!-- src/views/overlays/Overlays.page.vue -->
 <script setup lang="ts">
 import ButtonSecondary from "@/components/button/ButtonSecondary.vue";
-import HelpTooltip from "@/components/overlay/HelpTooltip.vue";
-import Tooltip from "@/components/overlay/Tooltip.vue";
+import HelpTooltip from "@/components/overlay/tooltip/HelpTooltip.vue";
+import Tooltip from "@/components/overlay/tooltip/Tooltip.vue";
 
 import SpecimenPair from "../components/SpecimenPair.vue";
 

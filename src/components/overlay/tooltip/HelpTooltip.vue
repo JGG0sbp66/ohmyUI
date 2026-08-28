@@ -1,9 +1,9 @@
-<!-- src/components/overlay/HelpTooltip.vue -->
+<!-- src/components/overlay/tooltip/HelpTooltip.vue -->
 <script setup lang="ts">
 import { mergeProps } from "vue";
 import type { HTMLAttributes } from "vue";
 
-import ButtonIcon from "../button/ButtonIcon.vue";
+import ButtonIcon from "../../button/ButtonIcon.vue";
 import Tooltip from "./Tooltip.vue";
 
 defineOptions({ inheritAttrs: false });
