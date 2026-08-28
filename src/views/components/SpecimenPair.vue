@@ -1,12 +1,12 @@
 <!-- src/views/components/SpecimenPair.vue -->
-<!-- 预览用：浅深并置。两栏 markup 相同，深色栏靠 .dark 类取另一套 token 值 -->
+<!-- 预览用：浅深并置。两栏 markup 相同，分别用 .light / .dark 锁定 token 值 -->
 <script setup lang="ts">
 defineSlots<{
   default(props: { tone: "light" | "dark" }): unknown;
 }>();
 
 const MODES = [
-  { label: ":root（浅色）", scope: "", tone: "light" as const },
+  { label: ".light（浅色）", scope: "light", tone: "light" as const },
   { label: ".dark（深色）", scope: "dark", tone: "dark" as const },
 ];
 </script>

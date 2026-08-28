@@ -1,9 +1,11 @@
 /* 深色模式变量 */
 
-/* 把 dark: 变体改为跟随 .dark 类，而不是默认的 prefers-color-scheme */
-@variant dark (&:where(.dark, .dark *));
+/* 把 dark: 变体改为跟随 .dark 类，并让显式 .light 子树保持浅色 */
+@variant dark (&:where(.dark, .dark *):not(:where(.light, .light *)));
 
 .dark {
+  color-scheme: dark;
+
   /* 浅色下悬停变暗，深色下悬停变亮 */
   --theme-accent: oklch(0.65 0.18 var(--app-hue));
   --theme-accent-hover: oklch(0.7 0.18 var(--app-hue));

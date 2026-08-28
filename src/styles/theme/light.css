@@ -10,6 +10,11 @@
 :root {
   /* 250 = 蓝色 */
   --app-hue: 250;
+}
+
+:root,
+.light {
+  color-scheme: light;
 
   --theme-accent: oklch(0.6 0.18 var(--app-hue));
   --theme-accent-hover: oklch(0.55 0.18 var(--app-hue));

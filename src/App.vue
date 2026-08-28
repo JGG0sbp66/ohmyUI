@@ -1,8 +1,8 @@
 <!-- src/App.vue -->
 <!--
   预览外壳。色相控制器放在这里，切页面时保持可用。
-  外壳本身用 zinc 静态色而不是 token —— 它必须待在 .dark 之外，
-  否则 SpecimenPair 的浅色栏会继承到深色值，并置对照就失效了。
+  外壳使用 zinc 静态色，不跟随主题 token；SpecimenPair 则通过显式
+  .light / .dark scope 保持浅深并置，不受全局 mode 影响。
 -->
 <script setup lang="ts">
 import { ref } from "vue";
