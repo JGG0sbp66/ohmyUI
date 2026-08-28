@@ -14,7 +14,7 @@ interface Props {
   /** 调用方 style 作用于完整输入框外壳。 */
   style?: HTMLAttributes["style"];
   rows?: number;
-  /** 默认保持旧组件不可拖拽的视觉；需要时可允许垂直调整。 */
+  /** 默认不可拖拽；需要时可允许垂直调整。 */
   resize?: TextareaResize;
   disabled?: boolean;
   readonly?: boolean;

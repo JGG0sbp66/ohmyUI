@@ -11,7 +11,7 @@ interface Props {
   class?: HTMLAttributes["class"];
   /** 调用方 style 作用于完整搜索框外壳。 */
   style?: HTMLAttributes["style"];
-  /** 搜索框宽度 class；默认保持旧搜索框的紧凑宽度。 */
+  /** 搜索框宽度 class；默认使用紧凑宽度。 */
   width?: HTMLAttributes["class"];
   disabled?: boolean;
   readonly?: boolean;

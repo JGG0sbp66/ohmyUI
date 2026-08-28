@@ -54,7 +54,7 @@ const TOKEN_GROUPS: { title: string; note: string; tokens: Token[] }[] = [
   },
   {
     title: "危险色",
-    note: "破坏性操作。色相钉死不跟随 --app-hue —— 危险信号的语义来自「红」这个具体颜色，被主题色带走就失效了（想象绿色的删除按钮）。数值取自 Tailwind 的 red-500 / red-600，与 ohmyblog 一致；深色下悬停改用 red-400，因为深底上变亮才是「更明显」的方向。",
+    note: "破坏性操作。色相钉死不跟随 --app-hue —— 危险信号的语义来自「红」这个具体颜色，被主题色带走就失效了（想象绿色的删除按钮）。数值取自 Tailwind 的 red-500 / red-600；深色下悬停改用 red-400，因为深底上变亮才是「更明显」的方向。",
     tokens: [
       {
         cls: "bg-danger",

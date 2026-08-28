@@ -8,12 +8,12 @@ import InputPassword from "@/components/input/InputPassword.vue";
 import InputSearch from "@/components/input/InputSearch.vue";
 import InputText from "@/components/input/InputText.vue";
 import InputTextarea from "@/components/input/InputTextarea.vue";
-import HelpTooltip from "@/components/overlay/HelpTooltip.vue";
+import HelpTooltip from "@/components/overlay/tooltip/HelpTooltip.vue";
 
 import SpecimenPair from "../components/SpecimenPair.vue";
 
 const username = ref("");
-const password = ref("ohmyblog-demo");
+const password = ref("demo-password");
 const excerpt = ref("组件只负责多行文本输入，校验与计数由字段层组合。");
 const smtpPort = ref<number | null>(587);
 const recaptchaMinScore = ref<number | null>(0.5);
@@ -200,7 +200,7 @@ const INPUT_FIELD_PROPS = [
         <div class="mt-2 space-y-5">
           <InputField label="站点地址">
             <template #default="{ controlAttrs }">
-              <InputText v-bind="controlAttrs" model-value="https://ohmy.blog" readonly />
+              <InputText v-bind="controlAttrs" model-value="https://example.com" readonly />
             </template>
           </InputField>
 
@@ -625,7 +625,7 @@ const INPUT_FIELD_PROPS = [
             error="地址必须以 https:// 开头"
           >
             <template #default="{ controlAttrs }">
-              <InputText v-bind="controlAttrs" type="url" model-value="ohmy.blog" />
+              <InputText v-bind="controlAttrs" type="url" model-value="example.com" />
             </template>
           </InputField>
         </div>
