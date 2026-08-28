@@ -226,18 +226,19 @@ export class ModeRuntime {
       this.store.syncMode(mode);
     } finally {
       --this.syncDepth;
-      if (this.syncDepth !== 0) return;
+    }
 
-      /*
-       * 其他同步订阅者可能在 action 期间再次修改 mode。
-       * 若最终值已变化，就按最终 Store 值重新收敛；否则直接写入根 class。
-       */
-      const settledMode = this.store.mode;
-      if (settledMode !== mode) {
-        this.reconcileFromStore();
-      } else {
-        this.controller.write(settledMode);
-      }
+    if (this.syncDepth !== 0) return;
+
+    /*
+     * 其他同步订阅者可能在 action 期间再次修改 mode。
+     * 若最终值已变化，就按最终 Store 值重新收敛；否则直接写入根 class。
+     */
+    const settledMode = this.store.mode;
+    if (settledMode !== mode) {
+      this.reconcileFromStore();
+    } else {
+      this.controller.write(settledMode);
     }
   }
 

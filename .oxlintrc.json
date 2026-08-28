@@ -1,0 +1,14 @@
+{
+  "plugins": ["oxc", "typescript", "unicorn", "vue"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "rules": {
+    "no-console": "warn",
+    "no-unused-vars": "warn",
+    "prefer-const": "warn",
+    "typescript/no-explicit-any": "warn",
+    "vue/no-import-compiler-macros": "warn"
+  }
+}
