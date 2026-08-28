@@ -11,12 +11,14 @@ import ButtonSecondary from "./components/button/ButtonSecondary.vue";
 import ButtonsPage from "./views/buttons/Buttons.page.vue";
 import HueControl from "./views/components/HueControl.vue";
 import ModeControl from "./views/components/ModeControl.vue";
+import InputsPage from "./views/inputs/Inputs.page.vue";
 import TokensPage from "./views/tokens/Tokens.page.vue";
 
 /** 新增分类页时在这里加一条，导航自动跟着长 */
 const PAGES = [
   { key: "tokens", label: "设计 token", component: TokensPage },
   { key: "buttons", label: "按钮", component: ButtonsPage },
+  { key: "inputs", label: "输入框", component: InputsPage },
 ] as const;
 
 const activeKey = ref<(typeof PAGES)[number]["key"]>("tokens");
