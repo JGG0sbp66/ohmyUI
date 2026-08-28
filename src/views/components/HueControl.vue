@@ -1,9 +1,10 @@
 <!-- src/views/components/HueControl.vue -->
 <!-- 预览用：色相控制器。放在外壳里，切换页面时保持可用 -->
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
-import { useThemeHue } from "@/composables/theme/hue.hook";
+import { useThemeStore } from "@/stores/theme.store";
 
 /** 色环上的几个落点，一键跳过去 */
 const HUE_MARKS = [
@@ -15,7 +16,8 @@ const HUE_MARKS = [
   { label: "紫", value: 305 },
 ] as const;
 
-const { hue } = useThemeHue();
+const themeStore = useThemeStore();
+const { hue } = storeToRefs(themeStore);
 
 /** 滑杆轨道：用 accent 的亮度彩度铺满色环 */
 const trackGradient = computed(() => {

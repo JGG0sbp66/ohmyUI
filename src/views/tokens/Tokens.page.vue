@@ -1,8 +1,9 @@
 <!-- src/views/tokens/Tokens.page.vue -->
 <!-- 往 styles 里加 token 时，同步往 TOKEN_GROUPS 里加一条 -->
 <script setup lang="ts">
-import { useThemeHue } from "@/composables/theme/hue.hook";
+import { storeToRefs } from "pinia";
 
+import { useThemeStore } from "@/stores/theme.store";
 import SpecimenPair from "../components/SpecimenPair.vue";
 
 /** 色值：跟随 hue 的 oklch，或不跟随的字面量（如 white） */
@@ -156,7 +157,8 @@ const TOKEN_GROUPS: { title: string; note: string; tokens: Token[] }[] = [
   },
 ];
 
-const { hue } = useThemeHue();
+const themeStore = useThemeStore();
+const { hue } = storeToRefs(themeStore);
 
 function toneText(tone: Tone): string {
   return "literal" in tone ? tone.literal : `oklch(${tone.l} ${tone.c} ${hue.value})`;
