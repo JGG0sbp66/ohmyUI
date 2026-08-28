@@ -8,6 +8,7 @@ import ApiTable from "../components/ApiTable.vue";
 import ComponentDocsSection from "../components/ComponentDocsSection.vue";
 import SpecimenCase from "../components/SpecimenCase.vue";
 import SpecimenPair from "../components/SpecimenPair.vue";
+import DialogsShowcase from "./components/DialogsShowcase.vue";
 
 const TOOLTIP_API = [
   ["content", "string", "必填", "纯文本提示；default slot 可覆盖呈现"],
@@ -37,9 +38,10 @@ const HELP_TOOLTIP_API = [
 <template>
   <div>
     <p class="max-w-xl text-sm/6 text-fg-muted">
-      Overlay 是浮在页面内容之上的组件分类，不是单个组件。Tooltip 负责非交互式短说明；HelpTooltip
-      是固定使用问号按钮的组合。两者都会 Teleport 到 body，避免被 overflow
-      裁切，同时保留触发器所在的浅色或深色主题。
+      Overlay 目前分为两个组件家族：Tooltip 提供依附触发器的短说明，Dialog
+      承载需要用户处理的模态内容；HelpTooltip、Modal 与 ConfirmDialog
+      都是在这两类基础能力上的组合。它们通过 Teleport 避免被 overflow
+      裁切，并保留触发位置的主题上下文。
     </p>
 
     <ComponentDocsSection title="Tooltip" class="mt-10">
@@ -129,5 +131,7 @@ const HELP_TOOLTIP_API = [
 
       <ApiTable caption="HelpTooltip Props and Slots" :rows="HELP_TOOLTIP_API" />
     </ComponentDocsSection>
+
+    <DialogsShowcase />
   </div>
 </template>
