@@ -48,28 +48,27 @@ const INPUT_FIELD_PROPS = [
 <template>
   <div>
     <p class="max-w-xl text-sm/6 text-fg-muted">
-      输入框按职责拆成 Field、基础文本控件和密码组合层。外观保持原有 TipInput
-      的圆角、背景、间距与状态，标签、错误语义和密码显隐互不耦合。
+      每个输入组件都按状态样例与 Props
+      就地展示。浅色和深色使用相同数据，方便直接比较交互、错误与受限状态。
     </p>
 
     <section class="mt-10">
-      <h2 class="font-mono text-sm text-fg">InputText + InputField</h2>
+      <h2 class="font-mono text-sm text-fg">InputText</h2>
       <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
-        输入值、原生属性和事件落在真正的
-        <code class="font-mono text-fg">input</code>
-        上；调用方的
+        InputText 负责真实输入控件、原生属性与焦点状态。以下样例使用 InputField
+        提供标签和错误语义，调用方的
         <code class="font-mono text-fg">class</code>
-        仍作用于完整外壳。
+        仍作用于完整输入框外壳。
       </p>
 
       <SpecimenPair class="mt-6">
-        <div class="mt-4 space-y-5">
+        <p class="mt-4 font-mono text-xs text-fg-subtle">可编辑状态</p>
+        <div class="mt-2 space-y-5">
           <InputField label="用户名" required>
             <template #default="{ controlAttrs }">
               <InputText
                 v-bind="controlAttrs"
                 v-model="username"
-                name="username-preview"
                 autocomplete="off"
                 placeholder="请输入用户名"
               />
@@ -81,7 +80,10 @@ const INPUT_FIELD_PROPS = [
               <InputText v-bind="controlAttrs" placeholder="请输入用户名" />
             </template>
           </InputField>
+        </div>
 
+        <p class="mt-5 font-mono text-xs text-fg-subtle">受限状态</p>
+        <div class="mt-2 space-y-5">
           <InputField label="站点地址">
             <template #default="{ controlAttrs }">
               <InputText v-bind="controlAttrs" model-value="https://ohmy.blog" readonly />
@@ -95,13 +97,36 @@ const INPUT_FIELD_PROPS = [
           </InputField>
         </div>
       </SpecimenPair>
+
+      <div class="mt-6 overflow-x-auto">
+        <table class="w-full min-w-160 border-collapse text-left font-mono text-xs">
+          <caption class="sr-only">
+            InputText Props
+          </caption>
+          <thead>
+            <tr class="text-fg-muted">
+              <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">prop</th>
+              <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">类型</th>
+              <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">默认</th>
+              <th scope="col" class="border-b border-border/60 py-2 font-normal">说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in INPUT_TEXT_PROPS" :key="row[0]" class="text-fg-muted">
+              <td class="border-b border-border/40 py-2.5 pr-4 text-fg">{{ row[0] }}</td>
+              <td class="border-b border-border/40 py-2.5 pr-4">{{ row[1] }}</td>
+              <td class="border-b border-border/40 py-2.5 pr-4">{{ row[2] }}</td>
+              <td class="border-b border-border/40 py-2.5">{{ row[3] }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
-    <section class="mt-12">
-      <h2 class="font-mono text-sm text-fg">InputPassword + InputField</h2>
+    <section class="mt-16">
+      <h2 class="font-mono text-sm text-fg">InputPassword</h2>
       <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
-        InputPassword 内部组合 InputText，只增加 password/text
-        切换和显隐按钮。点击按钮不会让输入框失焦；
+        InputPassword 在 InputText 上组合 password/text 切换和显隐按钮。点击按钮不会让输入框失焦；
         <code class="font-mono text-fg">show-icon</code>
         与
         <code class="font-mono text-fg">hide-icon</code>
@@ -109,13 +134,13 @@ const INPUT_FIELD_PROPS = [
       </p>
 
       <SpecimenPair class="mt-6">
-        <div class="mt-4 space-y-5">
+        <p class="mt-4 font-mono text-xs text-fg-subtle">显隐与错误</p>
+        <div class="mt-2 space-y-5">
           <InputField label="密码" required>
             <template #default="{ controlAttrs }">
               <InputPassword
                 v-bind="controlAttrs"
                 v-model="password"
-                name="password-preview"
                 autocomplete="off"
                 placeholder="请输入密码"
               />
@@ -132,7 +157,10 @@ const INPUT_FIELD_PROPS = [
               />
             </template>
           </InputField>
+        </div>
 
+        <p class="mt-5 font-mono text-xs text-fg-subtle">受限状态</p>
+        <div class="mt-2 space-y-5">
           <InputField label="只读密码">
             <template #default="{ controlAttrs }">
               <InputPassword
@@ -155,36 +183,12 @@ const INPUT_FIELD_PROPS = [
           </InputField>
         </div>
       </SpecimenPair>
-    </section>
 
-    <section class="mt-12">
-      <h2 class="font-mono text-sm text-fg">InputText API</h2>
-      <div class="mt-4 overflow-x-auto">
+      <div class="mt-6 overflow-x-auto">
         <table class="w-full min-w-160 border-collapse text-left font-mono text-xs">
-          <thead>
-            <tr class="text-fg-muted">
-              <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">prop</th>
-              <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">类型</th>
-              <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">默认</th>
-              <th scope="col" class="border-b border-border/60 py-2 font-normal">说明</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in INPUT_TEXT_PROPS" :key="row[0]" class="text-fg-muted">
-              <td class="border-b border-border/40 py-2.5 pr-4 text-fg">{{ row[0] }}</td>
-              <td class="border-b border-border/40 py-2.5 pr-4">{{ row[1] }}</td>
-              <td class="border-b border-border/40 py-2.5 pr-4">{{ row[2] }}</td>
-              <td class="border-b border-border/40 py-2.5">{{ row[3] }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="mt-12">
-      <h2 class="font-mono text-sm text-fg">InputPassword API</h2>
-      <div class="mt-4 overflow-x-auto">
-        <table class="w-full min-w-160 border-collapse text-left font-mono text-xs">
+          <caption class="sr-only">
+            InputPassword Props
+          </caption>
           <thead>
             <tr class="text-fg-muted">
               <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">prop</th>
@@ -205,10 +209,61 @@ const INPUT_FIELD_PROPS = [
       </div>
     </section>
 
-    <section class="mt-12">
-      <h2 class="font-mono text-sm text-fg">InputField API</h2>
-      <div class="mt-4 overflow-x-auto">
+    <section class="mt-16">
+      <h2 class="font-mono text-sm text-fg">InputField</h2>
+      <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
+        InputField 只组织字段语义：它连接 label、辅助说明、错误文案与真实控件，并通过默认 slot
+        下发所需的原生属性。
+      </p>
+
+      <SpecimenPair class="mt-6">
+        <p class="mt-4 font-mono text-xs text-fg-subtle">说明与错误关联</p>
+        <div class="mt-2 space-y-5">
+          <InputField label="邮箱地址" description="用于接收登录提醒，不会公开展示。" required>
+            <template #default="{ controlAttrs }">
+              <InputText
+                v-bind="controlAttrs"
+                type="email"
+                autocomplete="off"
+                placeholder="name@example.com"
+              />
+            </template>
+          </InputField>
+
+          <InputField
+            label="站点地址"
+            description="请输入包含协议的完整地址。"
+            error="地址必须以 https:// 开头"
+          >
+            <template #default="{ controlAttrs }">
+              <InputText v-bind="controlAttrs" type="url" model-value="ohmy.blog" />
+            </template>
+          </InputField>
+        </div>
+
+        <p class="mt-5 font-mono text-xs text-fg-subtle">标签插槽与禁用</p>
+        <div class="mt-2">
+          <InputField description="此字段由账户系统统一管理。" disabled>
+            <template #label>账户标识</template>
+            <template #hint>
+              <span
+                class="font-mono text-[10px] font-normal tracking-normal text-fg-soft normal-case"
+              >
+                系统管理
+              </span>
+            </template>
+            <template #default="{ controlAttrs }">
+              <InputText v-bind="controlAttrs" model-value="user-001" />
+            </template>
+          </InputField>
+        </div>
+      </SpecimenPair>
+
+      <div class="mt-6 overflow-x-auto">
         <table class="w-full min-w-160 border-collapse text-left font-mono text-xs">
+          <caption class="sr-only">
+            InputField Props
+          </caption>
           <thead>
             <tr class="text-fg-muted">
               <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">prop</th>
