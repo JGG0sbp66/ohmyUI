@@ -1,12 +1,5 @@
 /* 浅色模式变量（默认） */
 
-/* 注册成 <number> 浏览器才会补间。必须在 @layer 之外，否则不生效 */
-@property --app-hue {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 250;
-}
-
 :root,
 .light {
   color-scheme: light;
