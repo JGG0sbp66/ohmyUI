@@ -23,7 +23,7 @@ const props = withDefaults(
 const BASE = `
   relative isolate inline-flex aspect-square cursor-pointer items-center justify-center
   overflow-hidden rounded-lg bg-transparent p-1.5
-  transition-[color,opacity,scale]
+  transition-[opacity,scale]
   before:absolute before:inset-0 before:-z-10 before:rounded-[inherit]
   before:bg-bg-muted before:content-[''] before:transition-[opacity,scale]
   enabled:active:scale-90 enabled:active:opacity-80

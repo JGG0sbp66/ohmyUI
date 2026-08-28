@@ -30,9 +30,7 @@ const activePage = () => PAGES.find((page) => page.key === activeKey.value)!.com
         <div class="flex flex-wrap items-start justify-between gap-x-8 gap-y-6">
           <div class="min-w-0">
             <p class="font-mono text-xs tracking-widest text-fg-subtle uppercase">ohmyUI</p>
-            <h1 class="mt-3 text-2xl font-medium text-fg sm:text-3xl">
-              一个数字决定全部颜色
-            </h1>
+            <h1 class="mt-3 text-2xl font-medium text-fg sm:text-3xl">一个数字决定全部颜色</h1>
           </div>
 
           <ModeControl class="shrink-0" />
@@ -51,8 +49,8 @@ const activePage = () => PAGES.find((page) => page.key === activeKey.value)!.com
             />
             <!-- 绝对定位：不占按钮高度，也不影响兄弟元素布局 -->
             <div
-              class="absolute right-1 bottom-0 left-1 h-0.75 rounded-t-sm transition-colors"
-              :class="activeKey === page.key ? 'bg-accent' : 'bg-transparent'"
+              class="absolute right-1 bottom-0 left-1 h-0.75 rounded-t-sm bg-accent transition-opacity"
+              :class="activeKey === page.key ? 'opacity-100' : 'opacity-0'"
             />
           </div>
         </nav>

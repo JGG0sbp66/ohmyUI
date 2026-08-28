@@ -4,7 +4,7 @@
 import { storeToRefs } from "pinia";
 import { useId } from "vue";
 
-import { useThemeStore, type ThemeMode } from "@/stores/theme.store";
+import { useThemeRuntime, useThemeStore, type ThemeMode } from "@/theme";
 
 const MODE_META = {
   light: { label: "浅色", icon: "sun" },
@@ -12,9 +12,14 @@ const MODE_META = {
 } as const satisfies Record<ThemeMode, { label: string; icon: "sun" | "moon" }>;
 
 const themeStore = useThemeStore();
+const themeRuntime = useThemeRuntime();
 const { mode } = storeToRefs(themeStore);
 const modes = themeStore.modes;
 const groupName = `theme-mode-${useId()}`;
+
+function selectMode(nextMode: ThemeMode): void {
+  void themeRuntime.setMode(nextMode);
+}
 </script>
 
 <template>
@@ -24,13 +29,19 @@ const groupName = `theme-mode-${useId()}`;
     </legend>
 
     <div class="mode-control__options">
-      <label v-for="candidate in modes" :key="candidate" class="mode-control__option">
+      <label
+        v-for="candidate in modes"
+        :key="candidate"
+        class="mode-control__option"
+        :data-active="mode === candidate"
+      >
         <input
-          v-model="mode"
           class="mode-control__input sr-only"
           type="radio"
           :name="groupName"
           :value="candidate"
+          :checked="mode === candidate"
+          @change="selectMode(candidate)"
         />
 
         <span class="mode-control__surface">
@@ -45,16 +56,12 @@ const groupName = `theme-mode-${useId()}`;
             aria-hidden="true"
           >
             <circle cx="10" cy="10" r="3.25" />
-            <path d="M10 1.5v2M10 16.5v2M1.5 10h2M16.5 10h2M4 4l1.4 1.4M14.6 14.6 16 16M16 4l-1.4 1.4M5.4 14.6 4 16" />
+            <path
+              d="M10 1.5v2M10 16.5v2M1.5 10h2M16.5 10h2M4 4l1.4 1.4M14.6 14.6 16 16M16 4l-1.4 1.4M5.4 14.6 4 16"
+            />
           </svg>
 
-          <svg
-            v-else
-            class="size-4"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden="true"
-          >
+          <svg v-else class="size-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path d="M16.5 12.1A6.75 6.75 0 0 1 7.9 3.5a6.75 6.75 0 1 0 8.6 8.6Z" />
           </svg>
 
@@ -86,6 +93,7 @@ const groupName = `theme-mode-${useId()}`;
 
 .mode-control__surface {
   position: relative;
+  isolation: isolate;
   display: flex;
   min-height: 2.75rem;
   align-items: center;
@@ -94,9 +102,17 @@ const groupName = `theme-mode-${useId()}`;
   padding-inline: 0.75rem;
   color: var(--theme-fg-muted);
   background: transparent;
-  transition:
-    color 160ms ease,
-    background-color 160ms ease;
+}
+
+/* 选中与 hover 背景通过独立层淡入，hue 改变时背景色本身仍然立即同步。 */
+.mode-control__surface::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--theme-bg-muted);
+  content: "";
+  opacity: 0;
+  transition: opacity 160ms ease;
 }
 
 .mode-control__surface::after {
@@ -114,12 +130,15 @@ const groupName = `theme-mode-${useId()}`;
     transform 160ms ease;
 }
 
-.mode-control__input:checked + .mode-control__surface {
+.mode-control__option[data-active="true"] .mode-control__surface {
   color: var(--theme-fg);
-  background: var(--theme-bg-muted);
 }
 
-.mode-control__input:checked + .mode-control__surface::after {
+.mode-control__option[data-active="true"] .mode-control__surface::before {
+  opacity: 1;
+}
+
+.mode-control__option[data-active="true"] .mode-control__surface::after {
   opacity: 1;
   transform: scaleX(1);
 }
@@ -132,12 +151,15 @@ const groupName = `theme-mode-${useId()}`;
 @media (hover: hover) {
   .mode-control__option:hover .mode-control__surface {
     color: var(--theme-fg);
-    background: var(--theme-bg-muted);
+  }
+
+  .mode-control__option:hover .mode-control__surface::before {
+    opacity: 1;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mode-control__surface,
+  .mode-control__surface::before,
   .mode-control__surface::after {
     transition: none;
   }

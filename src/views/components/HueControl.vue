@@ -4,7 +4,7 @@
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
-import { useThemeStore } from "@/stores/theme.store";
+import { useThemeRuntime, useThemeStore } from "@/theme";
 
 /** 色环上的几个落点，一键跳过去 */
 const HUE_MARKS = [
@@ -17,7 +17,14 @@ const HUE_MARKS = [
 ] as const;
 
 const themeStore = useThemeStore();
-const { hue } = storeToRefs(themeStore);
+const themeRuntime = useThemeRuntime();
+const { currentHue: hue } = storeToRefs(themeStore);
+
+/** v-model 保持模板简洁，实际写入由 Runtime 同步提交到 Pinia 与根 CSS 变量。 */
+const hueModel = computed({
+  get: () => hue.value,
+  set: (value: number) => themeRuntime.setHue(value),
+});
 
 /** 滑杆轨道：用固定亮度和彩度铺满色环，让色相位置不随 mode 漂移 */
 const trackGradient = computed(() => {
@@ -38,7 +45,7 @@ const trackGradient = computed(() => {
 
     <input
       id="hue"
-      v-model.number="hue"
+      v-model.number="hueModel"
       type="range"
       min="0"
       max="360"
@@ -52,13 +59,14 @@ const trackGradient = computed(() => {
         v-for="mark in HUE_MARKS"
         :key="mark.value"
         type="button"
-        class="rounded-full border px-3 py-1 font-mono text-xs transition-colors"
+        class="rounded-full border px-3 py-1 font-mono text-xs"
         :class="
           hue === mark.value
             ? 'border-accent bg-bg-muted text-fg'
             : 'border-border/60 text-fg-muted hover:border-border hover:text-fg'
         "
-        @click="hue = mark.value"
+        :aria-pressed="hue === mark.value"
+        @click="themeRuntime.setHue(mark.value)"
       >
         {{ mark.label }} {{ mark.value }}
       </button>

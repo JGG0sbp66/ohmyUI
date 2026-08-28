@@ -25,15 +25,17 @@ const props = withDefaults(
 
 /*
   只输出内在样式，不输出宽高 —— 调用方传 min-w-24 / flex-1 / max-w-* 都能直接生效。
-  实心填色，不像 ButtonSecondary 那样用 ::before 背景层，两者没有可共用的视觉基础。
+  ::before 承载 hover 色并只过渡 opacity：全局 hue 改变时，两层背景会在同一帧
+  重算；正常 hover 仍保留平滑反馈，不再 transition 主题派生的 background-color。
   禁用与加载都走 :disabled 伪类，不在 JS 里分支。
-  底色不写在这里：danger 与常态是同一属性，必须二选一输出，否则外部无法覆盖。
 */
 const BASE = `
-  cursor-pointer items-center justify-center whitespace-nowrap
+  relative isolate cursor-pointer items-center justify-center overflow-hidden whitespace-nowrap
   rounded-lg px-4 py-2 text-sm leading-tight font-bold text-white
-  transition-[background-color,opacity,scale,filter]
-  enabled:active:scale-90
+  transition-[opacity,scale,filter]
+  before:pointer-events-none before:absolute before:inset-0 before:z-0
+  before:content-[''] before:opacity-0 before:transition-opacity
+  enabled:hover:before:opacity-100 enabled:active:scale-90
   disabled:cursor-not-allowed disabled:opacity-50 disabled:grayscale-[0.3]
 `;
 </script>
@@ -45,21 +47,19 @@ const BASE = `
     :class="[
       BASE,
       props.block ? 'flex w-full' : 'inline-flex',
-      props.danger
-        ? 'bg-danger enabled:hover:bg-danger-hover'
-        : 'bg-accent enabled:hover:bg-accent-hover',
+      props.danger ? 'bg-danger before:bg-danger-hover' : 'bg-accent before:bg-accent-hover',
     ]"
   >
     <!-- 间距放在动画容器内部，而不是父级 gap —— 否则指示器收起后会残留一段空隙 -->
     <Transition name="fade-width">
-      <span v-if="props.loading" class="flex shrink-0 items-center overflow-hidden">
+      <span v-if="props.loading" class="relative z-10 flex shrink-0 items-center overflow-hidden">
         <span class="mr-2 flex items-center">
           <Loading />
         </span>
       </span>
     </Transition>
 
-    <span class="truncate">{{ props.text }}</span>
+    <span class="relative z-10 truncate">{{ props.text }}</span>
   </button>
 </template>
 

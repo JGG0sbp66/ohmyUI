@@ -31,7 +31,7 @@ function isFilled(slot?: Slot): boolean {
 const BASE = `
   relative isolate cursor-pointer items-center gap-2 overflow-hidden
   rounded-lg bg-transparent px-3 py-2 text-sm leading-tight
-  transition-[color,opacity,scale]
+  transition-[opacity,scale]
   before:absolute before:inset-0 before:-z-10 before:rounded-[inherit]
   before:bg-bg-muted before:content-[''] before:transition-[opacity,scale]
   enabled:active:scale-90 enabled:active:opacity-80

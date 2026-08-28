@@ -3,7 +3,8 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-import { useThemeStore } from "@/stores/theme.store";
+import { useThemeStore } from "@/theme";
+
 import SpecimenPair from "../components/SpecimenPair.vue";
 
 /** 色值：跟随 hue 的 oklch，或不跟随的字面量（如 white） */
@@ -158,7 +159,7 @@ const TOKEN_GROUPS: { title: string; note: string; tokens: Token[] }[] = [
 ];
 
 const themeStore = useThemeStore();
-const { hue } = storeToRefs(themeStore);
+const { currentHue: hue } = storeToRefs(themeStore);
 
 function toneText(tone: Tone): string {
   return "literal" in tone ? tone.literal : `oklch(${tone.l} ${tone.c} ${hue.value})`;
@@ -229,7 +230,9 @@ function toneText(tone: Tone): string {
             <thead>
               <tr class="text-fg-muted">
                 <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">工具类</th>
-                <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">CSS 变量</th>
+                <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">
+                  CSS 变量
+                </th>
                 <th scope="col" class="border-b border-border/60 py-2 font-normal">用途</th>
               </tr>
             </thead>
@@ -247,8 +250,10 @@ function toneText(tone: Tone): string {
       </div>
 
       <p class="text-xs/5 text-fg-muted">
-        前缀可换：<code class="text-fg">bg-</code>、<code class="text-fg">text-</code
-        >、<code class="text-fg">border-</code>、<code class="text-fg">ring-</code>
+        前缀可换：<code class="text-fg">bg-</code>、<code class="text-fg">text-</code>、<code
+          class="text-fg"
+          >border-</code
+        >、<code class="text-fg">ring-</code>
         都能用同一个 token 名。
       </p>
     </section>
