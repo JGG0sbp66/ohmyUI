@@ -4,6 +4,7 @@
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
+import ButtonTertiary from "@/components/button/ButtonTertiary.vue";
 import { useThemeRuntime, useThemeStore } from "@/theme";
 
 /** 色环上的几个落点，一键跳过去 */
@@ -55,21 +56,13 @@ const trackGradient = computed(() => {
     />
 
     <div class="mt-3 flex flex-wrap gap-2">
-      <button
+      <ButtonTertiary
         v-for="mark in HUE_MARKS"
         :key="mark.value"
-        type="button"
-        class="rounded-full border px-3 py-1 font-mono text-xs"
-        :class="
-          hue === mark.value
-            ? 'border-accent bg-bg-muted text-fg'
-            : 'border-border/60 text-fg-muted hover:border-border hover:text-fg'
-        "
-        :aria-pressed="hue === mark.value"
+        :text="`${mark.label} ${mark.value}`"
+        :is-active="hue === mark.value"
         @click="themeRuntime.setHue(mark.value)"
-      >
-        {{ mark.label }} {{ mark.value }}
-      </button>
+      />
     </div>
   </div>
 </template>

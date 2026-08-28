@@ -6,6 +6,7 @@ import { ref } from "vue";
 import ButtonIcon from "@/components/button/ButtonIcon.vue";
 import ButtonPrimary from "@/components/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/button/ButtonSecondary.vue";
+import ButtonTertiary from "@/components/button/ButtonTertiary.vue";
 
 import SpecimenPair from "../components/SpecimenPair.vue";
 import PreviewIcon from "./components/PreviewIcon.vue";
@@ -35,6 +36,13 @@ const PROPS = {
     ["disabled", "boolean", "false", "禁用"],
     ["block", "boolean", "false", "撑满父容器宽度"],
     ["align", '"center" | "start"', '"center"', "内容对齐，菜单项用 start"],
+  ],
+  ButtonTertiary: [
+    ["text", "string", "必填", "按钮文字"],
+    ["isActive", "boolean", "未传", "可选切换态；传入时同步 aria-pressed"],
+    ["disabled", "boolean", "false", "禁用"],
+    ["danger", "boolean", "false", "低强调破坏性操作"],
+    ["type", '"button" | "submit" | "reset"', '"button"', "原生按钮类型"],
   ],
   ButtonIcon: [
     ["label", "string", "必填", "无障碍名称，渲染为 aria-label"],
@@ -162,6 +170,52 @@ const PROPS = {
         </thead>
         <tbody>
           <tr v-for="row in PROPS.ButtonSecondary" :key="row[0]" class="text-fg-muted">
+            <td class="border-b border-border/40 py-2.5 pr-4 text-fg">{{ row[0] }}</td>
+            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[1] }}</td>
+            <td class="border-b border-border/40 py-2.5 pr-4">{{ row[2] }}</td>
+            <td class="border-b border-border/40 py-2.5">{{ row[3] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ButtonTertiary -->
+    <section class="mt-16">
+      <h2 class="font-mono text-sm text-fg">ButtonTertiary</h2>
+      <p class="mt-2 max-w-xl text-sm/6 text-fg-muted">
+        最低层级的辅助动作。没有按钮面，常驻短轨负责提示可点击；hover
+        或键盘聚焦时，强调轨从中心展开。
+      </p>
+
+      <SpecimenPair class="mt-6">
+        <p class="mt-4 font-mono text-xs text-fg-subtle">状态</p>
+        <div class="mt-2 flex flex-wrap items-center gap-2">
+          <ButtonTertiary text="稍后处理" />
+          <ButtonTertiary text="恢复默认" />
+          <ButtonTertiary text="当前选择" is-active />
+          <ButtonTertiary text="移除标签" danger />
+          <ButtonTertiary text="不可用" disabled />
+        </div>
+
+        <p class="mt-5 font-mono text-xs text-fg-subtle">三级并列</p>
+        <div class="mt-2 flex flex-wrap items-center gap-2">
+          <ButtonPrimary text="发布" />
+          <ButtonSecondary text="保存草稿" />
+          <ButtonTertiary text="稍后" />
+        </div>
+      </SpecimenPair>
+
+      <table class="mt-6 w-full border-collapse text-left font-mono text-xs">
+        <thead>
+          <tr class="text-fg-muted">
+            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">prop</th>
+            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">类型</th>
+            <th scope="col" class="border-b border-border/60 py-2 pr-4 font-normal">默认</th>
+            <th scope="col" class="border-b border-border/60 py-2 font-normal">说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="row in PROPS.ButtonTertiary" :key="row[0]" class="text-fg-muted">
             <td class="border-b border-border/40 py-2.5 pr-4 text-fg">{{ row[0] }}</td>
             <td class="border-b border-border/40 py-2.5 pr-4">{{ row[1] }}</td>
             <td class="border-b border-border/40 py-2.5 pr-4">{{ row[2] }}</td>
