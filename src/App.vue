@@ -12,6 +12,7 @@ import ButtonsPage from "./views/buttons/Buttons.page.vue";
 import CardsPage from "./views/cards/Cards.page.vue";
 import HueControl from "./views/components/HueControl.vue";
 import ModeControl from "./views/components/ModeControl.vue";
+import ControlsPage from "./views/controls/Controls.page.vue";
 import InputsPage from "./views/inputs/Inputs.page.vue";
 import OverlaysPage from "./views/overlays/Overlays.page.vue";
 import TagsPage from "./views/tags/Tags.page.vue";
@@ -21,6 +22,7 @@ import TokensPage from "./views/tokens/Tokens.page.vue";
 const PAGES = [
   { key: "tokens", label: "设计 token", component: TokensPage },
   { key: "buttons", label: "按钮", component: ButtonsPage },
+  { key: "controls", label: "控件", component: ControlsPage },
   { key: "inputs", label: "输入框", component: InputsPage },
   { key: "cards", label: "卡片", component: CardsPage },
   { key: "tags", label: "标签", component: TagsPage },
