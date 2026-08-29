@@ -3,6 +3,7 @@
 import { computed, nextTick, onBeforeUnmount, ref, shallowRef, useId, watch } from "vue";
 import type { ComponentPublicInstance, CSSProperties, HTMLAttributes } from "vue";
 
+import { findDialogOwner, resolveDialogOwnerId } from "../internal/dialog-owner";
 import { registerDismissableLayer } from "../internal/dismissable-layer";
 
 defineOptions({ inheritAttrs: false });
@@ -241,8 +242,7 @@ const handleDocumentPointerDown = (event: PointerEvent) => {
 const updateThemeScope = () => {
   const trigger = triggerElement.value;
   const scope = trigger?.closest(".light, .dark");
-  const dialogOwner = trigger?.closest<HTMLElement>("[data-ohmyui-dialog-layer]");
-  dialogOwnerId.value = dialogOwner?.dataset.ohmyuiDialogLayer;
+  dialogOwnerId.value = resolveDialogOwnerId(trigger);
   themeScope.value = scope?.classList.contains("dark")
     ? "dark"
     : scope?.classList.contains("light")
@@ -328,22 +328,20 @@ function startPositionTracking(document: Document, window: Window): void {
     // Teleport 后的 Tooltip 只有在自身未被隔离、且所属 Dialog 仍可交互时才能占用 Escape。
     isActive: () => {
       if (!isOpen.value) return false;
-      if (tooltipElement.value?.closest("[inert], [aria-hidden='true']")) return false;
+      const tooltip = tooltipElement.value;
+      if (!tooltip || tooltip.closest("[inert], [aria-hidden='true']")) return false;
 
       const ownerId = dialogOwnerId.value;
       if (!ownerId) return true;
-
-      const owner = triggerElement.value?.closest<HTMLElement>("[data-ohmyui-dialog-layer]");
-      return (
-        owner?.dataset.ohmyuiDialogLayer === ownerId &&
-        !owner.inert &&
-        owner.getAttribute("aria-hidden") !== "true"
-      );
+      const owner = findDialogOwner(tooltip.ownerDocument, ownerId);
+      return Boolean(owner && !owner.inert && owner.getAttribute("aria-hidden") !== "true");
     },
     onEscape: () => {
       dismiss();
       return true;
     },
+    getContainers: () => [triggerElement.value, tooltipElement.value],
+    onPointerDownOutside: props.openOnClick ? dismiss : undefined,
   });
   if (props.openOnClick) {
     document.addEventListener("pointerdown", handleDocumentPointerDown);
@@ -498,3 +496,10 @@ onBeforeUnmount(() => {
     </Transition>
   </Teleport>
 </template>
+
+<style scoped>
+[role="tooltip"][inert],
+[role="tooltip"][aria-hidden="true"] {
+  visibility: hidden !important;
+}
+</style>

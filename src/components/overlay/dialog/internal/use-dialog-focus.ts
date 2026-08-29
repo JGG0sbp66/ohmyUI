@@ -19,13 +19,21 @@ const FOCUSABLE_SELECTOR = [
   "[tabindex]:not([tabindex='-1'])",
 ].join(",");
 
+export type DialogFocusFallback = "first-tabbable" | "panel";
+
 interface UseDialogFocusOptions {
   panelRef: Ref<HTMLElement | null>;
   initialFocus: () => string | undefined;
   dialogDomId: string;
+  focusFallback?: DialogFocusFallback;
 }
 
-export function useDialogFocus({ panelRef, initialFocus, dialogDomId }: UseDialogFocusOptions) {
+export function useDialogFocus({
+  panelRef,
+  initialFocus,
+  dialogDomId,
+  focusFallback = "first-tabbable",
+}: UseDialogFocusOptions) {
   let returnFocusTarget: HTMLElement | null = null;
 
   function getTabbableElements(): HTMLElement[] {
@@ -51,11 +59,12 @@ export function useDialogFocus({ panelRef, initialFocus, dialogDomId }: UseDialo
       }
     }
 
+    const fallbackCandidates =
+      focusFallback === "panel" ? [panel] : [getTabbableElements()[0], panel];
     const candidates = [
       requested,
       panel.querySelector<HTMLElement>("[autofocus]"),
-      getTabbableElements()[0],
-      panel,
+      ...fallbackCandidates,
     ];
     const visited = new Set<HTMLElement>();
     for (const candidate of candidates) {
