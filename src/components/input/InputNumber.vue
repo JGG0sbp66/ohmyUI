@@ -1,35 +1,14 @@
 <!-- src/components/input/InputNumber.vue -->
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import type { HTMLAttributes } from "vue";
 
+import type { InputNumberProps, ReadonlyCopyEmits } from "./input.types";
 import InputControlFrame from "./internal/InputControlFrame.vue";
 import { selectAndCopyReadonlyControl } from "./internal/readonly-copy";
 
 defineOptions({ inheritAttrs: false });
 
-type NumberStep = number | "any";
-
-interface Props {
-  /** 调用方 class 作用于完整输入框外壳，而不是内部原生 input。 */
-  class?: HTMLAttributes["class"];
-  /** 调用方 style 作用于完整输入框外壳。 */
-  style?: HTMLAttributes["style"];
-  min?: number;
-  max?: number;
-  step?: NumberStep;
-  disabled?: boolean;
-  readonly?: boolean;
-  /** 仅在 readonly 时，点击会尝试复制当前展示值。 */
-  copyOnClick?: boolean;
-  required?: boolean;
-  /** 只控制错误视觉与 aria-invalid；范围错误文案由调用方决定。 */
-  invalid?: boolean;
-  /** 需要直接调整原生 input 时使用。 */
-  inputClass?: HTMLAttributes["class"];
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<InputNumberProps>(), {
   class: undefined,
   style: undefined,
   min: undefined,
@@ -43,10 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
   inputClass: undefined,
 });
 
-const emit = defineEmits<{
-  "copy-success": [value: string];
-  "copy-error": [error: unknown];
-}>();
+const emit = defineEmits<ReadonlyCopyEmits>();
 
 const model = defineModel<number | null>({ default: null });
 

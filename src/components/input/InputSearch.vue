@@ -1,31 +1,11 @@
 <!-- src/components/input/InputSearch.vue -->
 <script setup lang="ts">
-import type { HTMLAttributes } from "vue";
-
+import type { InputSearchEmits, InputSearchProps } from "./input.types";
 import InputText from "./InputText.vue";
 
 defineOptions({ inheritAttrs: false });
 
-interface Props {
-  /** 调用方 class 作用于完整搜索框外壳。 */
-  class?: HTMLAttributes["class"];
-  /** 调用方 style 作用于完整搜索框外壳。 */
-  style?: HTMLAttributes["style"];
-  /** 搜索框宽度 class；默认使用紧凑宽度。 */
-  width?: HTMLAttributes["class"];
-  disabled?: boolean;
-  readonly?: boolean;
-  /** 仅在 readonly 时，点击会全选并尝试复制当前搜索词。 */
-  copyOnClick?: boolean;
-  required?: boolean;
-  invalid?: boolean;
-  /** 需要直接调整原生 input 时使用。 */
-  inputClass?: HTMLAttributes["class"];
-  /** 清空按钮的 title 与无障碍名称。 */
-  clearLabel?: string;
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<InputSearchProps>(), {
   class: undefined,
   style: undefined,
   width: "max-w-56",
@@ -38,11 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
   clearLabel: "清空搜索",
 });
 
-const emit = defineEmits<{
-  search: [value: string];
-  "copy-success": [value: string];
-  "copy-error": [error: unknown];
-}>();
+const emit = defineEmits<InputSearchEmits>();
 
 const model = defineModel<string>({ default: "" });
 

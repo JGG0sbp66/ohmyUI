@@ -1,33 +1,12 @@
 <!-- src/components/input/InputText.vue -->
 <script setup lang="ts">
-import type { HTMLAttributes } from "vue";
-
+import type { InputTextProps, ReadonlyCopyEmits } from "./input.types";
 import InputControlFrame from "./internal/InputControlFrame.vue";
 import { selectAndCopyReadonlyControl } from "./internal/readonly-copy";
 
 defineOptions({ inheritAttrs: false });
 
-type InputType = "text" | "email" | "password" | "search" | "tel" | "url";
-
-interface Props {
-  /** 调用方 class 作用于完整输入框外壳，而不是内部原生 input。 */
-  class?: HTMLAttributes["class"];
-  /** 调用方 style 作用于完整输入框外壳。 */
-  style?: HTMLAttributes["style"];
-  /** 文本型原生 input 类型；数值输入后续由独立组件处理。 */
-  type?: InputType;
-  disabled?: boolean;
-  readonly?: boolean;
-  /** 仅在 readonly 时，点击会全选并尝试复制当前展示值。 */
-  copyOnClick?: boolean;
-  required?: boolean;
-  /** 只控制错误视觉与 aria-invalid；错误文案由 InputField 渲染。 */
-  invalid?: boolean;
-  /** 需要直接调整原生 input 时使用。 */
-  inputClass?: HTMLAttributes["class"];
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<InputTextProps>(), {
   class: undefined,
   style: undefined,
   type: "text",
@@ -39,10 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
   inputClass: undefined,
 });
 
-const emit = defineEmits<{
-  "copy-success": [value: string];
-  "copy-error": [error: unknown];
-}>();
+const emit = defineEmits<ReadonlyCopyEmits>();
 
 const model = defineModel<string>({ default: "" });
 

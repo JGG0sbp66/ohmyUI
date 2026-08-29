@@ -1,68 +1,43 @@
 <!-- src/components/overlay/dialog/ConfirmListDialog.vue -->
 <script setup lang="ts">
-import type { Component, HTMLAttributes } from "vue";
+import { computed } from "vue";
 
-import type { TagTone } from "../../tag/tag.types";
 import Tag from "../../tag/Tag.vue";
+import type {
+  ConfirmDialogEmits,
+  ConfirmDialogProps,
+  ConfirmListDialogProps,
+  ConfirmListItem,
+} from "./confirm.types";
 import ConfirmDialog from "./ConfirmDialog.vue";
-import type { DialogDismissReason } from "./internal/dialog.types";
+import { CONFIRM_DIALOG_DEFAULTS } from "./internal/confirm.defaults";
 
-interface ConfirmListItem {
-  key: string | number;
-  label: string;
-  tag?: string;
-  tagTone?: TagTone;
-  tagClass?: HTMLAttributes["class"];
-}
+defineOptions({ inheritAttrs: false });
 
-interface Props {
-  modelValue: boolean;
-  icon?: Component;
-  title: string;
-  question: string;
-  warning?: string;
-  confirmText?: string;
-  cancelText?: string;
-  danger?: boolean;
-  iconClass?: HTMLAttributes["class"];
-  confirmClass?: HTMLAttributes["class"];
-  panelClass?: HTMLAttributes["class"];
-  loading?: boolean;
-  confirmDisabled?: boolean;
-  closeOnBackdrop?: boolean;
-  closeOnEscape?: boolean;
-  lockScroll?: boolean;
-  returnFocus?: boolean;
-  teleportTo?: string | HTMLElement;
-  items: readonly ConfirmListItem[];
-}
+const props = withDefaults(defineProps<ConfirmListDialogProps>(), CONFIRM_DIALOG_DEFAULTS);
 
-const props = withDefaults(defineProps<Props>(), {
-  icon: undefined,
-  warning: undefined,
-  confirmText: "确认",
-  cancelText: "取消",
-  danger: false,
-  iconClass: undefined,
-  confirmClass: undefined,
-  panelClass: undefined,
-  loading: false,
-  confirmDisabled: false,
-  closeOnBackdrop: true,
-  closeOnEscape: true,
-  lockScroll: true,
-  returnFocus: true,
-  teleportTo: "body",
-});
+const emit = defineEmits<ConfirmDialogEmits>();
 
-const emit = defineEmits<{
-  "update:modelValue": [value: boolean];
-  confirm: [];
-  cancel: [];
-  dismiss: [reason: DialogDismissReason];
-  "after-open": [];
-  "after-close": [];
-}>();
+const forwardedConfirmProps = computed<ConfirmDialogProps>(() => ({
+  modelValue: props.modelValue,
+  icon: props.icon,
+  title: props.title,
+  question: props.question,
+  warning: props.warning,
+  confirmText: props.confirmText,
+  cancelText: props.cancelText,
+  danger: props.danger,
+  iconClass: props.iconClass,
+  confirmClass: props.confirmClass,
+  panelClass: props.panelClass,
+  loading: props.loading,
+  confirmDisabled: props.confirmDisabled,
+  closeOnBackdrop: props.closeOnBackdrop,
+  closeOnEscape: props.closeOnEscape,
+  lockScroll: props.lockScroll,
+  returnFocus: props.returnFocus,
+  teleportTo: props.teleportTo,
+}));
 
 defineSlots<{
   default?(): unknown;
@@ -72,24 +47,7 @@ defineSlots<{
 
 <template>
   <ConfirmDialog
-    :model-value="props.modelValue"
-    :icon="props.icon"
-    :title="props.title"
-    :question="props.question"
-    :warning="props.warning"
-    :confirm-text="props.confirmText"
-    :cancel-text="props.cancelText"
-    :danger="props.danger"
-    :icon-class="props.iconClass"
-    :confirm-class="props.confirmClass"
-    :panel-class="props.panelClass"
-    :loading="props.loading"
-    :confirm-disabled="props.confirmDisabled"
-    :close-on-backdrop="props.closeOnBackdrop"
-    :close-on-escape="props.closeOnEscape"
-    :lock-scroll="props.lockScroll"
-    :return-focus="props.returnFocus"
-    :teleport-to="props.teleportTo"
+    v-bind="{ ...$attrs, ...forwardedConfirmProps }"
     @update:model-value="emit('update:modelValue', $event)"
     @confirm="emit('confirm')"
     @cancel="emit('cancel')"

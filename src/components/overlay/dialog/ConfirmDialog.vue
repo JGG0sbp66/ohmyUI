@@ -1,63 +1,18 @@
 <!-- src/components/overlay/dialog/ConfirmDialog.vue -->
 <script setup lang="ts">
 import { computed, useId, useSlots } from "vue";
-import type { Component, HTMLAttributes } from "vue";
 
 import ButtonPrimary from "../../button/ButtonPrimary.vue";
 import ButtonSecondary from "../../button/ButtonSecondary.vue";
-import type { DialogDismissReason } from "./internal/dialog.types";
+import type { ConfirmDialogEmits, ConfirmDialogProps } from "./confirm.types";
+import { CONFIRM_DIALOG_DEFAULTS } from "./internal/confirm.defaults";
 import Modal from "./Modal.vue";
 
 defineOptions({ inheritAttrs: false });
 
-interface Props {
-  modelValue: boolean;
-  icon?: Component;
-  title: string;
-  question: string;
-  warning?: string;
-  confirmText?: string;
-  cancelText?: string;
-  /** 使用危险色确认按钮，并在未指定 iconClass 时同步图标颜色。 */
-  danger?: boolean;
-  iconClass?: HTMLAttributes["class"];
-  confirmClass?: HTMLAttributes["class"];
-  panelClass?: HTMLAttributes["class"];
-  loading?: boolean;
-  confirmDisabled?: boolean;
-  closeOnBackdrop?: boolean;
-  closeOnEscape?: boolean;
-  lockScroll?: boolean;
-  returnFocus?: boolean;
-  teleportTo?: string | HTMLElement;
-}
+const props = withDefaults(defineProps<ConfirmDialogProps>(), CONFIRM_DIALOG_DEFAULTS);
 
-const props = withDefaults(defineProps<Props>(), {
-  icon: undefined,
-  warning: undefined,
-  confirmText: "确认",
-  cancelText: "取消",
-  danger: false,
-  iconClass: undefined,
-  confirmClass: undefined,
-  panelClass: undefined,
-  loading: false,
-  confirmDisabled: false,
-  closeOnBackdrop: true,
-  closeOnEscape: true,
-  lockScroll: true,
-  returnFocus: true,
-  teleportTo: "body",
-});
-
-const emit = defineEmits<{
-  "update:modelValue": [value: boolean];
-  confirm: [];
-  cancel: [];
-  dismiss: [reason: DialogDismissReason];
-  "after-open": [];
-  "after-close": [];
-}>();
+const emit = defineEmits<ConfirmDialogEmits>();
 
 const slots = useSlots();
 defineSlots<{

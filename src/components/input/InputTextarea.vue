@@ -1,34 +1,12 @@
 <!-- src/components/input/InputTextarea.vue -->
 <script setup lang="ts">
-import type { HTMLAttributes } from "vue";
-
+import type { InputTextareaProps, ReadonlyCopyEmits } from "./input.types";
 import InputControlFrame from "./internal/InputControlFrame.vue";
 import { selectAndCopyReadonlyControl } from "./internal/readonly-copy";
 
 defineOptions({ inheritAttrs: false });
 
-type TextareaResize = "none" | "vertical";
-
-interface Props {
-  /** 调用方 class 作用于完整输入框外壳，而不是内部原生 textarea。 */
-  class?: HTMLAttributes["class"];
-  /** 调用方 style 作用于完整输入框外壳。 */
-  style?: HTMLAttributes["style"];
-  rows?: number;
-  /** 默认不可拖拽；需要时可允许垂直调整。 */
-  resize?: TextareaResize;
-  disabled?: boolean;
-  readonly?: boolean;
-  /** 仅在 readonly 时，点击会全选并尝试复制当前展示值。 */
-  copyOnClick?: boolean;
-  required?: boolean;
-  /** 只控制错误视觉与 aria-invalid；错误文案由 InputField 渲染。 */
-  invalid?: boolean;
-  /** 需要直接调整原生 textarea 时使用。 */
-  textareaClass?: HTMLAttributes["class"];
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<InputTextareaProps>(), {
   class: undefined,
   style: undefined,
   rows: 4,
@@ -41,10 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
   textareaClass: undefined,
 });
 
-const emit = defineEmits<{
-  "copy-success": [value: string];
-  "copy-error": [error: unknown];
-}>();
+const emit = defineEmits<ReadonlyCopyEmits>();
 
 const model = defineModel<string>({ default: "" });
 

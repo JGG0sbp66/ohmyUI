@@ -1,28 +1,13 @@
 <!-- src/components/input/InputPassword.vue -->
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import type { HTMLAttributes } from "vue";
 
+import type { InputPasswordProps, ReadonlyCopyEmits } from "./input.types";
 import InputText from "./InputText.vue";
 
 defineOptions({ inheritAttrs: false });
 
-interface Props {
-  disabled?: boolean;
-  readonly?: boolean;
-  /** 仅在 readonly 时，点击会复制当前密码；默认关闭以避免意外暴露明文。 */
-  copyOnClick?: boolean;
-  required?: boolean;
-  invalid?: boolean;
-  /** 需要直接调整原生 input 时使用。 */
-  inputClass?: HTMLAttributes["class"];
-  /** 密文状态下显隐按钮的无障碍名称。 */
-  showPasswordLabel?: string;
-  /** 明文状态下显隐按钮的无障碍名称。 */
-  hidePasswordLabel?: string;
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<InputPasswordProps>(), {
   disabled: false,
   readonly: false,
   copyOnClick: false,
@@ -33,10 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
   hidePasswordLabel: "隐藏密码",
 });
 
-const emit = defineEmits<{
-  "copy-success": [value: string];
-  "copy-error": [error: unknown];
-}>();
+const emit = defineEmits<ReadonlyCopyEmits>();
 
 const model = defineModel<string>({ default: "" });
 const passwordVisible = ref(false);
