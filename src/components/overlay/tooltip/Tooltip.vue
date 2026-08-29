@@ -3,6 +3,8 @@
 import { computed, nextTick, onBeforeUnmount, ref, useId, watch } from "vue";
 import type { ComponentPublicInstance, CSSProperties, HTMLAttributes } from "vue";
 
+import { registerDismissableLayer } from "../internal/dismissable-layer";
+
 defineOptions({ inheritAttrs: false });
 
 type Placement = "top" | "bottom";
@@ -54,6 +56,7 @@ defineSlots<{
 }>();
 
 const tooltipId = `tooltip-${useId()}`;
+const tooltipLayerId = Symbol("ohmyui-tooltip");
 const triggerElement = ref<HTMLElement | null>(null);
 const tooltipElement = ref<HTMLElement | null>(null);
 const hovered = ref(false);
@@ -69,6 +72,7 @@ const position = ref({ top: 0, left: 0, arrowLeft: 12 });
 let openTimer: ReturnType<typeof setTimeout> | undefined;
 let closeTimer: ReturnType<typeof setTimeout> | undefined;
 let resizeObserver: ResizeObserver | undefined;
+let unregisterDismissableLayer: (() => void) | undefined;
 
 const isOpen = computed(
   () =>
@@ -188,11 +192,6 @@ const handleDocumentPointerDown = (event: PointerEvent) => {
   dismiss();
 };
 
-const handleDocumentKeydown = (event: KeyboardEvent) => {
-  if (event.key !== "Escape") return;
-  dismiss();
-};
-
 const updateThemeScope = () => {
   const trigger = triggerElement.value;
   const scope = trigger?.closest(".light, .dark");
@@ -257,7 +256,8 @@ const stopPositionTracking = () => {
   window.removeEventListener("resize", updatePosition);
   window.removeEventListener("scroll", updatePosition, true);
   document.removeEventListener("pointerdown", handleDocumentPointerDown);
-  document.removeEventListener("keydown", handleDocumentKeydown);
+  unregisterDismissableLayer?.();
+  unregisterDismissableLayer = undefined;
   resizeObserver?.disconnect();
   resizeObserver = undefined;
 };
@@ -266,7 +266,27 @@ const startPositionTracking = () => {
   stopPositionTracking();
   window.addEventListener("resize", updatePosition);
   window.addEventListener("scroll", updatePosition, true);
-  document.addEventListener("keydown", handleDocumentKeydown);
+  unregisterDismissableLayer = registerDismissableLayer(document, {
+    id: tooltipLayerId,
+    isActive: () => {
+      if (!isOpen.value) return false;
+      if (tooltipElement.value?.closest("[inert], [aria-hidden='true']")) return false;
+
+      const ownerId = dialogOwnerId.value;
+      if (!ownerId) return true;
+
+      const owner = triggerElement.value?.closest<HTMLElement>("[data-ohmyui-dialog-layer]");
+      return (
+        owner?.dataset.ohmyuiDialogLayer === ownerId &&
+        !owner.inert &&
+        owner.getAttribute("aria-hidden") !== "true"
+      );
+    },
+    onEscape: () => {
+      dismiss();
+      return true;
+    },
+  });
   if (props.openOnClick) {
     document.addEventListener("pointerdown", handleDocumentPointerDown);
   }

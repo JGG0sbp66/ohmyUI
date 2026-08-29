@@ -1,8 +1,8 @@
 <!-- src/components/overlay/dialog/Dialog.vue -->
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref, shallowRef, useId, watch } from "vue";
-import type { CSSProperties, HTMLAttributes } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, useId, watch } from "vue";
 
+import { registerDismissableLayer } from "../internal/dismissable-layer";
 import {
   isTopDialog,
   registerDialog,
@@ -11,37 +11,17 @@ import {
   updateDialogScrollLock,
 } from "./internal/dialog-manager";
 import type {
-  DialogDismissReason,
-  DialogRole,
+  DialogEmits,
+  DialogProps,
   DialogSize,
   DialogSlotProps,
 } from "./internal/dialog.types";
+import { useDialogFocus } from "./internal/use-dialog-focus";
+import { useDialogSession } from "./internal/use-dialog-session";
 
 defineOptions({ inheritAttrs: false });
 
-interface Props {
-  modelValue: boolean;
-  size?: DialogSize;
-  /** Tailwind 最大宽度类；传入后优先于 size。 */
-  maxWidth?: string;
-  role?: DialogRole;
-  ariaLabel?: string;
-  ariaLabelledby?: string;
-  ariaDescribedby?: string;
-  closeOnBackdrop?: boolean;
-  closeOnEscape?: boolean;
-  lockScroll?: boolean;
-  returnFocus?: boolean;
-  /** 面板内的 CSS selector；未匹配时聚焦 autofocus、首个可聚焦元素或面板。 */
-  initialFocus?: string;
-  teleportTo?: string | HTMLElement;
-  panelClass?: HTMLAttributes["class"];
-  panelStyle?: HTMLAttributes["style"];
-}
-
-type TeleportedThemeStyle = CSSProperties & { "--app-hue"?: string };
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<DialogProps>(), {
   size: "md",
   maxWidth: undefined,
   role: "dialog",
@@ -58,12 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
   panelStyle: undefined,
 });
 
-const emit = defineEmits<{
-  "update:modelValue": [value: boolean];
-  dismiss: [reason: DialogDismissReason];
-  "after-open": [];
-  "after-close": [];
-}>();
+const emit = defineEmits<DialogEmits>();
 
 defineSlots<{
   default(props: DialogSlotProps): unknown;
@@ -77,138 +52,31 @@ const SIZE_CLASS: Record<DialogSize, string> = {
   "2xl": "max-w-2xl",
 };
 
-const FOCUSABLE_SELECTOR = [
-  "a[href]",
-  "area[href]",
-  "button:not([disabled])",
-  "input:not([disabled]):not([type='hidden'])",
-  "select:not([disabled])",
-  "textarea:not([disabled])",
-  "[contenteditable='true']",
-  "[tabindex]:not([tabindex='-1'])",
-].join(",");
-
-function isHtmlElement(value: unknown, ownerDocument?: Document): value is HTMLElement {
-  if (!value || typeof value !== "object") return false;
-  const element = value as Element;
-  if (
-    element.nodeType !== 1 ||
-    element.namespaceURI !== "http://www.w3.org/1999/xhtml" ||
-    !element.ownerDocument
-  ) {
-    return false;
-  }
-
-  const HTMLElementConstructor = (ownerDocument ?? element.ownerDocument).defaultView?.HTMLElement;
-  return HTMLElementConstructor ? value instanceof HTMLElementConstructor : true;
-}
-
-function isNodeInDocument(value: unknown, document: Document): value is Node {
-  const NodeConstructor = document.defaultView?.Node;
-  if (NodeConstructor) return value instanceof NodeConstructor;
-  return Boolean(value && typeof value === "object" && "nodeType" in value);
-}
-
-function isElementInDocument(value: unknown, document: Document): value is Element {
-  const ElementConstructor = document.defaultView?.Element;
-  if (ElementConstructor) return value instanceof ElementConstructor;
-  return isNodeInDocument(value, document) && value.nodeType === 1;
-}
-
 const dialogId = Symbol("ohmyui-dialog");
 const originRef = ref<HTMLElement | null>(null);
 const backdropRef = ref<HTMLElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
-const themeScope = ref<"light" | "dark" | undefined>();
 const dialogDomId = `ohmyui-dialog-${useId()}`;
-const themeStyle = ref<TeleportedThemeStyle>({});
 const interactive = ref(false);
 const stackLayer = ref(70);
-const teleportSessionTarget = shallowRef<string | HTMLElement>();
-
 const widthClass = computed(() => props.maxWidth ?? SIZE_CLASS[props.size]);
-const resolvedTeleportTarget = computed<string | HTMLElement>(
-  () => teleportSessionTarget.value ?? props.teleportTo,
-);
+
+const dialogFocus = useDialogFocus({
+  panelRef,
+  initialFocus: () => props.initialFocus,
+  dialogDomId,
+});
+const dialogSession = useDialogSession({
+  originRef,
+  teleportTo: () => props.teleportTo,
+});
+const { resolvedTeleportTarget, themeScope, themeStyle } = dialogSession;
 
 let activeDocument: Document | null = null;
-let returnFocusTarget: HTMLElement | null = null;
-let openGeneration = 0;
+let unregisterDismissableLayer: (() => void) | undefined;
 let registered = false;
 let closePending = false;
 let shouldReturnFocus = false;
-let disposed = false;
-
-function resolveTeleportTargetForSession(): string | HTMLElement {
-  const requestedTarget = props.teleportTo;
-  const sourceDocument =
-    originRef.value?.ownerDocument ?? (typeof document === "undefined" ? null : document);
-  if (!sourceDocument) return requestedTarget;
-
-  let targetElement: Element | null = null;
-  try {
-    targetElement =
-      typeof requestedTarget === "string"
-        ? sourceDocument.querySelector(requestedTarget)
-        : isHtmlElement(requestedTarget)
-          ? requestedTarget
-          : null;
-  } catch {
-    return sourceDocument.body;
-  }
-
-  if (!isHtmlElement(targetElement) || !targetElement.isConnected) return sourceDocument.body;
-  if (targetElement.closest("[data-ohmyui-dialog-layer]")) {
-    return targetElement.ownerDocument.body;
-  }
-  return targetElement;
-}
-
-function lockTeleportSessionTarget(): void {
-  if (teleportSessionTarget.value !== undefined) return;
-  teleportSessionTarget.value = resolveTeleportTargetForSession();
-}
-
-function releaseTeleportSessionTarget(): void {
-  teleportSessionTarget.value = undefined;
-}
-
-function resolveTeleportDocument(): Document | null {
-  const target = resolvedTeleportTarget.value;
-  if (typeof target !== "string" && isHtmlElement(target)) return target.ownerDocument;
-  return originRef.value?.ownerDocument ?? (typeof document === "undefined" ? null : document);
-}
-
-function getFocusableElements(): HTMLElement[] {
-  const panel = panelRef.value;
-  if (!panel) return [];
-
-  return Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
-    (element) =>
-      element.getClientRects().length > 0 && element.getAttribute("aria-hidden") !== "true",
-  );
-}
-
-function focusInitialElement(): void {
-  const panel = panelRef.value;
-  if (!panel) return;
-
-  let requested: HTMLElement | null = null;
-  if (props.initialFocus) {
-    try {
-      requested = panel.querySelector<HTMLElement>(props.initialFocus);
-    } catch {
-      requested = null;
-    }
-  }
-
-  const target =
-    requested ??
-    panel.querySelector<HTMLElement>("[autofocus]") ??
-    getFocusableElements()[0] ??
-    panel;
-  target.focus({ preventScroll: true });
-}
 
 function setInteractiveState(value: boolean): void {
   interactive.value = value;
@@ -220,7 +88,7 @@ function setInteractiveState(value: boolean): void {
   else backdrop.setAttribute("aria-hidden", "true");
 }
 
-function requestDismiss(reason: DialogDismissReason): void {
+function requestDismiss(reason: DialogEmits["dismiss"][0]): void {
   if (!props.modelValue) return;
   emit("dismiss", reason);
   emit("update:modelValue", false);
@@ -230,55 +98,24 @@ function close(): void {
   requestDismiss("close");
 }
 
-function trapFocus(event: KeyboardEvent): void {
-  const panel = panelRef.value;
-  if (!panel) return;
-
-  const focusable = getFocusableElements();
-  if (focusable.length === 0) {
-    event.preventDefault();
-    panel.focus({ preventScroll: true });
-    return;
-  }
-
-  const first = focusable[0];
-  const last = focusable.at(-1);
-  const document = panel.ownerDocument;
-  const active = document.activeElement;
-  const focusIsOutside = !isNodeInDocument(active, document) || !panel.contains(active);
-
-  if (event.shiftKey && (active === first || active === panel || focusIsOutside)) {
-    event.preventDefault();
-    last?.focus({ preventScroll: true });
-  } else if (!event.shiftKey && (active === last || focusIsOutside)) {
-    event.preventDefault();
-    first?.focus({ preventScroll: true });
-  }
-}
-
 function handleDocumentKeydown(event: KeyboardEvent): void {
   const document = activeDocument;
-  if (!document || !props.modelValue || !isTopDialog(document, dialogId)) return;
-
-  if (event.key === "Escape" && props.closeOnEscape) {
-    event.preventDefault();
-    requestDismiss("escape");
-  } else if (event.key === "Tab") {
-    trapFocus(event);
+  if (
+    event.defaultPrevented ||
+    event.key !== "Tab" ||
+    !document ||
+    !props.modelValue ||
+    !isTopDialog(document, dialogId)
+  ) {
+    return;
   }
+  dialogFocus.trapFocus(event);
 }
 
 function handleDocumentFocusin(event: FocusEvent): void {
   const document = activeDocument;
-  const panel = panelRef.value;
-  const target = event.target;
-  if (!document || !panel || !props.modelValue || !isTopDialog(document, dialogId)) return;
-  if (!isNodeInDocument(target, document) || panel.contains(target)) return;
-  if (isElementInDocument(target, document)) {
-    const allowedPortal = target.closest<HTMLElement>("[data-dialog-focus-allow]");
-    if (allowedPortal?.dataset.dialogFocusAllow === dialogDomId) return;
-  }
-  focusInitialElement();
+  if (!document || !props.modelValue || !isTopDialog(document, dialogId)) return;
+  dialogFocus.handleFocusin(event, document);
 }
 
 function handleBackdropPointerDown(event: PointerEvent): void {
@@ -295,29 +132,6 @@ function handleBackdropPointerDown(event: PointerEvent): void {
   requestDismiss("backdrop");
 }
 
-function captureThemeContext(): void {
-  const origin = originRef.value;
-  const scope = origin?.closest(".light, .dark");
-  themeScope.value = scope?.classList.contains("dark")
-    ? "dark"
-    : scope?.classList.contains("light")
-      ? "light"
-      : undefined;
-
-  const view = origin?.ownerDocument.defaultView;
-  const hue =
-    origin && view ? view.getComputedStyle(origin).getPropertyValue("--app-hue").trim() : "";
-  themeStyle.value = hue ? { "--app-hue": hue } : {};
-}
-
-function captureReturnFocusTarget(): void {
-  const sourceDocument =
-    originRef.value?.ownerDocument ?? (typeof document === "undefined" ? null : document);
-  const activeElement = sourceDocument?.activeElement;
-  returnFocusTarget =
-    sourceDocument && isHtmlElement(activeElement, sourceDocument) ? activeElement : null;
-}
-
 function attachDocument(document: Document): void {
   if (activeDocument === document) return;
   if (activeDocument) detachDocument();
@@ -325,36 +139,26 @@ function attachDocument(document: Document): void {
   activeDocument = document;
   document.addEventListener("keydown", handleDocumentKeydown);
   document.addEventListener("focusin", handleDocumentFocusin);
+  unregisterDismissableLayer = registerDismissableLayer(document, {
+    id: dialogId,
+    isActive: () => props.modelValue && registered && isTopDialog(document, dialogId),
+    onEscape: () => {
+      if (!props.closeOnEscape) return false;
+      requestDismiss("escape");
+      return true;
+    },
+  });
 }
 
 function detachDocument(): void {
   const document = activeDocument;
   if (!document) return;
+
   activeDocument = null;
+  unregisterDismissableLayer?.();
+  unregisterDismissableLayer = undefined;
   document.removeEventListener("keydown", handleDocumentKeydown);
   document.removeEventListener("focusin", handleDocumentFocusin);
-}
-
-function transferFocusToNextDialog(
-  nextWrapper: HTMLElement | undefined,
-  focusNext: (() => void) | undefined,
-): void {
-  if (
-    props.returnFocus &&
-    returnFocusTarget?.isConnected &&
-    nextWrapper?.contains(returnFocusTarget)
-  ) {
-    returnFocusTarget.focus({ preventScroll: true });
-    return;
-  }
-
-  focusNext?.();
-}
-
-function adoptReturnFocus(target: HTMLElement | null, removedWrapper: HTMLElement): void {
-  if (returnFocusTarget && removedWrapper.contains(returnFocusTarget)) {
-    returnFocusTarget = target;
-  }
 }
 
 function moveToDocument(document: Document): void {
@@ -363,7 +167,11 @@ function moveToDocument(document: Document): void {
   const previousDocument = activeDocument;
   try {
     if (previousDocument && registered) {
-      unregisterDialog(previousDocument, dialogId, props.returnFocus ? returnFocusTarget : null);
+      unregisterDialog(
+        previousDocument,
+        dialogId,
+        dialogFocus.getReturnFocusTarget(props.returnFocus),
+      );
     }
   } finally {
     registered = false;
@@ -377,7 +185,11 @@ function unregisterActiveDialog() {
   let removal: ReturnType<typeof unregisterDialog> | undefined;
   try {
     if (document && registered) {
-      removal = unregisterDialog(document, dialogId, props.returnFocus ? returnFocusTarget : null);
+      removal = unregisterDialog(
+        document,
+        dialogId,
+        dialogFocus.getReturnFocusTarget(props.returnFocus),
+      );
     }
   } finally {
     registered = false;
@@ -387,58 +199,65 @@ function unregisterActiveDialog() {
 }
 
 async function beginOpen(): Promise<void> {
-  const generation = ++openGeneration;
-  lockTeleportSessionTarget();
+  const generation = dialogSession.beginOpenAttempt();
   closePending = false;
   shouldReturnFocus = false;
 
-  if (!activeDocument) captureReturnFocusTarget();
-  const preliminaryDocument = resolveTeleportDocument();
+  if (!activeDocument) {
+    const sourceDocument =
+      originRef.value?.ownerDocument ?? (typeof document === "undefined" ? null : document);
+    if (sourceDocument) dialogFocus.captureReturnFocusTarget(sourceDocument);
+  }
+
+  const preliminaryDocument = dialogSession.resolveTeleportDocument();
   if (!preliminaryDocument) return;
   if (!activeDocument) attachDocument(preliminaryDocument);
 
   await nextTick();
-  if (disposed || generation !== openGeneration || !props.modelValue) return;
+  if (!dialogSession.isCurrentAttempt(generation) || !props.modelValue) return;
 
   const wrapper = backdropRef.value;
   if (!wrapper || !panelRef.value) return;
 
-  const document = wrapper.ownerDocument;
-  moveToDocument(document);
-  captureThemeContext();
-  stackLayer.value = registerDialog(document, {
+  const ownerDocument = wrapper.ownerDocument;
+  moveToDocument(ownerDocument);
+  dialogSession.captureThemeContext();
+  stackLayer.value = registerDialog(ownerDocument, {
     id: dialogId,
     locksScroll: props.lockScroll,
     wrapper,
-    focus: focusInitialElement,
+    focus: dialogFocus.focusInitialElement,
     setInteractive: setInteractiveState,
-    adoptReturnFocus,
+    adoptReturnFocus: dialogFocus.adoptReturnFocus,
   });
   registered = true;
 
-  focusInitialElement();
+  dialogFocus.focusInitialElement();
 }
 
 function prepareLeave(): void {
-  openGeneration += 1;
-  closePending = activeDocument !== null || teleportSessionTarget.value !== undefined;
+  const generation = dialogSession.invalidateAttempt();
+  closePending = activeDocument !== null || dialogSession.hasLockedTeleportTarget();
 
   if (activeDocument) {
     if (!registered) {
       detachDocument();
-      returnFocusTarget = null;
+      dialogFocus.clearReturnFocusTarget();
     } else {
       const transition = startDialogClose(activeDocument, dialogId);
       shouldReturnFocus = transition.wasTop && !transition.hasNextActive;
       if (transition.wasTop && transition.hasNextActive) {
-        transferFocusToNextDialog(transition.nextWrapper, transition.focusNext);
+        dialogFocus.transferFocusToNextDialog(
+          props.returnFocus,
+          transition.nextWrapper,
+          transition.focusNext,
+        );
       }
     }
   }
 
-  const generation = openGeneration;
   void nextTick(() => {
-    if (!props.modelValue && generation === openGeneration && !backdropRef.value) {
+    if (!props.modelValue && dialogSession.isCurrentAttempt(generation) && !backdropRef.value) {
       finishClose();
     }
   });
@@ -450,21 +269,19 @@ function finishClose(emitEvent = true): void {
 
   const removal = unregisterActiveDialog();
   if (removal?.wasInteractive && removal.hasNextInteractive) {
-    transferFocusToNextDialog(removal.nextWrapper, removal.focusNext);
-  } else if (
-    props.returnFocus &&
-    shouldReturnFocus &&
-    !removal?.hasNextInteractive &&
-    returnFocusTarget?.isConnected
-  ) {
-    returnFocusTarget.focus({ preventScroll: true });
+    dialogFocus.transferFocusToNextDialog(
+      props.returnFocus,
+      removal.nextWrapper,
+      removal.focusNext,
+    );
+  } else if (props.returnFocus && shouldReturnFocus && !removal?.hasNextInteractive) {
+    dialogFocus.focusReturnTarget();
   }
 
-  returnFocusTarget = null;
-  themeScope.value = undefined;
-  themeStyle.value = {};
+  dialogFocus.clearReturnFocusTarget();
+  dialogSession.clearThemeContext();
   interactive.value = false;
-  releaseTeleportSessionTarget();
+  dialogSession.releaseTeleportTarget();
 
   if (emitEvent) emit("after-close");
 }
@@ -477,7 +294,7 @@ function handleAfterEnter(): void {
 watch(
   () => props.modelValue,
   (open) => {
-    if (open) lockTeleportSessionTarget();
+    if (open) dialogSession.lockTeleportTarget();
   },
   { immediate: true, flush: "sync" },
 );
@@ -501,23 +318,22 @@ watch(
 );
 
 onBeforeUnmount(() => {
-  disposed = true;
-  openGeneration += 1;
+  dialogSession.dispose();
 
   const removal = unregisterActiveDialog();
   if (removal?.wasInteractive && removal.hasNextInteractive) {
-    transferFocusToNextDialog(removal.nextWrapper, removal.focusNext);
-  } else if (
-    props.returnFocus &&
-    removal?.wasInteractive &&
-    !removal.hasNextInteractive &&
-    returnFocusTarget?.isConnected
-  ) {
-    returnFocusTarget.focus({ preventScroll: true });
+    dialogFocus.transferFocusToNextDialog(
+      props.returnFocus,
+      removal.nextWrapper,
+      removal.focusNext,
+    );
+  } else if (props.returnFocus && removal?.wasInteractive && !removal.hasNextInteractive) {
+    dialogFocus.focusReturnTarget();
   }
 
-  returnFocusTarget = null;
-  releaseTeleportSessionTarget();
+  dialogFocus.clearReturnFocusTarget();
+  dialogSession.clearThemeContext();
+  dialogSession.releaseTeleportTarget();
 });
 </script>
 
@@ -535,13 +351,19 @@ onBeforeUnmount(() => {
         v-if="props.modelValue"
         ref="backdropRef"
         :data-ohmyui-dialog-layer="dialogDomId"
-        class="fixed inset-0 z-70 flex items-center justify-center bg-black/20 p-4 text-fg backdrop-blur-sm"
+        class="fixed inset-0 z-70 flex items-start justify-center overflow-y-auto bg-black/20 p-4 text-fg backdrop-blur-sm"
         :class="themeScope"
         :style="[{ zIndex: stackLayer }, themeStyle]"
         :inert="!interactive"
         :aria-hidden="interactive ? undefined : 'true'"
-        @pointerdown="handleBackdropPointerDown"
       >
+        <div
+          data-ohmyui-dialog-backdrop
+          class="fixed inset-0"
+          aria-hidden="true"
+          @pointerdown="handleBackdropPointerDown"
+        />
+
         <div
           v-bind="$attrs"
           ref="panelRef"
@@ -553,7 +375,7 @@ onBeforeUnmount(() => {
           :aria-describedby="props.ariaDescribedby"
           tabindex="-1"
           :class="[
-            'dialog-panel relative w-full overflow-hidden rounded-2xl bg-bg-card shadow-2xl',
+            'dialog-panel relative z-10 my-auto w-full overflow-hidden rounded-2xl bg-bg-card shadow-2xl',
             widthClass,
             props.panelClass,
           ]"

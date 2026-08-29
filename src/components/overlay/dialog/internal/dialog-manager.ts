@@ -1,3 +1,10 @@
+import { promoteDismissableLayer } from "../../internal/dismissable-layer";
+import {
+  createBackgroundIsolation,
+  type BackgroundIsolationController,
+} from "./background-isolation";
+import { createScrollLock, type ScrollLockController } from "./scroll-lock";
+
 interface DialogEntry {
   id: symbol;
   locksScroll: boolean;
@@ -9,24 +16,11 @@ interface DialogEntry {
   adoptReturnFocus: (target: HTMLElement | null, removedWrapper: HTMLElement) => void;
 }
 
-interface BodyStyleSnapshot {
-  overflow: string;
-  paddingRight: string;
-}
-
-interface ElementAccessibilitySnapshot {
-  inert: boolean;
-  ariaHidden: string | null;
-}
-
 interface DocumentDialogState {
   stack: DialogEntry[];
   nextLayer: number;
-  scrollLockCount: number;
-  bodyStyleSnapshot?: BodyStyleSnapshot;
-  backgroundSnapshots: Map<HTMLElement, ElementAccessibilitySnapshot>;
-  backgroundObserver?: MutationObserver;
-  backgroundSyncQueued: boolean;
+  scrollLock: ScrollLockController;
+  backgroundIsolation: BackgroundIsolationController;
 }
 
 export interface DialogRegistration {
@@ -62,9 +56,8 @@ function getDocumentState(document: Document): DocumentDialogState {
   const state: DocumentDialogState = {
     stack: [],
     nextLayer: BASE_DIALOG_LAYER,
-    scrollLockCount: 0,
-    backgroundSnapshots: new Map(),
-    backgroundSyncQueued: false,
+    scrollLock: createScrollLock(document),
+    backgroundIsolation: createBackgroundIsolation(document),
   };
   documentStates.set(document, state);
   return state;
@@ -89,138 +82,16 @@ function getInteractiveEntry(state: DocumentDialogState): DialogEntry | undefine
   return getTopActiveEntry(state) ?? state.stack.at(-1);
 }
 
-function acquireScrollLock(document: Document, state: DocumentDialogState): void {
-  state.scrollLockCount += 1;
-  if (state.scrollLockCount > 1) return;
-
-  const body = document.body;
-  const view = document.defaultView;
-  if (!body || !view) return;
-
-  state.bodyStyleSnapshot = {
-    overflow: body.style.overflow,
-    paddingRight: body.style.paddingRight,
-  };
-
-  const scrollbarWidth = Math.max(0, view.innerWidth - document.documentElement.clientWidth);
-  const currentPadding = Number.parseFloat(view.getComputedStyle(body).paddingRight) || 0;
-
-  body.style.overflow = "hidden";
-  if (scrollbarWidth > 0) {
-    body.style.paddingRight = `${currentPadding + scrollbarWidth}px`;
-  }
-}
-
-function releaseScrollLock(document: Document, state: DocumentDialogState): void {
-  state.scrollLockCount = Math.max(0, state.scrollLockCount - 1);
-  if (state.scrollLockCount > 0) return;
-
-  const body = document.body;
-  const snapshot = state.bodyStyleSnapshot;
-  if (body && snapshot) {
-    body.style.overflow = snapshot.overflow;
-    body.style.paddingRight = snapshot.paddingRight;
-  }
-
-  state.bodyStyleSnapshot = undefined;
-}
-
-function restoreBackground(state: DocumentDialogState): void {
-  for (const [element, snapshot] of state.backgroundSnapshots) {
-    element.inert = snapshot.inert;
-    if (snapshot.ariaHidden === null) element.removeAttribute("aria-hidden");
-    else element.setAttribute("aria-hidden", snapshot.ariaHidden);
-  }
-  state.backgroundSnapshots.clear();
-}
-
-function isHtmlElementForDocument(element: Element, document: Document): element is HTMLElement {
-  const HTMLElementConstructor = document.defaultView?.HTMLElement;
-  if (HTMLElementConstructor) return element instanceof HTMLElementConstructor;
-  return element.namespaceURI === "http://www.w3.org/1999/xhtml";
-}
-
-function collectBackgroundRoots(
-  root: HTMLElement,
-  protectedElements: readonly HTMLElement[],
-  output: HTMLElement[],
-): void {
-  const document = root.ownerDocument;
-  for (const child of root.children) {
-    if (!isHtmlElementForDocument(child, document)) continue;
-    if (["SCRIPT", "STYLE", "LINK"].includes(child.tagName)) continue;
-    if (protectedElements.includes(child)) continue;
-
-    const containsProtectedElement = protectedElements.some((element) => child.contains(element));
-    if (containsProtectedElement) collectBackgroundRoots(child, protectedElements, output);
-    else output.push(child);
-  }
-}
-
-function stopBackgroundObserver(state: DocumentDialogState): void {
-  state.backgroundObserver?.disconnect();
-  state.backgroundObserver = undefined;
-  state.backgroundSyncQueued = false;
-}
-
-function syncBackgroundIsolation(document: Document, state: DocumentDialogState): void {
-  restoreBackground(state);
-
-  if (state.stack.length === 0 || !document.body) {
-    stopBackgroundObserver(state);
-    return;
-  }
-
-  if (!state.backgroundObserver) {
-    const MutationObserverConstructor = document.defaultView?.MutationObserver;
-    if (MutationObserverConstructor) {
-      state.backgroundObserver = new MutationObserverConstructor(() => {
-        if (state.backgroundSyncQueued) return;
-        state.backgroundSyncQueued = true;
-        queueMicrotask(() => {
-          state.backgroundSyncQueued = false;
-          syncBackgroundIsolation(document, state);
-        });
-      });
-      state.backgroundObserver.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ["data-dialog-focus-allow"],
-      });
-    }
-  }
-
-  const wrappers = state.stack
-    .map((entry) => entry.wrapper)
-    .filter((wrapper) => wrapper.isConnected);
-  const interactiveOwnerId = getInteractiveEntry(state)?.wrapper.dataset.ohmyuiDialogLayer;
-  const allowedPortals = Array.from(
-    document.querySelectorAll<HTMLElement>("[data-dialog-focus-allow]"),
-  ).filter(
-    (element) =>
-      interactiveOwnerId !== undefined && element.dataset.dialogFocusAllow === interactiveOwnerId,
-  );
-  const protectedElements = [...wrappers, ...allowedPortals];
-  const backgroundRoots: HTMLElement[] = [];
-  collectBackgroundRoots(document.body, protectedElements, backgroundRoots);
-
-  for (const element of backgroundRoots) {
-    state.backgroundSnapshots.set(element, {
-      inert: element.inert,
-      ariaHidden: element.getAttribute("aria-hidden"),
-    });
-    element.inert = true;
-    element.setAttribute("aria-hidden", "true");
-  }
-}
-
-function syncInteractivity(document: Document, state: DocumentDialogState): void {
+function syncInteractivity(state: DocumentDialogState): void {
   const interactiveEntry = getInteractiveEntry(state);
   for (const entry of state.stack) {
     entry.setInteractive(entry === interactiveEntry);
   }
-  syncBackgroundIsolation(document, state);
+
+  state.backgroundIsolation.sync(
+    state.stack.map((entry) => entry.wrapper),
+    interactiveEntry?.wrapper.dataset.ohmyuiDialogLayer,
+  );
 }
 
 export function registerDialog(document: Document, registration: DialogRegistration): number {
@@ -229,10 +100,10 @@ export function registerDialog(document: Document, registration: DialogRegistrat
   const existing = existingIndex >= 0 ? state.stack.splice(existingIndex, 1)[0] : undefined;
 
   if (existing?.locksScroll !== registration.locksScroll) {
-    if (registration.locksScroll) acquireScrollLock(document, state);
-    else if (existing?.locksScroll) releaseScrollLock(document, state);
+    if (registration.locksScroll) state.scrollLock.acquire();
+    else if (existing?.locksScroll) state.scrollLock.release();
   } else if (!existing && registration.locksScroll) {
-    acquireScrollLock(document, state);
+    state.scrollLock.acquire();
   }
 
   const layer = state.nextLayer;
@@ -242,7 +113,8 @@ export function registerDialog(document: Document, registration: DialogRegistrat
     layer,
     closing: false,
   });
-  syncInteractivity(document, state);
+  promoteDismissableLayer(document, registration.id);
+  syncInteractivity(state);
   return layer;
 }
 
@@ -253,7 +125,7 @@ export function startDialogClose(document: Document, id: symbol): DialogCloseTra
 
   if (entry) entry.closing = true;
   const nextActive = getTopActiveEntry(state);
-  syncInteractivity(document, state);
+  syncInteractivity(state);
 
   return {
     wasTop,
@@ -273,7 +145,7 @@ export function unregisterDialog(
   const index = state.stack.findIndex((entry) => entry.id === id);
   const [removedEntry] = index >= 0 ? state.stack.splice(index, 1) : [];
 
-  if (removedEntry?.locksScroll) releaseScrollLock(document, state);
+  if (removedEntry?.locksScroll) state.scrollLock.release();
   if (removedEntry) {
     for (const entry of state.stack) {
       entry.adoptReturnFocus(outerReturnTarget, removedEntry.wrapper);
@@ -281,7 +153,7 @@ export function unregisterDialog(
   }
 
   const nextInteractive = getInteractiveEntry(state);
-  syncInteractivity(document, state);
+  syncInteractivity(state);
   if (state.stack.length === 0) state.nextLayer = BASE_DIALOG_LAYER;
 
   return {
@@ -297,8 +169,8 @@ export function updateDialogScrollLock(document: Document, id: symbol, locksScro
   const entry = state.stack.find((candidate) => candidate.id === id);
   if (!entry || entry.locksScroll === locksScroll) return;
 
-  if (locksScroll) acquireScrollLock(document, state);
-  else releaseScrollLock(document, state);
+  if (locksScroll) state.scrollLock.acquire();
+  else state.scrollLock.release();
   entry.locksScroll = locksScroll;
 }
 

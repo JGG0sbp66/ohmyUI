@@ -1,38 +1,13 @@
 <!-- src/components/overlay/dialog/Modal.vue -->
 <script setup lang="ts">
 import { computed, useId, useSlots, watch } from "vue";
-import type { HTMLAttributes } from "vue";
 
 import Dialog from "./Dialog.vue";
-import type {
-  DialogDismissReason,
-  DialogRole,
-  DialogSize,
-  DialogSlotProps,
-} from "./internal/dialog.types";
+import type { DialogEmits, DialogProps, DialogSlotProps } from "./internal/dialog.types";
 
 defineOptions({ inheritAttrs: false });
 
-interface Props {
-  modelValue: boolean;
-  size?: DialogSize;
-  /** 自定义最大宽度工具类；传入后优先于 size。 */
-  maxWidth?: string;
-  role?: DialogRole;
-  ariaLabel?: string;
-  ariaLabelledby?: string;
-  ariaDescribedby?: string;
-  closeOnBackdrop?: boolean;
-  closeOnEscape?: boolean;
-  lockScroll?: boolean;
-  returnFocus?: boolean;
-  initialFocus?: string;
-  teleportTo?: string | HTMLElement;
-  panelClass?: HTMLAttributes["class"];
-  panelStyle?: HTMLAttributes["style"];
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<DialogProps>(), {
   size: "md",
   maxWidth: undefined,
   role: "dialog",
@@ -49,12 +24,7 @@ const props = withDefaults(defineProps<Props>(), {
   panelStyle: undefined,
 });
 
-const emit = defineEmits<{
-  "update:modelValue": [value: boolean];
-  dismiss: [reason: DialogDismissReason];
-  "after-open": [];
-  "after-close": [];
-}>();
+const emit = defineEmits<DialogEmits>();
 
 const slots = useSlots();
 defineSlots<{
