@@ -96,6 +96,7 @@ export function useDialogFocus({ panelRef, initialFocus, dialogDomId }: UseDialo
       return;
     }
 
+    // initialFocus 可以落在 tabindex=-1 节点；此时按 DOM 相对位置寻找下一项，而不是误判为焦点已逃出。
     const NodeConstructor = document.defaultView?.Node;
     const preceding = NodeConstructor?.DOCUMENT_POSITION_PRECEDING ?? 2;
     const following = NodeConstructor?.DOCUMENT_POSITION_FOLLOWING ?? 4;

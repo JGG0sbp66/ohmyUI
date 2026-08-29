@@ -11,6 +11,7 @@ interface UseDialogSessionOptions {
 }
 
 export function useDialogSession({ originRef, teleportTo }: UseDialogSessionOptions) {
+  // Teleport 目标从打开前一直冻结到离场结束，避免打开期间因 prop 变化搬动真实 DOM。
   const teleportTarget = shallowRef<string | HTMLElement>();
   const themeScope = ref<"light" | "dark" | undefined>();
   const themeStyle = ref<TeleportedThemeStyle>({});
@@ -18,6 +19,7 @@ export function useDialogSession({ originRef, teleportTo }: UseDialogSessionOpti
     () => teleportTarget.value ?? teleportTo(),
   );
 
+  // 每个异步打开流程持有代次；close、reopen 或 unmount 会让旧 nextTick 续体失效。
   let generation = 0;
   let disposed = false;
 

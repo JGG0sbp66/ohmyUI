@@ -38,6 +38,7 @@ function collectBackgroundRoots(
 }
 
 export function createBackgroundIsolation(document: Document): BackgroundIsolationController {
+  // root 在持续隔离期间只保存一次原值；后续同步只处理集合差异，避免反复恢复和重新快照。
   const snapshots = new Map<HTMLElement, ElementAccessibilitySnapshot>();
   let observer: MutationObserver | undefined;
   let syncQueued = false;

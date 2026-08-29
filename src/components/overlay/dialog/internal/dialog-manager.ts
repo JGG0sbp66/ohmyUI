@@ -113,6 +113,7 @@ export function registerDialog(document: Document, registration: DialogRegistrat
     layer,
     closing: false,
   });
+  // 同一实例可能在离场完成前重开；视觉栈置顶时必须同步刷新 Escape 栈顺序。
   promoteDismissableLayer(document, registration.id);
   syncInteractivity(state);
   return layer;

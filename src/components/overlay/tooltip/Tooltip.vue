@@ -268,6 +268,7 @@ const startPositionTracking = () => {
   window.addEventListener("scroll", updatePosition, true);
   unregisterDismissableLayer = registerDismissableLayer(document, {
     id: tooltipLayerId,
+    // Teleport 后的 Tooltip 只有在自身未被隔离、且所属 Dialog 仍可交互时才能占用 Escape。
     isActive: () => {
       if (!isOpen.value) return false;
       if (tooltipElement.value?.closest("[inert], [aria-hidden='true']")) return false;

@@ -236,6 +236,7 @@ async function beginOpen(): Promise<void> {
 }
 
 function prepareLeave(): void {
+  // 先从 active 栈让位，但保留注册直到动画结束，确保滚动锁和背景隔离不会提前释放。
   const generation = dialogSession.invalidateAttempt();
   closePending = activeDocument !== null || dialogSession.hasLockedTeleportTarget();
 

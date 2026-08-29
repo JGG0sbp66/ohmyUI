@@ -9,6 +9,7 @@ export interface ScrollLockController {
 }
 
 export function createScrollLock(document: Document): ScrollLockController {
+  // controller 按 Document 复用；引用计数保证嵌套 Dialog 不会提前恢复 body 滚动。
   let count = 0;
   let bodyStyleSnapshot: BodyStyleSnapshot | undefined;
 
