@@ -13,7 +13,9 @@ import CardsPage from "./views/cards/Cards.page.vue";
 import HueControl from "./views/components/HueControl.vue";
 import ModeControl from "./views/components/ModeControl.vue";
 import ControlsPage from "./views/controls/Controls.page.vue";
+import FeedbackPage from "./views/feedback/Feedback.page.vue";
 import InputsPage from "./views/inputs/Inputs.page.vue";
+import NavigationPage from "./views/navigation/Navigation.page.vue";
 import OverlaysPage from "./views/overlays/Overlays.page.vue";
 import TagsPage from "./views/tags/Tags.page.vue";
 import TokensPage from "./views/tokens/Tokens.page.vue";
@@ -24,8 +26,10 @@ const PAGES = [
   { key: "buttons", label: "按钮", component: ButtonsPage },
   { key: "controls", label: "控件", component: ControlsPage },
   { key: "inputs", label: "输入框", component: InputsPage },
+  { key: "navigation", label: "导航", component: NavigationPage },
   { key: "cards", label: "卡片", component: CardsPage },
   { key: "tags", label: "标签", component: TagsPage },
+  { key: "feedback", label: "反馈", component: FeedbackPage },
   { key: "overlays", label: "浮层", component: OverlaysPage },
 ] as const;
 
@@ -48,20 +52,31 @@ const activePage = () => PAGES.find((page) => page.key === activeKey.value)!.com
 
         <HueControl class="mt-8" />
 
-        <!-- nav 跟随 root mode；只有 SpecimenPair 内部保留显式浅深 scope -->
-        <nav class="mt-10 flex gap-1 border-b border-border/40" aria-label="预览页面">
-          <!-- pb-2 撑出按钮与分隔线之间的空隙，指示器 bottom-0 正好落在分隔线上 -->
-          <div v-for="page in PAGES" :key="page.key" class="relative flex items-center pb-2">
-            <ButtonSecondary
-              :text="page.label"
-              :is-active="activeKey === page.key"
-              @click="activeKey = page.key"
-            />
-            <!-- 绝对定位：不占按钮高度，也不影响兄弟元素布局 -->
+        <!-- 分类增多后保持单行横滑；焦点进入屏外按钮时浏览器会自动滚入。 -->
+        <nav
+          class="mt-10 overflow-x-auto overscroll-x-contain border-b border-border/40"
+          aria-label="预览页面"
+        >
+          <div class="flex min-w-max gap-1">
+            <!-- pb-2 撑出按钮与分隔线之间的空隙，指示器 bottom-0 正好落在分隔线上 -->
             <div
-              class="absolute right-1 bottom-0 left-1 h-0.75 rounded-t-sm bg-accent transition-opacity"
-              :class="activeKey === page.key ? 'opacity-100' : 'opacity-0'"
-            />
+              v-for="page in PAGES"
+              :key="page.key"
+              class="relative flex shrink-0 items-center pb-2"
+            >
+              <ButtonSecondary
+                :text="page.label"
+                :is-active="activeKey === page.key"
+                :aria-current="activeKey === page.key ? 'page' : undefined"
+                class="whitespace-nowrap"
+                @click="activeKey = page.key"
+              />
+              <!-- 绝对定位：不占按钮高度，也不影响兄弟元素布局 -->
+              <div
+                class="absolute right-1 bottom-0 left-1 h-0.75 rounded-t-sm bg-accent transition-opacity"
+                :class="activeKey === page.key ? 'opacity-100' : 'opacity-0'"
+              />
+            </div>
           </div>
         </nav>
       </header>
