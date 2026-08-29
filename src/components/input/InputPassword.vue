@@ -10,6 +10,8 @@ defineOptions({ inheritAttrs: false });
 interface Props {
   disabled?: boolean;
   readonly?: boolean;
+  /** 仅在 readonly 时，点击会复制当前密码；默认关闭以避免意外暴露明文。 */
+  copyOnClick?: boolean;
   required?: boolean;
   invalid?: boolean;
   /** 需要直接调整原生 input 时使用。 */
@@ -23,12 +25,18 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   readonly: false,
+  copyOnClick: false,
   required: false,
   invalid: false,
   inputClass: undefined,
   showPasswordLabel: "显示密码",
   hidePasswordLabel: "隐藏密码",
 });
+
+const emit = defineEmits<{
+  "copy-success": [value: string];
+  "copy-error": [error: unknown];
+}>();
 
 const model = defineModel<string>({ default: "" });
 const passwordVisible = ref(false);
@@ -50,6 +58,14 @@ const togglePasswordVisible = () => {
   passwordVisible.value = !passwordVisible.value;
 };
 
+const handleCopySuccess = (value: string) => {
+  emit("copy-success", value);
+};
+
+const handleCopyError = (error: unknown) => {
+  emit("copy-error", error);
+};
+
 defineSlots<{
   prefix?(): unknown;
   suffix?(): unknown;
@@ -65,9 +81,12 @@ defineSlots<{
     :type="effectiveType"
     :disabled="props.disabled"
     :readonly="props.readonly"
+    :copy-on-click="props.copyOnClick"
     :required="props.required"
     :invalid="props.invalid"
     :input-class="['input-password__control pr-2', props.inputClass]"
+    @copy-success="handleCopySuccess"
+    @copy-error="handleCopyError"
   >
     <template v-if="$slots.prefix" #prefix>
       <slot name="prefix" />

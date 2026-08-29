@@ -43,10 +43,13 @@ const INPUT_TEXT_PROPS = [
     "文本型原生 input 类型",
   ],
   ["disabled", "boolean", "false", "原生禁用状态"],
-  ["readonly", "boolean", "false", "原生只读状态"],
+  ["readonly", "boolean", "false", "原生只读状态；本身不会改写剪贴板"],
+  ["copyOnClick", "boolean", "false", "仅在 readonly 时点击全选并尝试复制展示值"],
   ["required", "boolean", "false", "原生必填状态"],
   ["invalid", "boolean", "false", "错误视觉与 aria-invalid"],
   ["inputClass", "HTMLAttributes['class']", "未传", "直接调整内部原生 input"],
+  ["@copy-success", "(value: string) => void", "—", "写入剪贴板成功后触发"],
+  ["@copy-error", "(error: unknown) => void", "—", "剪贴板不可用或写入被拒绝时触发"],
   ["#prefix", "slot", "—", "输入区域前置内容，不进入 modelValue"],
   ["#suffix", "slot", "—", "输入区域尾部内容，不进入 modelValue"],
 ] as const;
@@ -54,21 +57,27 @@ const INPUT_TEXT_PROPS = [
 const INPUT_PASSWORD_PROPS = [
   ["disabled", "boolean", "false", "禁用输入框与显隐按钮，并恢复密文"],
   ["readonly", "boolean", "false", "只读状态保持密文且不显示显隐按钮"],
+  ["copyOnClick", "boolean", "false", "仅在 readonly 时复制当前密码；敏感值应谨慎启用"],
   ["required", "boolean", "false", "原生必填状态"],
   ["invalid", "boolean", "false", "错误视觉与 aria-invalid"],
   ["inputClass", "HTMLAttributes['class']", "未传", "直接调整内部原生 input"],
   ["showPasswordLabel", "string", '"显示密码"', "密文状态下按钮的无障碍名称"],
   ["hidePasswordLabel", "string", '"隐藏密码"', "明文状态下按钮的无障碍名称"],
+  ["@copy-success", "(value: string) => void", "—", "写入剪贴板成功后触发"],
+  ["@copy-error", "(error: unknown) => void", "—", "剪贴板不可用或写入被拒绝时触发"],
 ] as const;
 
 const INPUT_TEXTAREA_PROPS = [
   ["rows", "number", "4", "原生 textarea 可见行数"],
   ["resize", '"none" | "vertical"', '"none"', "是否允许垂直调整高度"],
   ["disabled", "boolean", "false", "原生禁用状态"],
-  ["readonly", "boolean", "false", "原生只读状态"],
+  ["readonly", "boolean", "false", "原生只读状态；本身不会改写剪贴板"],
+  ["copyOnClick", "boolean", "false", "仅在 readonly 时点击全选并尝试复制展示值"],
   ["required", "boolean", "false", "原生必填状态"],
   ["invalid", "boolean", "false", "错误视觉与 aria-invalid"],
   ["textareaClass", "HTMLAttributes['class']", "未传", "直接调整内部原生 textarea"],
+  ["@copy-success", "(value: string) => void", "—", "写入剪贴板成功后触发"],
+  ["@copy-error", "(error: unknown) => void", "—", "剪贴板不可用或写入被拒绝时触发"],
 ] as const;
 
 const INPUT_NUMBER_PROPS = [
@@ -77,10 +86,13 @@ const INPUT_NUMBER_PROPS = [
   ["max", "number", "未传", "原生最大值，不自动截断"],
   ["step", 'number | "any"', "1", "原生步进规则"],
   ["disabled", "boolean", "false", "原生禁用状态"],
-  ["readonly", "boolean", "false", "原生只读状态"],
+  ["readonly", "boolean", "false", "原生只读状态；本身不会改写剪贴板"],
+  ["copyOnClick", "boolean", "false", "仅在 readonly 时点击并尝试复制展示值"],
   ["required", "boolean", "false", "原生必填状态"],
   ["invalid", "boolean", "false", "错误视觉与 aria-invalid"],
   ["inputClass", "HTMLAttributes['class']", "未传", "直接调整内部原生 input"],
+  ["@copy-success", "(value: string) => void", "—", "写入剪贴板成功后触发"],
+  ["@copy-error", "(error: unknown) => void", "—", "剪贴板不可用或写入被拒绝时触发"],
 ] as const;
 
 const INPUT_SEARCH_API = [
@@ -88,11 +100,14 @@ const INPUT_SEARCH_API = [
   ["width", "HTMLAttributes['class']", '"max-w-56"', "完整搜索框的宽度 class"],
   ["disabled", "boolean", "false", "禁用输入与清空按钮"],
   ["readonly", "boolean", "false", "只读输入并隐藏清空按钮"],
+  ["copyOnClick", "boolean", "false", "仅在 readonly 时点击全选并尝试复制搜索词"],
   ["required", "boolean", "false", "原生必填状态"],
   ["invalid", "boolean", "false", "错误视觉与 aria-invalid"],
   ["inputClass", "HTMLAttributes['class']", "未传", "直接调整内部原生 input"],
   ["clearLabel", "string", '"清空搜索"', "清空按钮的 title 与无障碍名称"],
   ["@search", "(value: string) => void", "—", "按 Enter 或清空时触发"],
+  ["@copy-success", "(value: string) => void", "—", "写入剪贴板成功后触发"],
+  ["@copy-error", "(error: unknown) => void", "—", "剪贴板不可用或写入被拒绝时触发"],
 ] as const;
 
 const INPUT_FIELD_PROPS = [
@@ -202,9 +217,17 @@ const INPUT_FIELD_PROPS = [
 
         <SpecimenCase label="受限状态" class="mt-5">
           <div class="space-y-5">
-            <InputField label="站点地址">
+            <InputField
+              label="站点地址"
+              description="已显式启用 copyOnClick；点击只读内容会全选并尝试复制。"
+            >
               <template #default="{ controlAttrs }">
-                <InputText v-bind="controlAttrs" model-value="https://example.com" readonly />
+                <InputText
+                  v-bind="controlAttrs"
+                  model-value="https://example.com"
+                  readonly
+                  copy-on-click
+                />
               </template>
             </InputField>
 
@@ -217,7 +240,7 @@ const INPUT_FIELD_PROPS = [
         </SpecimenCase>
       </SpecimenPair>
 
-      <ApiTable caption="InputText Props and Slots" :rows="INPUT_TEXT_PROPS" />
+      <ApiTable caption="InputText Props, Events and Slots" :rows="INPUT_TEXT_PROPS" />
     </ComponentDocsSection>
 
     <ComponentDocsSection title="InputPassword" class="mt-16">
@@ -282,7 +305,7 @@ const INPUT_FIELD_PROPS = [
         </SpecimenCase>
       </SpecimenPair>
 
-      <ApiTable caption="InputPassword Props" :rows="INPUT_PASSWORD_PROPS" />
+      <ApiTable caption="InputPassword Props and Events" :rows="INPUT_PASSWORD_PROPS" />
     </ComponentDocsSection>
 
     <ComponentDocsSection title="InputTextarea" class="mt-16">
@@ -348,7 +371,7 @@ const INPUT_FIELD_PROPS = [
         </SpecimenCase>
       </SpecimenPair>
 
-      <ApiTable caption="InputTextarea Props" :rows="INPUT_TEXTAREA_PROPS" />
+      <ApiTable caption="InputTextarea Props and Events" :rows="INPUT_TEXTAREA_PROPS" />
     </ComponentDocsSection>
 
     <ComponentDocsSection title="InputNumber" class="mt-16">
@@ -419,7 +442,7 @@ const INPUT_FIELD_PROPS = [
         </SpecimenCase>
       </SpecimenPair>
 
-      <ApiTable caption="InputNumber Props" :rows="INPUT_NUMBER_PROPS" />
+      <ApiTable caption="InputNumber Props and Events" :rows="INPUT_NUMBER_PROPS" />
     </ComponentDocsSection>
 
     <ComponentDocsSection title="InputSearch" class="mt-16">

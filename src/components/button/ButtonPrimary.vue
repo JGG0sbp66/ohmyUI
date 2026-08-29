@@ -5,17 +5,20 @@ import Loading from "../feedback/Loading.vue";
 const props = withDefaults(
   defineProps<{
     text: string;
-    /** 加载中：显示指示器并禁用点击 */
+    /** 加载中：显示指示器并禁用点击。 */
     loading?: boolean;
+    /** loading 时追加到可访问名称并由 live region 宣告。 */
+    loadingLabel?: string;
     disabled?: boolean;
-    /** 破坏性操作：删除、清空这类不可逆动作 */
+    /** 破坏性操作：删除、清空这类不可逆动作。 */
     danger?: boolean;
-    /** 撑满父容器宽度 */
+    /** 撑满父容器宽度。 */
     block?: boolean;
     type?: "button" | "submit" | "reset";
   }>(),
   {
     loading: false,
+    loadingLabel: "加载中",
     disabled: false,
     danger: false,
     block: false,
@@ -44,6 +47,7 @@ const BASE = `
   <button
     :type="props.type"
     :disabled="props.disabled || props.loading"
+    :aria-busy="props.loading ? 'true' : undefined"
     :class="[
       BASE,
       props.block ? 'flex w-full' : 'inline-flex',
@@ -60,6 +64,9 @@ const BASE = `
     </Transition>
 
     <span class="relative z-10 truncate">{{ props.text }}</span>
+    <span role="status" aria-live="polite" aria-atomic="true" class="sr-only">
+      {{ props.loading ? props.loadingLabel : "" }}
+    </span>
   </button>
 </template>
 

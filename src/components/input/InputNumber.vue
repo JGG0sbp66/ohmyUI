@@ -4,6 +4,7 @@ import { ref, watch } from "vue";
 import type { HTMLAttributes } from "vue";
 
 import InputControlFrame from "./internal/InputControlFrame.vue";
+import { selectAndCopyReadonlyControl } from "./internal/readonly-copy";
 
 defineOptions({ inheritAttrs: false });
 
@@ -19,6 +20,8 @@ interface Props {
   step?: NumberStep;
   disabled?: boolean;
   readonly?: boolean;
+  /** 仅在 readonly 时，点击会尝试复制当前展示值。 */
+  copyOnClick?: boolean;
   required?: boolean;
   /** 只控制错误视觉与 aria-invalid；范围错误文案由调用方决定。 */
   invalid?: boolean;
@@ -34,10 +37,16 @@ const props = withDefaults(defineProps<Props>(), {
   step: 1,
   disabled: false,
   readonly: false,
+  copyOnClick: false,
   required: false,
   invalid: false,
   inputClass: undefined,
 });
+
+const emit = defineEmits<{
+  "copy-success": [value: string];
+  "copy-error": [error: unknown];
+}>();
 
 const model = defineModel<number | null>({ default: null });
 
@@ -81,6 +90,15 @@ const handleBlur = () => {
   lastEmittedValue = undefined;
   draft.value = formatModelValue(model.value);
 };
+
+const handleReadonlyClick = (event: MouseEvent) => {
+  if (!props.readonly || !props.copyOnClick || props.disabled) return;
+
+  void selectAndCopyReadonlyControl(event, {
+    onSuccess: (value) => emit("copy-success", value),
+    onError: (error) => emit("copy-error", error),
+  });
+};
 </script>
 
 <template>
@@ -105,12 +123,14 @@ const handleBlur = () => {
       :class="[
         'min-h-10 w-full bg-transparent px-4 py-2.5 text-sm font-medium outline-none placeholder:text-fg-soft',
         props.disabled ? 'cursor-not-allowed' : '',
-        props.readonly ? 'select-all' : '',
+        props.readonly && !props.disabled && props.copyOnClick ? 'cursor-copy select-all' : '',
+        props.readonly && !props.disabled && !props.copyOnClick ? 'cursor-text' : '',
         props.inputClass,
       ]"
       @input="handleInput"
       @focus="handleFocus"
       @blur="handleBlur"
+      @click="handleReadonlyClick"
     />
   </InputControlFrame>
 </template>

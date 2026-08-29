@@ -1,6 +1,6 @@
 <!-- src/components/overlay/tooltip/Tooltip.vue -->
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref, useId, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, shallowRef, useId, watch } from "vue";
 import type { ComponentPublicInstance, CSSProperties, HTMLAttributes } from "vue";
 
 import { registerDismissableLayer } from "../internal/dismissable-layer";
@@ -59,6 +59,7 @@ const tooltipId = `tooltip-${useId()}`;
 const tooltipLayerId = Symbol("ohmyui-tooltip");
 const triggerElement = ref<HTMLElement | null>(null);
 const tooltipElement = ref<HTMLElement | null>(null);
+const teleportTarget = shallowRef<string | HTMLElement>("body");
 const hovered = ref(false);
 const focused = ref(false);
 const pinned = ref(false);
@@ -73,6 +74,10 @@ let openTimer: ReturnType<typeof setTimeout> | undefined;
 let closeTimer: ReturnType<typeof setTimeout> | undefined;
 let resizeObserver: ResizeObserver | undefined;
 let unregisterDismissableLayer: (() => void) | undefined;
+let activeDocument: Document | null = null;
+let activeWindow: Window | null = null;
+let activationGeneration = 0;
+let disposed = false;
 
 const isOpen = computed(
   () =>
@@ -91,6 +96,27 @@ const arrowStyle = computed<CSSProperties>(() => ({
   transform: "translateX(-50%) rotate(45deg)",
 }));
 
+function isHtmlElement(value: unknown): value is HTMLElement {
+  if (!value || typeof value !== "object") return false;
+  const element = value as Element;
+  if (
+    element.nodeType !== 1 ||
+    element.namespaceURI !== "http://www.w3.org/1999/xhtml" ||
+    !element.ownerDocument
+  ) {
+    return false;
+  }
+
+  const HTMLElementConstructor = element.ownerDocument.defaultView?.HTMLElement;
+  return HTMLElementConstructor ? value instanceof HTMLElementConstructor : true;
+}
+
+function isNodeForDocument(value: unknown, document: Document): value is Node {
+  const NodeConstructor = document.defaultView?.Node;
+  if (NodeConstructor) return value instanceof NodeConstructor;
+  return Boolean(value && typeof value === "object" && "nodeType" in value);
+}
+
 const clearOpenTimer = () => {
   if (openTimer === undefined) return;
   clearTimeout(openTimer);
@@ -108,24 +134,41 @@ const clearTimers = () => {
   clearCloseTimer();
 };
 
-const setTriggerRef = (target: TriggerTarget) => {
-  if (target instanceof HTMLElement) {
-    triggerElement.value = target;
-    return;
-  }
+function resolveTriggerRealm(): { document: Document; window: Window } | null {
+  const document = triggerElement.value?.ownerDocument;
+  const window = document?.defaultView;
+  return document && window ? { document, window } : null;
+}
 
+function syncTeleportTarget(): void {
+  const body = triggerElement.value?.ownerDocument.body;
+  if (body && teleportTarget.value !== body) teleportTarget.value = body;
+}
+
+const setTriggerRef = (target: TriggerTarget) => {
   const componentElement = target && "$el" in target ? target.$el : null;
-  triggerElement.value = componentElement instanceof HTMLElement ? componentElement : null;
+  const nextTrigger = isHtmlElement(target)
+    ? target
+    : isHtmlElement(componentElement)
+      ? componentElement
+      : null;
+  const changed = triggerElement.value !== nextTrigger;
+
+  triggerElement.value = nextTrigger;
+  syncTeleportTarget();
+  if (changed && isOpen.value) void activatePositionTracking();
 };
 
 const openFromHover = () => {
   if (props.disabled) return;
+  syncTeleportTarget();
   dismissedWhileFocused.value = false;
   hovered.value = true;
 };
 
 const handlePointerEnter = (event: PointerEvent) => {
   if (event.pointerType === "touch" || props.disabled) return;
+  syncTeleportTarget();
   clearCloseTimer();
   clearOpenTimer();
 
@@ -154,6 +197,7 @@ const handlePointerLeave = (event: PointerEvent) => {
 
 const handleFocus = () => {
   if (props.disabled) return;
+  syncTeleportTarget();
   clearTimers();
   dismissedWhileFocused.value = false;
   focused.value = true;
@@ -166,6 +210,7 @@ const handleBlur = () => {
 
 const handleClick = () => {
   if (!props.openOnClick || props.disabled) return;
+  syncTeleportTarget();
 
   if (pinned.value) {
     pinned.value = false;
@@ -186,8 +231,9 @@ const dismiss = () => {
 };
 
 const handleDocumentPointerDown = (event: PointerEvent) => {
+  const document = activeDocument;
   const target = event.target;
-  if (!(target instanceof Node)) return;
+  if (!document || !isNodeForDocument(target, document)) return;
   if (triggerElement.value?.contains(target) || tooltipElement.value?.contains(target)) return;
   dismiss();
 };
@@ -207,10 +253,17 @@ const updateThemeScope = () => {
 const clamp = (value: number, minimum: number, maximum: number) =>
   Math.min(Math.max(value, minimum), maximum);
 
-const updatePosition = () => {
+function updatePosition(): void {
   const trigger = triggerElement.value;
   const tooltip = tooltipElement.value;
-  if (!isOpen.value || !trigger || !tooltip) return;
+  const document = trigger?.ownerDocument;
+  const window = document?.defaultView;
+  if (!isOpen.value || !trigger || !tooltip || !document || !window) return;
+
+  if (tooltip.ownerDocument !== document || (activeDocument && activeDocument !== document)) {
+    void activatePositionTracking();
+    return;
+  }
 
   updateThemeScope();
 
@@ -250,20 +303,24 @@ const updatePosition = () => {
   resolvedPlacement.value = placement;
   position.value = { top, left, arrowLeft };
   positioned.value = true;
-};
+}
 
-const stopPositionTracking = () => {
-  window.removeEventListener("resize", updatePosition);
-  window.removeEventListener("scroll", updatePosition, true);
-  document.removeEventListener("pointerdown", handleDocumentPointerDown);
+function stopPositionTracking(): void {
+  activeWindow?.removeEventListener("resize", updatePosition);
+  activeWindow?.removeEventListener("scroll", updatePosition, true);
+  activeDocument?.removeEventListener("pointerdown", handleDocumentPointerDown);
+  activeDocument = null;
+  activeWindow = null;
+
   unregisterDismissableLayer?.();
   unregisterDismissableLayer = undefined;
   resizeObserver?.disconnect();
   resizeObserver = undefined;
-};
+}
 
-const startPositionTracking = () => {
-  stopPositionTracking();
+function startPositionTracking(document: Document, window: Window): void {
+  activeDocument = document;
+  activeWindow = window;
   window.addEventListener("resize", updatePosition);
   window.addEventListener("scroll", updatePosition, true);
   unregisterDismissableLayer = registerDismissableLayer(document, {
@@ -292,12 +349,50 @@ const startPositionTracking = () => {
     document.addEventListener("pointerdown", handleDocumentPointerDown);
   }
 
-  if (typeof ResizeObserver !== "undefined") {
-    resizeObserver = new ResizeObserver(updatePosition);
-    if (triggerElement.value) resizeObserver.observe(triggerElement.value);
-    if (tooltipElement.value) resizeObserver.observe(tooltipElement.value);
+  type ResizeObserverWindow = Window & {
+    ResizeObserver?: new (callback: ResizeObserverCallback) => ResizeObserver;
+  };
+  const ResizeObserverConstructor = (window as ResizeObserverWindow).ResizeObserver;
+  if (ResizeObserverConstructor) {
+    const observer = new ResizeObserverConstructor(updatePosition);
+    resizeObserver = observer;
+    if (triggerElement.value) observer.observe(triggerElement.value);
+    if (tooltipElement.value) observer.observe(tooltipElement.value);
   }
-};
+}
+
+async function activatePositionTracking(): Promise<void> {
+  const generation = ++activationGeneration;
+  stopPositionTracking();
+
+  const trigger = triggerElement.value;
+  const realm = resolveTriggerRealm();
+  const body = realm?.document.body;
+  if (!isOpen.value || !trigger || !realm || !body) return;
+
+  teleportTarget.value = body;
+  updateThemeScope();
+  positioned.value = false;
+  await nextTick();
+
+  const tooltip = tooltipElement.value;
+  if (
+    disposed ||
+    generation !== activationGeneration ||
+    !isOpen.value ||
+    triggerElement.value !== trigger
+  ) {
+    return;
+  }
+
+  if (trigger.ownerDocument !== realm.document || tooltip?.ownerDocument !== realm.document) {
+    void activatePositionTracking();
+    return;
+  }
+
+  updatePosition();
+  startPositionTracking(realm.document, realm.window);
+}
 
 const triggerAttrs = computed<TooltipTriggerAttrs>(() => ({
   ref: setTriggerRef,
@@ -311,19 +406,16 @@ const triggerAttrs = computed<TooltipTriggerAttrs>(() => ({
 
 watch(
   isOpen,
-  async (open) => {
+  (open) => {
     emit("open-change", open);
 
     if (!open) {
+      activationGeneration += 1;
       stopPositionTracking();
       return;
     }
 
-    positioned.value = false;
-    await nextTick();
-    if (!isOpen.value) return;
-    updatePosition();
-    startPositionTracking();
+    void activatePositionTracking();
   },
   { flush: "post" },
 );
@@ -332,8 +424,10 @@ watch(
   () => [props.content, props.placement, props.offset],
   async () => {
     if (!isOpen.value) return;
+    const generation = activationGeneration;
     positioned.value = false;
     await nextTick();
+    if (generation !== activationGeneration || !isOpen.value) return;
     updatePosition();
   },
   { flush: "post" },
@@ -349,6 +443,8 @@ watch(
 );
 
 onBeforeUnmount(() => {
+  disposed = true;
+  activationGeneration += 1;
   clearTimers();
   stopPositionTracking();
 });
@@ -357,7 +453,7 @@ onBeforeUnmount(() => {
 <template>
   <slot name="trigger" :attrs="triggerAttrs" :open="isOpen" />
 
-  <Teleport to="body">
+  <Teleport :to="teleportTarget">
     <Transition
       enter-active-class="transition-[opacity,scale] duration-100 motion-reduce:transition-none"
       enter-from-class="scale-95 opacity-0"

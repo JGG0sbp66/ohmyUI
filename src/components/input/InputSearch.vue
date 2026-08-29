@@ -15,6 +15,8 @@ interface Props {
   width?: HTMLAttributes["class"];
   disabled?: boolean;
   readonly?: boolean;
+  /** 仅在 readonly 时，点击会全选并尝试复制当前搜索词。 */
+  copyOnClick?: boolean;
   required?: boolean;
   invalid?: boolean;
   /** 需要直接调整原生 input 时使用。 */
@@ -29,6 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
   width: "max-w-56",
   disabled: false,
   readonly: false,
+  copyOnClick: false,
   required: false,
   invalid: false,
   inputClass: undefined,
@@ -37,6 +40,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   search: [value: string];
+  "copy-success": [value: string];
+  "copy-error": [error: unknown];
 }>();
 
 const model = defineModel<string>({ default: "" });
@@ -50,6 +55,14 @@ const clearSearch = () => {
   if (props.disabled || props.readonly) return;
   model.value = "";
   emit("search", "");
+};
+
+const handleCopySuccess = (value: string) => {
+  emit("copy-success", value);
+};
+
+const handleCopyError = (error: unknown) => {
+  emit("copy-error", error);
 };
 
 defineSlots<{
@@ -68,10 +81,13 @@ defineSlots<{
     :style="props.style"
     :disabled="props.disabled"
     :readonly="props.readonly"
+    :copy-on-click="props.copyOnClick"
     :required="props.required"
     :invalid="props.invalid"
     :input-class="['input-search__control min-w-0 px-2 font-normal', props.inputClass]"
     @keydown="handleKeydown"
+    @copy-success="handleCopySuccess"
+    @copy-error="handleCopyError"
   >
     <template #prefix>
       <span

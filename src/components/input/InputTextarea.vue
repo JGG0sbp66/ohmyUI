@@ -3,6 +3,7 @@
 import type { HTMLAttributes } from "vue";
 
 import InputControlFrame from "./internal/InputControlFrame.vue";
+import { selectAndCopyReadonlyControl } from "./internal/readonly-copy";
 
 defineOptions({ inheritAttrs: false });
 
@@ -18,6 +19,8 @@ interface Props {
   resize?: TextareaResize;
   disabled?: boolean;
   readonly?: boolean;
+  /** 仅在 readonly 时，点击会全选并尝试复制当前展示值。 */
+  copyOnClick?: boolean;
   required?: boolean;
   /** 只控制错误视觉与 aria-invalid；错误文案由 InputField 渲染。 */
   invalid?: boolean;
@@ -32,12 +35,27 @@ const props = withDefaults(defineProps<Props>(), {
   resize: "none",
   disabled: false,
   readonly: false,
+  copyOnClick: false,
   required: false,
   invalid: false,
   textareaClass: undefined,
 });
 
+const emit = defineEmits<{
+  "copy-success": [value: string];
+  "copy-error": [error: unknown];
+}>();
+
 const model = defineModel<string>({ default: "" });
+
+const handleReadonlyClick = (event: MouseEvent) => {
+  if (!props.readonly || !props.copyOnClick || props.disabled) return;
+
+  void selectAndCopyReadonlyControl(event, {
+    onSuccess: (value) => emit("copy-success", value),
+    onError: (error) => emit("copy-error", error),
+  });
+};
 </script>
 
 <template>
@@ -60,8 +78,11 @@ const model = defineModel<string>({ default: "" });
         'min-h-10 w-full bg-transparent px-4 py-2.5 text-sm leading-relaxed font-medium outline-none placeholder:text-fg-soft',
         props.resize === 'vertical' ? 'resize-y' : 'resize-none',
         props.disabled ? 'cursor-not-allowed' : '',
+        props.readonly && !props.disabled && props.copyOnClick ? 'cursor-copy select-all' : '',
+        props.readonly && !props.disabled && !props.copyOnClick ? 'cursor-text' : '',
         props.textareaClass,
       ]"
+      @click="handleReadonlyClick"
     />
   </InputControlFrame>
 </template>

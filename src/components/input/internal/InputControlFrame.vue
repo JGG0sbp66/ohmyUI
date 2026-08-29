@@ -31,7 +31,8 @@ defineSlots<{
   <div
     :class="[
       'flex w-full items-center overflow-hidden rounded-xl border border-transparent bg-bg-muted text-fg transition-shadow',
-      props.disabled || props.readonly ? 'cursor-not-allowed opacity-60' : '',
+      props.disabled ? 'cursor-not-allowed opacity-60' : '',
+      props.readonly && !props.disabled ? 'cursor-text' : '',
       props.invalid ? 'ring-2 ring-danger' : 'focus-within:ring-2 focus-within:ring-accent/30',
       props.rootClass,
     ]"

@@ -28,6 +28,7 @@ const PROPS = {
   ButtonPrimary: [
     ["text", "string", "必填", "按钮文字"],
     ["loading", "boolean", "false", "显示指示器并禁用点击"],
+    ["loadingLabel", "string", '"加载中"', "loading 状态的读屏提示文本"],
     ["disabled", "boolean", "false", "禁用"],
     ["danger", "boolean", "false", "破坏性操作，底色换成危险色"],
     ["block", "boolean", "false", "撑满父容器宽度"],
