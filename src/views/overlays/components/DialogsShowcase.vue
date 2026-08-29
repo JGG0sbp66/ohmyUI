@@ -1,6 +1,6 @@
 <!-- src/views/overlays/components/DialogsShowcase.vue -->
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 
 import ButtonPrimary from "@/components/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/button/ButtonSecondary.vue";
@@ -18,7 +18,6 @@ type Tone = "light" | "dark";
 const modalTone = ref<Tone | null>(null);
 const confirmTone = ref<Tone | null>(null);
 const listTone = ref<Tone | null>(null);
-const expanded = reactive<Record<Tone, boolean>>({ light: false, dark: false });
 
 const CONFIRM_ITEMS = [
   {
@@ -75,11 +74,6 @@ const CONFIRM_LIST_API = [
   ["#item", "{ item, index }", "默认行", "替换整行呈现"],
   ["其余 props / events", "ConfirmDialog", "继承", "标题、危险态、loading 与关闭策略一致"],
 ] as const;
-
-function openModal(tone: Tone): void {
-  expanded[tone] = false;
-  modalTone.value = tone;
-}
 </script>
 
 <template>
@@ -90,8 +84,8 @@ function openModal(tone: Tone): void {
     </template>
 
     <SpecimenPair class="mt-6" v-slot="{ tone }">
-      <SpecimenCase label="局部主题与动态高度" class="mt-4">
-        <ButtonSecondary text="打开基础弹窗" @click="openModal(tone)" />
+      <SpecimenCase label="局部主题" class="mt-4">
+        <ButtonSecondary text="打开基础弹窗" @click="modalTone = tone" />
 
         <Modal
           :model-value="modalTone === tone"
@@ -106,21 +100,6 @@ function openModal(tone: Tone): void {
             这个弹窗从 {{ tone === "light" ? "浅色" : "深色" }} 展示区触发，Teleport 到 body
             后仍保留触发器所在主题。
           </p>
-          <div
-            v-if="expanded[tone]"
-            :id="`dialog-height-details-${tone}`"
-            class="mt-4 rounded-xl bg-bg-muted p-4 text-xs/5 text-fg-muted"
-          >
-            内容高度变化时，外壳与内容会使用协调的布局过渡。
-          </div>
-          <ButtonSecondary
-            class="mt-4"
-            :text="expanded[tone] ? '收起补充内容' : '展开补充内容'"
-            :aria-expanded="expanded[tone]"
-            :aria-controls="`dialog-height-details-${tone}`"
-            @click="expanded[tone] = !expanded[tone]"
-          />
-
           <template #footer="{ close }">
             <ButtonSecondary data-modal-cancel text="取消" class="min-w-24" @click="close" />
             <ButtonPrimary text="完成" class="min-w-24" @click="close" />

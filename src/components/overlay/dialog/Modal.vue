@@ -1,6 +1,6 @@
 <!-- src/components/overlay/dialog/Modal.vue -->
 <script setup lang="ts">
-import { computed, ref, useId, useSlots, watch } from "vue";
+import { computed, useId, useSlots, watch } from "vue";
 import type { HTMLAttributes } from "vue";
 
 import Dialog from "./Dialog.vue";
@@ -10,7 +10,6 @@ import type {
   DialogSize,
   DialogSlotProps,
 } from "./internal/dialog.types";
-import { useModalBodyMotion } from "./internal/use-modal-body-motion";
 
 defineOptions({ inheritAttrs: false });
 
@@ -72,37 +71,15 @@ const resolvedLabelledby = computed(() => props.ariaLabelledby ?? internalTitleI
 const resolvedAriaLabel = computed(() =>
   resolvedLabelledby.value ? undefined : (props.ariaLabel ?? "Dialog"),
 );
-const bodyRef = ref<HTMLElement | null>(null);
-const layoutRootRef = computed(() => bodyRef.value?.parentElement ?? null);
-const bodyMotion = useModalBodyMotion(bodyRef);
-const layoutMotion = useModalBodyMotion(layoutRootRef);
 let warnedAboutMissingName = false;
 
 function handleAfterOpen(): void {
-  bodyMotion.enable();
-  layoutMotion.enable();
   emit("after-open");
 }
 
 function handleAfterClose(): void {
-  bodyMotion.disable();
-  layoutMotion.disable();
   emit("after-close");
 }
-
-watch(
-  () => props.modelValue,
-  (open) => {
-    if (open) {
-      bodyMotion.prepareForOpen();
-      layoutMotion.prepareForOpen();
-    } else {
-      bodyMotion.suspend();
-      layoutMotion.suspend();
-    }
-  },
-  { immediate: true, flush: "sync" },
-);
 
 watch(
   () => props.modelValue,
@@ -154,7 +131,7 @@ watch(
         <slot name="header" :close="close" />
       </div>
 
-      <div ref="bodyRef" class="px-6 py-8">
+      <div class="px-6 py-8">
         <slot :close="close" />
       </div>
 

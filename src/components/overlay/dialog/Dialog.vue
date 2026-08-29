@@ -16,7 +16,6 @@ import type {
   DialogSize,
   DialogSlotProps,
 } from "./internal/dialog.types";
-import { useAutoHeightMotion } from "./internal/use-auto-height-motion";
 
 defineOptions({ inheritAttrs: false });
 
@@ -120,14 +119,12 @@ const dialogId = Symbol("ohmyui-dialog");
 const originRef = ref<HTMLElement | null>(null);
 const backdropRef = ref<HTMLElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
-const contentRef = ref<HTMLElement | null>(null);
 const themeScope = ref<"light" | "dark" | undefined>();
 const dialogDomId = `ohmyui-dialog-${useId()}`;
 const themeStyle = ref<TeleportedThemeStyle>({});
 const interactive = ref(false);
 const stackLayer = ref(70);
 const teleportSessionTarget = shallowRef<string | HTMLElement>();
-const heightMotion = useAutoHeightMotion(panelRef, contentRef);
 
 const widthClass = computed(() => props.maxWidth ?? SIZE_CLASS[props.size]);
 const resolvedTeleportTarget = computed<string | HTMLElement>(
@@ -140,7 +137,6 @@ let openGeneration = 0;
 let registered = false;
 let closePending = false;
 let shouldReturnFocus = false;
-let entranceFinished = false;
 let disposed = false;
 
 function resolveTeleportTargetForSession(): string | HTMLElement {
@@ -339,14 +335,6 @@ function detachDocument(): void {
   document.removeEventListener("focusin", handleDocumentFocusin);
 }
 
-function safelyRunMotion(action: () => void): void {
-  try {
-    action();
-  } catch {
-    // Motion is progressive enhancement; dialog ownership cleanup must continue.
-  }
-}
-
 function transferFocusToNextDialog(
   nextWrapper: HTMLElement | undefined,
   focusNext: (() => void) | undefined,
@@ -403,8 +391,6 @@ async function beginOpen(): Promise<void> {
   lockTeleportSessionTarget();
   closePending = false;
   shouldReturnFocus = false;
-  entranceFinished = false;
-  safelyRunMotion(heightMotion.prepare);
 
   if (!activeDocument) captureReturnFocusTarget();
   const preliminaryDocument = resolveTeleportDocument();
@@ -415,7 +401,7 @@ async function beginOpen(): Promise<void> {
   if (disposed || generation !== openGeneration || !props.modelValue) return;
 
   const wrapper = backdropRef.value;
-  if (!wrapper || !panelRef.value || !contentRef.value) return;
+  if (!wrapper || !panelRef.value) return;
 
   const document = wrapper.ownerDocument;
   moveToDocument(document);
@@ -430,16 +416,12 @@ async function beginOpen(): Promise<void> {
   });
   registered = true;
 
-  safelyRunMotion(heightMotion.start);
-  if (entranceFinished) safelyRunMotion(heightMotion.enable);
   focusInitialElement();
 }
 
 function prepareLeave(): void {
   openGeneration += 1;
   closePending = activeDocument !== null || teleportSessionTarget.value !== undefined;
-  entranceFinished = false;
-  safelyRunMotion(heightMotion.freeze);
 
   if (activeDocument) {
     if (!registered) {
@@ -465,7 +447,6 @@ function prepareLeave(): void {
 function finishClose(emitEvent = true): void {
   if (props.modelValue || !closePending) return;
   closePending = false;
-  safelyRunMotion(heightMotion.reset);
 
   const removal = unregisterActiveDialog();
   if (removal?.wasInteractive && removal.hasNextInteractive) {
@@ -490,8 +471,6 @@ function finishClose(emitEvent = true): void {
 
 function handleAfterEnter(): void {
   if (!props.modelValue) return;
-  entranceFinished = true;
-  safelyRunMotion(heightMotion.enable);
   emit("after-open");
 }
 
@@ -524,7 +503,6 @@ watch(
 onBeforeUnmount(() => {
   disposed = true;
   openGeneration += 1;
-  safelyRunMotion(heightMotion.reset);
 
   const removal = unregisterActiveDialog();
   if (removal?.wasInteractive && removal.hasNextInteractive) {
@@ -581,7 +559,7 @@ onBeforeUnmount(() => {
           ]"
           :style="props.panelStyle"
         >
-          <div ref="contentRef" class="flow-root">
+          <div class="flow-root">
             <slot :close="close" />
           </div>
         </div>
@@ -592,23 +570,23 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .dialog-shell-enter-active {
-  transition: opacity 0.22s cubic-bezier(0.2, 0, 0, 1);
+  transition: opacity 0.15s ease-out;
 }
 
 .dialog-shell-leave-active {
-  transition: opacity 0.16s ease-in;
+  transition: opacity 0.1s ease-in;
 }
 
 .dialog-shell-enter-active .dialog-panel {
   transition:
-    opacity 0.18s ease-out,
-    transform 0.22s cubic-bezier(0.2, 0, 0, 1);
+    opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dialog-shell-leave-active .dialog-panel {
   transition:
-    opacity 0.14s ease-in,
-    transform 0.16s ease-in;
+    opacity 0.12s ease-in,
+    transform 0.12s ease-in;
 }
 
 .dialog-shell-enter-from,
@@ -618,12 +596,12 @@ onBeforeUnmount(() => {
 
 .dialog-shell-enter-from .dialog-panel {
   opacity: 0;
-  transform: translateY(6px) scale(0.96);
+  transform: scale(0.9);
 }
 
 .dialog-shell-leave-to .dialog-panel {
   opacity: 0;
-  transform: translateY(3px) scale(0.98);
+  transform: scale(0.95);
 }
 
 @media (prefers-reduced-motion: reduce) {

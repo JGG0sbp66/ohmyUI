@@ -172,7 +172,7 @@ function cancel(): void {
       <ButtonSecondary
         data-confirm-cancel
         :text="props.cancelText"
-        class="min-w-24 px-2! text-base!"
+        class="min-w-24 px-2! text-base! before:scale-100!"
         @click="cancel"
       />
       <ButtonPrimary
