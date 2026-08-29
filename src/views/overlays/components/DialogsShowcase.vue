@@ -111,7 +111,7 @@ function openModal(tone: Tone): void {
             :id="`dialog-height-details-${tone}`"
             class="mt-4 rounded-xl bg-bg-muted p-4 text-xs/5 text-fg-muted"
           >
-            内容高度变化时，外层面板使用 300ms 高度过渡。
+            内容高度变化时，外壳与内容会使用协调的布局过渡。
           </div>
           <ButtonSecondary
             class="mt-4"
