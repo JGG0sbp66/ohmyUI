@@ -24,19 +24,24 @@ function isFilled(slot?: Slot): boolean {
 }
 
 /*
-  只输出内在样式，不输出宽高 —— 宽高由上下文决定，留给调用方传 h-10 / flex-1 等。
-  isolate + before:-z-10 让背景层沉到内容之下，子元素不必加定位类。
-  过渡内置，不依赖全局基线；时长取 --default-transition-duration。
+  根 button 保持稳定的布局盒与点击热区，方便 Popover 等浮层用它作为锚点。
+  按压缩放只发生在 ::before 背景和内部视觉层，不再改变根元素的 DOMRect。
+  宽高仍由上下文决定；过渡时长继续取 --default-transition-duration。
 */
 const BASE = `
-  relative isolate cursor-pointer items-center gap-2 overflow-hidden
+  group/secondary relative isolate cursor-pointer items-center overflow-hidden
   rounded-lg bg-transparent px-3 py-2 text-sm leading-tight
-  transition-[opacity,scale]
   before:absolute before:inset-0 before:-z-10 before:rounded-[inherit]
   before:bg-bg-muted before:content-[''] before:transition-[opacity,scale]
-  enabled:active:scale-90 enabled:active:opacity-80
+  enabled:active:before:scale-90 enabled:active:before:opacity-80
   disabled:cursor-not-allowed disabled:text-fg-muted disabled:opacity-50
   disabled:before:opacity-0
+`;
+
+const VISUAL = `
+  flex min-w-0 items-center gap-2 transition-[opacity,scale]
+  group-enabled/secondary:group-active/secondary:scale-90
+  group-enabled/secondary:group-active/secondary:opacity-80
 `;
 
 /** 激活是 prop，只能在 JS 里分支；禁用交给 :disabled 伪类 */
@@ -58,10 +63,18 @@ const stateClass = computed(() =>
       props.align === 'start' ? 'justify-start' : 'justify-center',
     ]"
   >
-    <slot></slot>
-    <span>{{ props.text }}</span>
-    <span v-if="isFilled(slots.suffix)" class="ml-auto">
-      <slot name="suffix"></slot>
+    <span
+      :class="[
+        VISUAL,
+        props.block ? 'w-full' : '',
+        props.align === 'start' ? 'justify-start' : 'justify-center',
+      ]"
+    >
+      <slot></slot>
+      <span class="min-w-0 truncate">{{ props.text }}</span>
+      <span v-if="isFilled(slots.suffix)" class="ml-auto shrink-0">
+        <slot name="suffix"></slot>
+      </span>
     </span>
   </button>
 </template>
