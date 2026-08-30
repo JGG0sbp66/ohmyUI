@@ -2,23 +2,26 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 
+import ControlFrame from "../../internal/control/ControlFrame.vue";
+
 defineOptions({ inheritAttrs: false });
 
-interface Props {
-  rootClass?: HTMLAttributes["class"];
-  rootStyle?: HTMLAttributes["style"];
-  disabled?: boolean;
-  readonly?: boolean;
-  invalid?: boolean;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  rootClass: undefined,
-  rootStyle: undefined,
-  disabled: false,
-  readonly: false,
-  invalid: false,
-});
+const props = withDefaults(
+  defineProps<{
+    rootClass?: HTMLAttributes["class"];
+    rootStyle?: HTMLAttributes["style"];
+    disabled?: boolean;
+    readonly?: boolean;
+    invalid?: boolean;
+  }>(),
+  {
+    rootClass: undefined,
+    rootStyle: undefined,
+    disabled: false,
+    readonly: false,
+    invalid: false,
+  },
+);
 
 defineSlots<{
   default(): unknown;
@@ -28,18 +31,16 @@ defineSlots<{
 </script>
 
 <template>
-  <div
-    :class="[
-      'flex w-full items-center overflow-hidden rounded-xl border border-transparent bg-bg-muted text-fg transition-shadow',
-      props.disabled ? 'cursor-not-allowed opacity-60' : '',
-      props.readonly && !props.disabled ? 'cursor-text' : '',
-      props.invalid ? 'ring-2 ring-danger' : 'focus-within:ring-2 focus-within:ring-accent/30',
-      props.rootClass,
-    ]"
-    :style="props.rootStyle"
+  <ControlFrame
+    v-bind="$attrs"
+    :root-class="props.rootClass"
+    :root-style="props.rootStyle"
+    :disabled="props.disabled"
+    :readonly="props.readonly"
+    :invalid="props.invalid"
   >
-    <slot name="prefix" />
+    <template #prefix><slot name="prefix" /></template>
     <slot />
-    <slot name="suffix" />
-  </div>
+    <template #suffix><slot name="suffix" /></template>
+  </ControlFrame>
 </template>
