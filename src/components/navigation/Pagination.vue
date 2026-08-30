@@ -3,6 +3,8 @@
 import { ChevronLeft, ChevronRight } from "@lucide/vue";
 import { computed } from "vue";
 
+import ButtonIcon from "../button/ButtonIcon.vue";
+
 defineOptions({ inheritAttrs: false });
 
 type PaginationItem = number | { type: "ellipsis"; key: string };
@@ -94,40 +96,27 @@ const goTo = (page: number) => {
 
   emit("update:modelValue", page);
 };
-
-const BUTTON_BASE = `
-  relative isolate inline-flex size-10 shrink-0 cursor-pointer items-center justify-center
-  overflow-hidden rounded-full bg-transparent p-0 text-sm font-medium tabular-nums
-  transition-[opacity,scale]
-  before:absolute before:inset-0 before:-z-10 before:scale-90 before:rounded-[inherit]
-  before:bg-bg-muted before:opacity-0 before:content-[''] before:transition-[opacity,scale]
-  enabled:hover:text-fg-subtle enabled:hover:before:scale-100 enabled:hover:before:opacity-100
-  enabled:active:scale-90 enabled:active:opacity-80
-  disabled:cursor-not-allowed disabled:text-fg-muted disabled:opacity-50 disabled:before:opacity-0
-  motion-reduce:transition-none motion-reduce:before:transition-none
-`;
-
-const pageState = (page: number) =>
-  page === current.value ? "text-fg-subtle before:scale-100 before:opacity-100" : "text-fg";
 </script>
 
 <template>
   <nav v-if="total > 1" v-bind="$attrs" :aria-label="props.label">
     <ul class="m-0 flex list-none items-center justify-end gap-1.5 p-0">
       <li>
-        <button
-          type="button"
-          :class="[BUTTON_BASE, 'text-fg-subtle']"
+        <ButtonIcon
+          :label="props.previousLabel"
           :disabled="props.disabled || current <= 1"
-          :aria-label="props.previousLabel"
+          class="group size-10 shrink-0 rounded-full! p-0!"
           @click="goTo(current - 1)"
         >
-          <span aria-hidden="true" class="flex size-5 items-center justify-center">
+          <span
+            aria-hidden="true"
+            class="flex size-5 items-center justify-center text-fg-subtle group-disabled:text-fg-muted"
+          >
             <slot name="previous">
               <ChevronLeft aria-hidden="true" class="size-5" />
             </slot>
           </span>
-        </button>
+        </ButtonIcon>
       </li>
 
       <li :class="props.compact ? 'flex' : 'flex sm:hidden'">
@@ -140,16 +129,17 @@ const pageState = (page: number) =>
 
       <template v-for="item in pages" :key="typeof item === 'number' ? `page-${item}` : item.key">
         <li :class="props.compact ? 'hidden' : 'hidden sm:block'">
-          <button
+          <ButtonIcon
             v-if="typeof item === 'number'"
-            type="button"
-            :class="[BUTTON_BASE, pageState(item)]"
+            :label="String(item)"
+            :is-active="item === current"
             :disabled="props.disabled"
             :aria-current="item === current ? 'page' : undefined"
+            class="size-10 shrink-0 rounded-full! p-0! text-sm font-medium tabular-nums"
             @click="goTo(item)"
           >
             {{ item }}
-          </button>
+          </ButtonIcon>
           <span
             v-else
             aria-hidden="true"
@@ -161,19 +151,21 @@ const pageState = (page: number) =>
       </template>
 
       <li>
-        <button
-          type="button"
-          :class="[BUTTON_BASE, 'text-fg-subtle']"
+        <ButtonIcon
+          :label="props.nextLabel"
           :disabled="props.disabled || current >= total"
-          :aria-label="props.nextLabel"
+          class="group size-10 shrink-0 rounded-full! p-0!"
           @click="goTo(current + 1)"
         >
-          <span aria-hidden="true" class="flex size-5 items-center justify-center">
+          <span
+            aria-hidden="true"
+            class="flex size-5 items-center justify-center text-fg-subtle group-disabled:text-fg-muted"
+          >
             <slot name="next">
               <ChevronRight aria-hidden="true" class="size-5" />
             </slot>
           </span>
-        </button>
+        </ButtonIcon>
       </li>
     </ul>
   </nav>

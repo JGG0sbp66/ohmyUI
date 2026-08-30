@@ -4,7 +4,7 @@ import { computed } from "vue";
 
 const props = withDefaults(
   defineProps<{
-    /** 无障碍名称。图标按钮没有可见文字，读屏器只能靠它，必填 */
+    /** 无障碍名称，始终渲染为 aria-label；纯图标内容必须提供可读名称 */
     label: string;
     isActive?: boolean;
     disabled?: boolean;

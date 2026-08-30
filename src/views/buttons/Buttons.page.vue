@@ -238,9 +238,9 @@ const PROPS = {
     <!-- ButtonIcon -->
     <ComponentDocsSection title="ButtonIcon" class="mt-16">
       <template #description>
-        纯图标按钮，宽高 1:1。靠
+        紧凑型方形按钮，通常承载图标，也可用于分页数字等短内容。宽高 1:1，靠
         <code class="font-mono">aspect-square</code>
-        保证，图标不是正方形也不影响。视觉语言与 ButtonSecondary 一致。
+        保证；图标不是正方形也不影响。视觉语言与 ButtonSecondary 一致。
       </template>
 
       <SpecimenPair class="mt-6">
