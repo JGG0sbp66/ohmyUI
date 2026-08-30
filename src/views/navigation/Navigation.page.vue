@@ -76,7 +76,7 @@ const FILTER_TABS_API = [
   ],
   ["class / style / 原生属性", "透传", "未传", "作用于可横向滚动的 radiogroup 根节点"],
   ["#icon", "slot({ option, selected, disabled })", "option.icon", "替换选项装饰图标"],
-  ["#count", "slot({ option, selected, disabled })", "数字胶囊", "替换已有 count 的呈现"],
+  ["#count", "slot({ option, selected, disabled })", "Tag size=sm", "替换已有 count 的呈现"],
   [
     "@update:modelValue",
     "(value: FilterTabValue) => void",

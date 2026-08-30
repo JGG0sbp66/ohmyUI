@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from "vue";
 
+import Tag from "../tag/Tag.vue";
 import type {
   FilterTabCountVisibility,
   FilterTabOption,
@@ -251,11 +252,9 @@ const BUTTON_BASE = `
               :selected="isSelected(option)"
               :disabled="isDisabled(option)"
             >
-              <span
-                class="rounded-full bg-accent/15 px-1.5 py-0.5 text-[10px] font-medium whitespace-nowrap text-accent tabular-nums"
-              >
+              <Tag tone="accent" size="sm" class="bg-accent/15! whitespace-nowrap tabular-nums">
                 {{ option.count }}
-              </span>
+              </Tag>
             </slot>
           </span>
         </span>
