@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { X } from "@lucide/vue";
 import { computed, onBeforeUnmount, onMounted, ref, useId, useSlots, watch } from "vue";
 
 import ButtonIcon from "../../button/ButtonIcon.vue";
@@ -247,19 +248,7 @@ watch(
                     class="size-9 shrink-0"
                     @click="close"
                   >
-                    <svg
-                      class="size-4"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="M18 6 6 18" />
-                      <path d="m6 6 12 12" />
-                    </svg>
+                    <X aria-hidden="true" class="size-4" />
                   </ButtonIcon>
                 </div>
               </slot>

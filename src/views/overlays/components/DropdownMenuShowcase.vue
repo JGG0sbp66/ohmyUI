@@ -1,5 +1,6 @@
 <!-- src/views/overlays/components/DropdownMenuShowcase.vue -->
 <script setup lang="ts">
+import { ChevronDown } from "@lucide/vue";
 import { reactive, ref } from "vue";
 
 import ButtonSecondary from "@/components/button/ButtonSecondary.vue";
@@ -63,16 +64,7 @@ const DROPDOWN_API = [
           <template #trigger="{ attrs, open }">
             <ButtonSecondary v-bind="attrs" text="文章操作" :is-active="open">
               <template #suffix>
-                <svg
-                  class="size-3.5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  aria-hidden="true"
-                >
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
+                <ChevronDown aria-hidden="true" class="size-3.5" />
               </template>
             </ButtonSecondary>
           </template>

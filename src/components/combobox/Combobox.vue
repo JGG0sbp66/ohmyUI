@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ChevronDown, Search } from "@lucide/vue";
 import {
   computed,
   mergeProps,
@@ -11,8 +12,6 @@ import {
 } from "vue";
 
 import ButtonSecondary from "../button/ButtonSecondary.vue";
-import ChevronDownIcon from "../internal/icon/ChevronDownIcon.vue";
-import SearchIcon from "../internal/icon/SearchIcon.vue";
 import { useAdaptivePresentation } from "../internal/selection/use-adaptive-presentation";
 import BottomSheet from "../overlay/bottom-sheet/BottomSheet.vue";
 import Popover from "../overlay/popover/Popover.vue";
@@ -719,9 +718,10 @@ watch(
       :is-active="open || hasValue"
       :class="launcherClass"
     >
-      <slot name="prefix"><SearchIcon class="size-4 shrink-0" /></slot>
+      <slot name="prefix"><Search aria-hidden="true" class="size-4 shrink-0" /></slot>
       <template #suffix>
-        <ChevronDownIcon
+        <ChevronDown
+          aria-hidden="true"
           class="size-3.5 transition-transform motion-reduce:transition-none"
           :class="open ? 'rotate-180' : ''"
         />

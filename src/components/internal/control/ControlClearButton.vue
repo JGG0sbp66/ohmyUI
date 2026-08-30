@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ClearIcon from "../icon/ClearIcon.vue";
+import { X } from "@lucide/vue";
 
 defineOptions({ inheritAttrs: false });
 
@@ -27,6 +27,6 @@ defineSlots<{ default?(): unknown }>();
     @mousedown.prevent
     @click="emit('clear')"
   >
-    <slot><ClearIcon class="size-4" /></slot>
+    <slot><X aria-hidden="true" class="size-4" /></slot>
   </button>
 </template>

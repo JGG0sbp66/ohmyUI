@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ChevronDown } from "@lucide/vue";
 import {
   computed,
   mergeProps,
@@ -11,7 +12,6 @@ import {
 } from "vue";
 
 import ButtonSecondary from "../../button/ButtonSecondary.vue";
-import ChevronDownIcon from "../../internal/icon/ChevronDownIcon.vue";
 import { useAdaptivePresentation } from "../../internal/selection/use-adaptive-presentation";
 import BottomSheet from "../../overlay/bottom-sheet/BottomSheet.vue";
 import Popover from "../../overlay/popover/Popover.vue";
@@ -258,7 +258,8 @@ watch(
           <path d="M10 18h4" />
         </svg>
         <template #suffix>
-          <ChevronDownIcon
+          <ChevronDown
+            aria-hidden="true"
             class="size-3.5 transition-transform motion-reduce:transition-none"
             :class="open ? 'rotate-180' : ''"
           />
@@ -318,7 +319,8 @@ watch(
         <path d="M10 18h4" />
       </svg>
       <template #suffix>
-        <ChevronDownIcon
+        <ChevronDown
+          aria-hidden="true"
           class="size-3.5 transition-transform motion-reduce:transition-none"
           :class="open ? 'rotate-180' : ''"
         />

@@ -1,5 +1,6 @@
 <!-- src/components/overlay/dialog/ConfirmDialog.vue -->
 <script setup lang="ts">
+import { Info, TriangleAlert } from "@lucide/vue";
 import { computed, useId, useSlots } from "vue";
 
 import ButtonPrimary from "../../button/ButtonPrimary.vue";
@@ -67,22 +68,7 @@ function cancel(): void {
             aria-hidden="true"
             :class="['size-5', resolvedIconClass]"
           />
-          <svg
-            v-else
-            class="size-5"
-            :class="resolvedIconClass"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M21.73 18 13.73 4a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
-            <path d="M12 9v4" />
-            <path d="M12 17h.01" />
-          </svg>
+          <TriangleAlert v-else aria-hidden="true" class="size-5" :class="resolvedIconClass" />
         </slot>
         <h2 class="text-xl font-bold text-fg">
           <slot name="title">{{ props.title }}</slot>
@@ -103,20 +89,7 @@ function cancel(): void {
         :id="warningId"
         class="flex items-center gap-1 text-danger"
       >
-        <svg
-          class="size-3.5 shrink-0"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 16v-4" />
-          <path d="M12 8h.01" />
-        </svg>
+        <Info aria-hidden="true" class="size-3.5 shrink-0" />
         <p class="text-xs">
           <slot name="warning">{{ props.warning }}</slot>
         </p>

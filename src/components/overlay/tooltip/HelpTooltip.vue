@@ -1,5 +1,6 @@
 <!-- src/components/overlay/tooltip/HelpTooltip.vue -->
 <script setup lang="ts">
+import { CircleHelp } from "@lucide/vue";
 import { mergeProps } from "vue";
 import type { HTMLAttributes } from "vue";
 
@@ -54,21 +55,7 @@ defineSlots<{
         :style="props.style"
       >
         <slot name="icon">
-          <svg
-            aria-hidden="true"
-            class="size-3.5 text-accent"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="12" cy="12" r="9" />
-            <path d="M9.75 9a2.4 2.4 0 1 1 3.45 2.16c-.8.42-1.2.8-1.2 1.84" />
-            <path d="M12 17h.01" />
-          </svg>
+          <CircleHelp aria-hidden="true" class="size-3.5 text-accent" />
         </slot>
       </ButtonIcon>
     </template>

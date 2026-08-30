@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Check } from "@lucide/vue";
+
 import type { SelectionDensity } from "./selection.types";
 
 defineOptions({ inheritAttrs: false });
@@ -41,19 +43,12 @@ defineSlots<{
   >
     <slot />
     <slot name="indicator" :selected="props.selected">
-      <svg
+      <Check
         v-if="props.selected"
-        class="size-4 shrink-0 text-accent"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
         aria-hidden="true"
-      >
-        <path d="m5 12 4 4L19 6" />
-      </svg>
+        class="size-4 shrink-0 text-accent"
+        :stroke-width="2.5"
+      />
     </slot>
   </div>
 </template>

@@ -1,7 +1,8 @@
 <!-- src/components/input/InputSearch.vue -->
 <script setup lang="ts">
+import { Search } from "@lucide/vue";
+
 import ControlClearButton from "../internal/control/ControlClearButton.vue";
-import SearchIcon from "../internal/icon/SearchIcon.vue";
 import type { InputSearchEmits, InputSearchProps } from "./input.types";
 import InputText from "./InputText.vue";
 
@@ -72,7 +73,7 @@ defineSlots<{
         aria-hidden="true"
         class="ml-3 size-4 shrink-0 text-fg-soft transition-colors duration-150 group-focus-within/search:text-fg-subtle motion-reduce:transition-none"
       >
-        <slot name="search-icon"><SearchIcon class="size-4" /></slot>
+        <slot name="search-icon"><Search aria-hidden="true" class="size-4" /></slot>
       </span>
     </template>
 

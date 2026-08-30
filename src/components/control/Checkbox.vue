@@ -1,5 +1,7 @@
 <!-- src/components/control/Checkbox.vue -->
 <script setup lang="ts">
+import { Check, Minus } from "@lucide/vue";
+
 const props = withDefaults(
   defineProps<{
     /** 无可见文字控件的无障碍名称 */
@@ -54,34 +56,20 @@ const toggle = () => {
       leave-from-class="opacity-100 scale-100"
       leave-to-class="opacity-0 scale-50"
     >
-      <svg
+      <Check
         v-if="model && !props.indeterminate"
         key="check"
         aria-hidden="true"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="4"
-        stroke-linecap="round"
-        stroke-linejoin="round"
         class="relative h-3 w-3 text-white"
-      >
-        <path d="M20 6 9 17l-5-5" />
-      </svg>
-      <svg
+        :stroke-width="4"
+      />
+      <Minus
         v-else-if="props.indeterminate"
         key="minus"
         aria-hidden="true"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="4"
-        stroke-linecap="round"
-        stroke-linejoin="round"
         class="relative h-3 w-3 text-white"
-      >
-        <path d="M5 12h14" />
-      </svg>
+        :stroke-width="4"
+      />
     </Transition>
   </button>
 </template>

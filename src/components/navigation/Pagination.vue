@@ -1,5 +1,6 @@
 <!-- src/components/navigation/Pagination.vue -->
 <script setup lang="ts">
+import { ChevronLeft, ChevronRight } from "@lucide/vue";
 import { computed } from "vue";
 
 defineOptions({ inheritAttrs: false });
@@ -123,17 +124,7 @@ const pageState = (page: number) =>
         >
           <span aria-hidden="true" class="flex size-5 items-center justify-center">
             <slot name="previous">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="size-5"
-              >
-                <path d="m15 18-6-6 6-6" />
-              </svg>
+              <ChevronLeft aria-hidden="true" class="size-5" />
             </slot>
           </span>
         </button>
@@ -179,17 +170,7 @@ const pageState = (page: number) =>
         >
           <span aria-hidden="true" class="flex size-5 items-center justify-center">
             <slot name="next">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="size-5"
-              >
-                <path d="m9 18 6-6-6-6" />
-              </svg>
+              <ChevronRight aria-hidden="true" class="size-5" />
             </slot>
           </span>
         </button>

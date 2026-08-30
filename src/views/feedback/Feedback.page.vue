@@ -1,5 +1,7 @@
 <!-- src/views/feedback/Feedback.page.vue -->
 <script setup lang="ts">
+import { Users } from "@lucide/vue";
+
 import ButtonSecondary from "@/components/button/ButtonSecondary.vue";
 import EmptyState from "@/components/feedback/EmptyState.vue";
 import Loading from "@/components/feedback/Loading.vue";
@@ -8,7 +10,6 @@ import ApiTable from "../components/ApiTable.vue";
 import ComponentDocsSection from "../components/ComponentDocsSection.vue";
 import SpecimenCase from "../components/SpecimenCase.vue";
 import SpecimenPair from "../components/SpecimenPair.vue";
-import PreviewUsersIcon from "./components/PreviewUsersIcon.vue";
 
 const LOADING_API = [
   [
@@ -76,7 +77,7 @@ const EMPTY_STATE_API = [
         <SpecimenCase label="自定义图标" class="mt-5">
           <EmptyState text="暂无友链，成为第一个！">
             <template #icon>
-              <PreviewUsersIcon class="size-8" />
+              <Users aria-hidden="true" class="size-8" />
             </template>
           </EmptyState>
         </SpecimenCase>

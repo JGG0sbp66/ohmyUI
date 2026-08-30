@@ -1,11 +1,10 @@
 <script setup lang="ts">
+import { ChevronDown, Search } from "@lucide/vue";
 import type { HTMLAttributes } from "vue";
 
 import Loading from "../../feedback/Loading.vue";
 import ControlClearButton from "../../internal/control/ControlClearButton.vue";
 import ControlFrame from "../../internal/control/ControlFrame.vue";
-import ChevronDownIcon from "../../internal/icon/ChevronDownIcon.vue";
-import SearchIcon from "../../internal/icon/SearchIcon.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -62,7 +61,7 @@ defineSlots<{
       aria-hidden="true"
       class="ml-3 size-4 shrink-0 text-fg-soft transition-colors duration-150 group-focus-within/combobox:text-fg-subtle motion-reduce:transition-none"
     >
-      <slot name="prefix"><SearchIcon class="size-4" /></slot>
+      <slot name="prefix"><Search aria-hidden="true" class="size-4" /></slot>
     </span>
 
     <input
@@ -93,7 +92,8 @@ defineSlots<{
       <template v-if="$slots['clear-icon']" #default><slot name="clear-icon" /></template>
     </ControlClearButton>
 
-    <ChevronDownIcon
+    <ChevronDown
+      aria-hidden="true"
       class="mr-3 size-3.5 shrink-0 text-fg-soft transition-transform motion-reduce:transition-none"
       :class="props.expanded ? 'rotate-180' : ''"
     />

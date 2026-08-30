@@ -1,6 +1,7 @@
 <!-- src/views/buttons/Buttons.page.vue -->
 <!-- 按钮类组件展示。新增组件时加一个 <ComponentDocsSection>，并往 PROPS 里补一份签名 -->
 <script setup lang="ts">
+import { Check, ChevronDown, Menu, Plus, X } from "@lucide/vue";
 import { ref } from "vue";
 
 import ButtonIcon from "@/components/button/ButtonIcon.vue";
@@ -12,18 +13,9 @@ import ApiTable from "../components/ApiTable.vue";
 import ComponentDocsSection from "../components/ComponentDocsSection.vue";
 import SpecimenCase from "../components/SpecimenCase.vue";
 import SpecimenPair from "../components/SpecimenPair.vue";
-import PreviewIcon from "./components/PreviewIcon.vue";
 
 /** 手动切换才能看清加载指示器进出的宽度过渡 */
 const loadingDemo = ref(false);
-
-const ICON = {
-  plus: "M12 5v14M5 12h14",
-  check: "m5 13 4 4L19 7",
-  close: "M18 6 6 18M6 6l12 12",
-  menu: "M4 6h16M4 12h16M4 18h16",
-  chevron: "m6 9 6 6 6-6",
-} as const;
 
 const PROPS = {
   ButtonPrimary: [
@@ -131,7 +123,7 @@ const PROPS = {
             <ButtonSecondary text="激活" is-active />
             <ButtonSecondary text="禁用" disabled />
             <ButtonSecondary text="带图标">
-              <PreviewIcon :d="ICON.plus" />
+              <Plus aria-hidden="true" class="size-4" />
             </ButtonSecondary>
           </div>
         </SpecimenCase>
@@ -140,11 +132,11 @@ const PROPS = {
           <div class="space-y-1">
             <ButtonSecondary text="全宽居中" block />
             <ButtonSecondary text="全宽左对齐" block align="start">
-              <PreviewIcon :d="ICON.menu" />
+              <Menu aria-hidden="true" class="size-4" />
             </ButtonSecondary>
             <ButtonSecondary text="带尾部内容" block align="start">
               <template #suffix>
-                <PreviewIcon :d="ICON.check" />
+                <Check aria-hidden="true" class="size-4" />
               </template>
             </ButtonSecondary>
           </div>
@@ -182,17 +174,17 @@ const PROPS = {
         <SpecimenCase label="左右插槽" class="mt-5">
           <div class="flex flex-wrap items-center gap-2">
             <ButtonThird text="仅左侧">
-              <PreviewIcon :d="ICON.plus" />
+              <Plus aria-hidden="true" class="size-4" />
             </ButtonThird>
             <ButtonThird text="仅右侧">
               <template #suffix>
-                <PreviewIcon :d="ICON.check" />
+                <Check aria-hidden="true" class="size-4" />
               </template>
             </ButtonThird>
             <ButtonThird text="两侧都有">
-              <PreviewIcon :d="ICON.menu" />
+              <Menu aria-hidden="true" class="size-4" />
               <template #suffix>
-                <PreviewIcon :d="ICON.chevron" />
+                <ChevronDown aria-hidden="true" class="size-4" />
               </template>
             </ButtonThird>
           </div>
@@ -243,13 +235,13 @@ const PROPS = {
         <SpecimenCase label="状态" class="mt-4">
           <div class="flex items-center gap-2">
             <ButtonIcon label="添加">
-              <PreviewIcon :d="ICON.plus" />
+              <Plus aria-hidden="true" class="size-4" />
             </ButtonIcon>
             <ButtonIcon label="已选中" is-active>
-              <PreviewIcon :d="ICON.check" />
+              <Check aria-hidden="true" class="size-4" />
             </ButtonIcon>
             <ButtonIcon label="不可用" disabled>
-              <PreviewIcon :d="ICON.close" />
+              <X aria-hidden="true" class="size-4" />
             </ButtonIcon>
           </div>
         </SpecimenCase>
@@ -274,7 +266,7 @@ const PROPS = {
         <SpecimenCase label="调用方指定尺寸与圆角" class="mt-5">
           <div class="flex items-center gap-2">
             <ButtonIcon label="大号圆形" class="size-10 rounded-full">
-              <PreviewIcon :d="ICON.plus" />
+              <Plus aria-hidden="true" class="size-4" />
             </ButtonIcon>
           </div>
         </SpecimenCase>
