@@ -86,9 +86,9 @@ const PROPS = {
               text="保存"
               :loading="loadingDemo"
               class="min-w-24"
-              @click="loadingDemo = !loadingDemo"
+              @click="loadingDemo = true"
             />
-            <ButtonSecondary text="切回来" @click="loadingDemo = !loadingDemo" />
+            <ButtonSecondary text="切回来" :disabled="!loadingDemo" @click="loadingDemo = false" />
           </div>
         </SpecimenCase>
 
