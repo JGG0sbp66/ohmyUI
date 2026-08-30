@@ -1,0 +1,5 @@
+/* 自托管字体。使用方要自带字体就跳过这一份，改为覆盖 base.css 的 --font-sans */
+
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/noto-sans-sc";
+@import "@fontsource-variable/jetbrains-mono";

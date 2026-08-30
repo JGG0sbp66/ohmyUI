@@ -3,6 +3,10 @@
 @theme {
   /* 全库动画节奏，统一使用此时长（Tailwind 默认 150ms） */
   --default-transition-duration: 200ms;
+
+  /* 家族名带 Variable 是 Fontsource variable 包的注册名，写 "Inter" 不生效 */
+  --font-sans: "Inter Variable", "Noto Sans SC Variable", sans-serif;
+  --font-mono: "JetBrains Mono Variable", monospace;
 }
 
 @layer base {

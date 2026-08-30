@@ -2,6 +2,8 @@
 
 @import "tailwindcss";
 
+@import "./fonts.css";
+
 @import "./base.css";
 @import "./tokens.css";
 @import "./theme/light.css";
