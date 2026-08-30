@@ -62,7 +62,6 @@ const tagProps = computed(() =>
 const BASE = `
   group/third relative inline-flex items-center gap-1 bg-transparent px-1 py-0.5
   transition-colors
-  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fg
 `;
 
 /*

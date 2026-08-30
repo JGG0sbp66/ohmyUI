@@ -26,7 +26,7 @@ const toggle = () => {
     :aria-label="props.label"
     :aria-checked="props.indeterminate ? 'mixed' : model"
     :disabled="props.disabled"
-    class="group relative flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-full transition-transform duration-300 outline-none select-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg enabled:active:scale-90 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
+    class="group relative flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-full transition-transform duration-300 select-none enabled:active:scale-90 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
     @click="toggle"
   >
     <!-- 状态背景分层做透明度过渡，切换 hue 时不让旧颜色追着新颜色补间。 -->

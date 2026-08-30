@@ -259,7 +259,7 @@ defineExpose({ focusInitial });
     :aria-errormessage="props.ariaErrormessage"
     :aria-activedescendant="activeEntry?.id"
     :aria-disabled="props.disabled || undefined"
-    class="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pb-1 outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+    class="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pb-1 outline-none"
     @focus="syncActive"
     @keydown="handleKeydown"
   >

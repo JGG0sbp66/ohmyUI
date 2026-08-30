@@ -136,7 +136,7 @@ const fieldInvalid = computed(
   () => props.invalid || attrs["aria-invalid"] === true || attrs["aria-invalid"] === "true",
 );
 const launcherClass = computed<HTMLAttributes["class"]>(() => [
-  "h-10 min-w-0 px-3 text-sm focus-visible:ring-2 focus-visible:ring-accent/40",
+  "h-10 min-w-0 px-3 text-sm",
   "[&>span:not(:last-child)]:min-w-0 [&>span:not(:last-child)]:truncate",
   props.block ? "w-full" : "max-w-64",
   fieldInvalid.value ? "ring-2 ring-danger" : "",

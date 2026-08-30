@@ -96,13 +96,12 @@ const goTo = (page: number) => {
 
 const BUTTON_BASE = `
   relative isolate inline-flex size-10 shrink-0 cursor-pointer items-center justify-center
-  overflow-hidden rounded-full bg-transparent p-0 text-sm font-medium tabular-nums outline-none
+  overflow-hidden rounded-full bg-transparent p-0 text-sm font-medium tabular-nums
   transition-[opacity,scale]
   before:absolute before:inset-0 before:-z-10 before:scale-90 before:rounded-[inherit]
   before:bg-bg-muted before:opacity-0 before:content-[''] before:transition-[opacity,scale]
   enabled:hover:text-fg-subtle enabled:hover:before:scale-100 enabled:hover:before:opacity-100
   enabled:active:scale-90 enabled:active:opacity-80
-  focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg
   disabled:cursor-not-allowed disabled:text-fg-muted disabled:opacity-50 disabled:before:opacity-0
   motion-reduce:transition-none motion-reduce:before:transition-none
 `;

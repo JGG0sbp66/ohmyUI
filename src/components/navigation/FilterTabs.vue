@@ -174,13 +174,12 @@ onMounted(() => void keepOptionVisible(selectedIndex.value));
 
 const BUTTON_BASE = `
   group relative isolate inline-flex h-10 cursor-pointer items-center justify-center
-  overflow-hidden rounded-lg bg-transparent px-4 text-sm text-fg outline-none
+  overflow-hidden rounded-lg bg-transparent px-4 text-sm text-fg
   transition-[color,opacity]
   before:absolute before:inset-0 before:-z-10 before:scale-90 before:rounded-[inherit]
   before:bg-bg-muted before:opacity-0 before:content-[''] before:transition-[opacity,scale]
   enabled:hover:text-fg-subtle enabled:hover:before:scale-100 enabled:hover:before:opacity-100
   enabled:active:before:scale-90 enabled:active:before:opacity-80
-  focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent
   disabled:cursor-not-allowed disabled:text-fg-muted disabled:opacity-50
   motion-reduce:transition-none motion-reduce:before:transition-none
 `;
