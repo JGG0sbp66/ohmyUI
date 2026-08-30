@@ -413,10 +413,4 @@ defineExpose({
   pointer-events: none !important;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .popover-enter-active,
-  .popover-leave-active {
-    transition: none;
-  }
-}
 </style>

@@ -35,10 +35,3 @@ html[data-theme-committing] *::after {
   animation-duration: var(--default-transition-duration);
   animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
 }
-
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
-  }
-}

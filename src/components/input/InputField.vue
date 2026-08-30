@@ -93,14 +93,14 @@ const controlAttrs = computed<FieldControlAttrs>(() => ({
     </p>
 
     <div
-      class="grid transition-[grid-template-rows] motion-reduce:transition-none"
+      class="grid transition-[grid-template-rows]"
       :class="props.error ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'"
       aria-live="polite"
     >
       <div class="min-h-0 overflow-hidden">
         <p
           :id="errorId"
-          class="mt-1 px-1 text-[10px] leading-tight text-danger transition-opacity motion-reduce:transition-none"
+          class="mt-1 px-1 text-[10px] leading-tight text-danger transition-opacity"
           :class="props.error ? 'opacity-100' : 'opacity-0'"
         >
           {{ props.error }}

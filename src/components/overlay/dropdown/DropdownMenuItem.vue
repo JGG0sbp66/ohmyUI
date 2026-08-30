@@ -59,7 +59,7 @@ const handleClick = (event: MouseEvent) => {
       'relative isolate flex w-full cursor-pointer items-center justify-start gap-2 overflow-hidden rounded-lg bg-transparent px-3 py-1.5 text-left text-sm transition-[color,opacity,scale]',
       'before:absolute before:inset-0 before:-z-10 before:scale-90 before:rounded-[inherit] before:bg-bg-muted before:opacity-0 before:transition-[opacity,scale] before:content-[\'\']',
       'enabled:hover:before:scale-100 enabled:hover:before:opacity-100 enabled:active:scale-[0.98]',
-      'disabled:cursor-not-allowed disabled:text-fg-muted disabled:opacity-50 motion-reduce:transition-none motion-reduce:before:transition-none',
+      'disabled:cursor-not-allowed disabled:text-fg-muted disabled:opacity-50',
       stateClass,
     ]"
     @click="handleClick"

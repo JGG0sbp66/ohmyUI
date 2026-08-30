@@ -71,7 +71,7 @@ defineSlots<{
     <template #prefix>
       <span
         aria-hidden="true"
-        class="ml-3 size-4 shrink-0 text-fg-soft transition-colors group-focus-within/search:text-fg-subtle motion-reduce:transition-none"
+        class="ml-3 size-4 shrink-0 text-fg-soft transition-colors group-focus-within/search:text-fg-subtle"
       >
         <slot name="search-icon"><Search aria-hidden="true" class="size-4" /></slot>
       </span>

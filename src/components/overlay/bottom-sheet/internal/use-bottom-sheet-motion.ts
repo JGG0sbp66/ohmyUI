@@ -85,10 +85,6 @@ export function useBottomSheetMotion(options: UseBottomSheetMotionOptions) {
     return getView()?.performance.now() ?? Date.now();
   }
 
-  function prefersReducedMotion(): boolean {
-    return getView()?.matchMedia("(prefers-reduced-motion: reduce)").matches ?? false;
-  }
-
   function clearSettleTimer(): void {
     settleGeneration += 1;
     if (settleTimer === undefined) return;
@@ -108,11 +104,6 @@ export function useBottomSheetMotion(options: UseBottomSheetMotionOptions) {
       callback?.();
       if (!preserveMotion) gestureActive.value = false;
     };
-
-    if (prefersReducedMotion()) {
-      queueMicrotask(complete);
-      return;
-    }
 
     settleView = getView();
     settleTimer = settleView
@@ -379,10 +370,9 @@ export function useBottomSheetMotion(options: UseBottomSheetMotionOptions) {
     style["--ohmyui-bottom-sheet-y"] = `${dragOffset.value}px`;
     style.height = "var(--ohmyui-bottom-sheet-height)";
     style.transform = "translate3d(0, var(--ohmyui-bottom-sheet-y), 0)";
-    style.transition =
-      isDragging.value || prefersReducedMotion()
-        ? "none"
-        : `height ${SETTLE_DURATION}ms ${SETTLE_EASING}, transform ${SETTLE_DURATION}ms ${SETTLE_EASING}`;
+    style.transition = isDragging.value
+      ? "none"
+      : `height ${SETTLE_DURATION}ms ${SETTLE_EASING}, transform ${SETTLE_DURATION}ms ${SETTLE_EASING}`;
     style.willChange = "height, transform";
     return style;
   });

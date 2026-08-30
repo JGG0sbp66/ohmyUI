@@ -169,12 +169,4 @@ function close(): void {
   transform: scale(0.95);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .dialog-shell-enter-active,
-  .dialog-shell-leave-active,
-  .dialog-shell-enter-active .dialog-panel,
-  .dialog-shell-leave-active .dialog-panel {
-    transition: none;
-  }
-}
 </style>

@@ -722,7 +722,7 @@ watch(
       <template #suffix>
         <ChevronDown
           aria-hidden="true"
-          class="size-3.5 transition-transform motion-reduce:transition-none"
+          class="size-3.5 transition-transform"
           :class="open ? 'rotate-180' : ''"
         />
       </template>

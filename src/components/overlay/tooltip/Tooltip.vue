@@ -453,9 +453,9 @@ onBeforeUnmount(() => {
 
   <Teleport :to="teleportTarget">
     <Transition
-      enter-active-class="transition-[opacity,scale] motion-reduce:transition-none"
+      enter-active-class="transition-[opacity,scale]"
       enter-from-class="scale-95 opacity-0"
-      leave-active-class="transition-[opacity,scale] motion-reduce:transition-none"
+      leave-active-class="transition-[opacity,scale]"
       leave-to-class="scale-95 opacity-0"
     >
       <div

@@ -59,7 +59,7 @@ defineSlots<{
   >
     <span
       aria-hidden="true"
-      class="ml-3 size-4 shrink-0 text-fg-soft transition-colors group-focus-within/combobox:text-fg-subtle motion-reduce:transition-none"
+      class="ml-3 size-4 shrink-0 text-fg-soft transition-colors group-focus-within/combobox:text-fg-subtle"
     >
       <slot name="prefix"><Search aria-hidden="true" class="size-4" /></slot>
     </span>
@@ -94,7 +94,7 @@ defineSlots<{
 
     <ChevronDown
       aria-hidden="true"
-      class="mr-3 size-3.5 shrink-0 text-fg-soft transition-transform motion-reduce:transition-none"
+      class="mr-3 size-3.5 shrink-0 text-fg-soft transition-transform"
       :class="props.expanded ? 'rotate-180' : ''"
     />
 

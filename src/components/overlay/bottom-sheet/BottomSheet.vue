@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { X } from "@lucide/vue";
-import { computed, onBeforeUnmount, onMounted, ref, useId, useSlots, watch } from "vue";
+import { computed, ref, useId, useSlots, watch } from "vue";
 
 import ButtonIcon from "../../button/ButtonIcon.vue";
 import { useModalLayer } from "../internal/use-modal-layer";
@@ -46,7 +46,6 @@ const originRef = ref<HTMLElement | null>(null);
 const layerRef = ref<HTMLElement | null>(null);
 const motionRef = ref<HTMLElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
-const reducedMotion = ref(false);
 const generatedTitleId = `bottom-sheet-title-${useId()}`;
 const generatedDescriptionId = `bottom-sheet-description-${useId()}`;
 const hasHeader = computed(() => Boolean(props.title || slots.header));
@@ -63,9 +62,8 @@ const resolvedAriaLabel = computed(() =>
   resolvedLabelledby.value ? undefined : (props.ariaLabel ?? "Bottom sheet"),
 );
 const resolvedDescribedby = computed(() => props.ariaDescribedby ?? internalDescriptionId.value);
-const transitionDuration = computed(() => (reducedMotion.value ? 0 : { enter: 250, leave: 180 }));
+const transitionDuration = { enter: 250, leave: 180 };
 let warnedAboutMissingName = false;
-let reducedMotionQuery: MediaQueryList | undefined;
 
 const {
   finishClose,
@@ -116,23 +114,6 @@ function handleAfterLeave(): void {
   motion.resetAfterLeave();
   finishClose();
 }
-
-function syncReducedMotion(event?: MediaQueryListEvent): void {
-  reducedMotion.value = event?.matches ?? reducedMotionQuery?.matches ?? false;
-}
-
-onMounted(() => {
-  const view =
-    originRef.value?.ownerDocument.defaultView ?? (typeof window === "undefined" ? null : window);
-  reducedMotionQuery = view?.matchMedia("(prefers-reduced-motion: reduce)");
-  syncReducedMotion();
-  reducedMotionQuery?.addEventListener("change", syncReducedMotion);
-});
-
-onBeforeUnmount(() => {
-  reducedMotionQuery?.removeEventListener("change", syncReducedMotion);
-  reducedMotionQuery = undefined;
-});
 
 watch(
   () => props.modelValue,
@@ -309,12 +290,4 @@ watch(
   transform: translateY(100%);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .bottom-sheet-shell-enter-active .bottom-sheet-backdrop,
-  .bottom-sheet-shell-leave-active .bottom-sheet-backdrop,
-  .bottom-sheet-shell-enter-active .bottom-sheet-motion,
-  .bottom-sheet-shell-leave-active .bottom-sheet-motion {
-    transition: none;
-  }
-}
 </style>

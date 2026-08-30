@@ -58,10 +58,4 @@
   animation: dash 1.5s ease-in-out infinite;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .animate-spin,
-  .spinner-path {
-    animation: none;
-  }
-}
 </style>

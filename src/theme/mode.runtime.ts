@@ -142,10 +142,9 @@ export class ModeRuntime {
     }
 
     const startViewTransition = this.document.startViewTransition?.bind(this.document);
-    const reduceMotion = matchesMedia(this.view, "(prefers-reduced-motion: reduce)");
 
-    // 浏览器不支持 View Transition，或用户要求减少动态效果时，走无动画提交。
-    if (!startViewTransition || reduceMotion) {
+    // 浏览器不支持 View Transition 时，走无动画提交。
+    if (!startViewTransition) {
       await this.commitWithoutAnimation(mode, requestId);
       return;
     }

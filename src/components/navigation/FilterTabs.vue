@@ -181,7 +181,6 @@ const BUTTON_BASE = `
   enabled:hover:text-fg-subtle enabled:hover:before:scale-100 enabled:hover:before:opacity-100
   enabled:active:before:scale-90 enabled:active:before:opacity-80
   disabled:cursor-not-allowed disabled:text-fg-muted disabled:opacity-50
-  motion-reduce:transition-none motion-reduce:before:transition-none
 `;
 </script>
 
@@ -216,7 +215,7 @@ const BUTTON_BASE = `
         @keydown="onOptionKeydown($event, index)"
       >
         <span
-          class="flex items-center justify-center transition-[opacity,scale] motion-reduce:transition-none"
+          class="flex items-center justify-center transition-[opacity,scale]"
           :class="isDisabled(option) ? undefined : 'group-active:scale-90 group-active:opacity-80'"
         >
           <span
@@ -238,7 +237,7 @@ const BUTTON_BASE = `
 
           <span
             v-if="option.count !== undefined"
-            class="inline-flex items-center overflow-hidden transition-all ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none"
+            class="inline-flex items-center overflow-hidden transition-all ease-[cubic-bezier(0.34,1.56,0.64,1)]"
             :class="
               isCountVisible(option) ? 'ml-1.5 max-w-8 opacity-100' : 'ml-0 max-w-0 opacity-0'
             "
@@ -261,7 +260,7 @@ const BUTTON_BASE = `
 
       <span
         aria-hidden="true"
-        class="absolute right-1 -bottom-3 left-1 h-0.75 rounded-t-sm transition-colors motion-reduce:transition-none"
+        class="absolute right-1 -bottom-3 left-1 h-0.75 rounded-t-sm transition-colors"
         :class="isSelected(option) ? 'bg-accent' : 'bg-transparent'"
       />
     </div>

@@ -78,7 +78,7 @@ const BASE = `
 */
 const UNDERLINE = `
   pointer-events-none absolute bottom-0 left-1 h-px bg-current opacity-30
-  transition-[width] ease-out motion-reduce:transition-none
+  transition-[width] ease-out
 `;
 
 /*
