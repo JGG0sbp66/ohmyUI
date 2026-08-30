@@ -1,7 +1,19 @@
 <!-- src/views/buttons/Buttons.page.vue -->
 <!-- 按钮类组件展示。新增组件时加一个 <ComponentDocsSection>，并往 PROPS 里补一份签名 -->
 <script setup lang="ts">
-import { Check, ChevronDown, Menu, Plus, X } from "@lucide/vue";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Bookmark,
+  Check,
+  ChevronDown,
+  FilePlus2,
+  Maximize2,
+  Menu,
+  Plus,
+  Settings,
+  Trash2,
+} from "@lucide/vue";
 import { ref } from "vue";
 
 import ButtonIcon from "@/components/button/ButtonIcon.vue";
@@ -122,8 +134,8 @@ const PROPS = {
             <ButtonSecondary text="默认" />
             <ButtonSecondary text="激活" is-active />
             <ButtonSecondary text="禁用" disabled />
-            <ButtonSecondary text="带图标">
-              <Plus aria-hidden="true" class="size-4" />
+            <ButtonSecondary text="新建文章">
+              <FilePlus2 aria-hidden="true" class="size-4" />
             </ButtonSecondary>
           </div>
         </SpecimenCase>
@@ -173,16 +185,16 @@ const PROPS = {
 
         <SpecimenCase label="左右插槽" class="mt-5">
           <div class="flex flex-wrap items-center gap-2">
-            <ButtonThird text="仅左侧">
-              <Plus aria-hidden="true" class="size-4" />
+            <ButtonThird text="返回列表">
+              <ArrowLeft aria-hidden="true" class="size-4" />
             </ButtonThird>
-            <ButtonThird text="仅右侧">
+            <ButtonThird text="继续">
               <template #suffix>
-                <Check aria-hidden="true" class="size-4" />
+                <ArrowRight aria-hidden="true" class="size-4" />
               </template>
             </ButtonThird>
-            <ButtonThird text="两侧都有">
-              <Menu aria-hidden="true" class="size-4" />
+            <ButtonThird text="更多设置">
+              <Settings aria-hidden="true" class="size-4" />
               <template #suffix>
                 <ChevronDown aria-hidden="true" class="size-4" />
               </template>
@@ -237,11 +249,11 @@ const PROPS = {
             <ButtonIcon label="添加">
               <Plus aria-hidden="true" class="size-4" />
             </ButtonIcon>
-            <ButtonIcon label="已选中" is-active>
-              <Check aria-hidden="true" class="size-4" />
+            <ButtonIcon label="已收藏" is-active>
+              <Bookmark aria-hidden="true" class="size-4" />
             </ButtonIcon>
-            <ButtonIcon label="不可用" disabled>
-              <X aria-hidden="true" class="size-4" />
+            <ButtonIcon label="删除不可用" disabled>
+              <Trash2 aria-hidden="true" class="size-4" />
             </ButtonIcon>
           </div>
         </SpecimenCase>
@@ -265,8 +277,8 @@ const PROPS = {
 
         <SpecimenCase label="调用方指定尺寸与圆角" class="mt-5">
           <div class="flex items-center gap-2">
-            <ButtonIcon label="大号圆形" class="size-10 rounded-full">
-              <Plus aria-hidden="true" class="size-4" />
+            <ButtonIcon label="全屏预览" class="size-10 rounded-full">
+              <Maximize2 aria-hidden="true" class="size-4" />
             </ButtonIcon>
           </div>
         </SpecimenCase>

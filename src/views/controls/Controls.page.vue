@@ -1,5 +1,6 @@
 <!-- src/views/controls/Controls.page.vue -->
 <script setup lang="ts">
+import { Eye, List, Rows3 } from "@lucide/vue";
 import { ref } from "vue";
 
 import ButtonThird from "@/components/button/ButtonThird.vue";
@@ -12,7 +13,6 @@ import ApiTable from "../components/ApiTable.vue";
 import ComponentDocsSection from "../components/ComponentDocsSection.vue";
 import SpecimenCase from "../components/SpecimenCase.vue";
 import SpecimenPair from "../components/SpecimenPair.vue";
-import PreviewSegmentIcon from "./components/PreviewSegmentIcon.vue";
 
 const unchecked = ref(false);
 const checked = ref(true);
@@ -43,12 +43,12 @@ const statusOptions = [
 type ViewMode = "list" | "compact" | "preview";
 const viewMode = ref<ViewMode>("list");
 const viewModeOptions = [
-  { value: "list", label: "列表", icon: PreviewSegmentIcon },
-  { value: "compact", label: "紧凑", icon: PreviewSegmentIcon },
+  { value: "list", label: "列表", icon: List },
+  { value: "compact", label: "紧凑", icon: Rows3 },
   {
     value: "preview",
     label: "预览",
-    icon: PreviewSegmentIcon,
+    icon: Eye,
     iconClass: "h-2.5 w-auto",
   },
 ] as const satisfies readonly SegmentedControlOption<ViewMode>[];

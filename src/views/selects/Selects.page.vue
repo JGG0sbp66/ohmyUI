@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { FilePenLine, FileText, Settings, Users } from "@lucide/vue";
 import { computed, ref } from "vue";
 
 import InputField from "@/components/input/InputField.vue";
@@ -11,7 +12,6 @@ import ComponentDocsSection from "../components/ComponentDocsSection.vue";
 import SpecimenCase from "../components/SpecimenCase.vue";
 import SpecimenPair from "../components/SpecimenPair.vue";
 import ComboboxDocs from "./components/ComboboxDocs.vue";
-import PreviewSelectIcon from "./components/PreviewSelectIcon.vue";
 
 const statusOptions = [
   { value: "draft", label: "草稿" },
@@ -35,14 +35,14 @@ const groupedOptions = [
         value: "posts",
         label: "文章",
         description: "管理已发布内容",
-        icon: PreviewSelectIcon,
+        icon: FileText,
         iconClass: "text-sky-500",
       },
       {
         value: "drafts",
         label: "草稿箱",
         description: "继续未完成的写作",
-        icon: PreviewSelectIcon,
+        icon: FilePenLine,
         iconClass: "text-amber-500",
       },
     ],
@@ -55,14 +55,14 @@ const groupedOptions = [
         value: "friends",
         label: "友链",
         description: "站点与伙伴链接",
-        icon: PreviewSelectIcon,
+        icon: Users,
         iconClass: "text-emerald-500",
       },
       {
         value: "settings",
         label: "系统设置",
         description: "仅管理员可以修改",
-        icon: PreviewSelectIcon,
+        icon: Settings,
         iconClass: "text-violet-500",
         disabled: true,
       },

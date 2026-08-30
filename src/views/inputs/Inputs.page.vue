@@ -1,6 +1,6 @@
 <!-- src/views/inputs/Inputs.page.vue -->
 <script setup lang="ts">
-import { Link2 } from "@lucide/vue";
+import { CircleX, FileSearch, Link2, Lock, LockOpen } from "@lucide/vue";
 import { computed, ref } from "vue";
 
 import InputField from "@/components/input/InputField.vue";
@@ -253,7 +253,14 @@ const INPUT_FIELD_PROPS = [
                   v-model="password"
                   autocomplete="off"
                   placeholder="请输入密码"
-                />
+                >
+                  <template #show-icon>
+                    <LockOpen aria-hidden="true" class="size-4" />
+                  </template>
+                  <template #hide-icon>
+                    <Lock aria-hidden="true" class="size-4" />
+                  </template>
+                </InputPassword>
               </template>
             </InputField>
 
@@ -459,7 +466,14 @@ const INPUT_FIELD_PROPS = [
                   autocomplete="off"
                   placeholder="搜索文章"
                   @search="handleSearch"
-                />
+                >
+                  <template #search-icon>
+                    <FileSearch aria-hidden="true" class="size-4" />
+                  </template>
+                  <template #clear-icon>
+                    <CircleX aria-hidden="true" class="size-4" />
+                  </template>
+                </InputSearch>
               </template>
               <template #description>
                 <span class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">

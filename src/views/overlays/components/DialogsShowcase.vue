@@ -1,5 +1,6 @@
 <!-- src/views/overlays/components/DialogsShowcase.vue -->
 <script setup lang="ts">
+import { Trash2 } from "@lucide/vue";
 import { ref } from "vue";
 
 import ButtonPrimary from "@/components/button/ButtonPrimary.vue";
@@ -126,6 +127,7 @@ const CONFIRM_LIST_API = [
           question="删除后文章将无法继续被访问。"
           warning="这个操作不可撤销。"
           confirm-text="确认删除"
+          :icon="Trash2"
           danger
           @update:model-value="confirmTone = $event ? tone : null"
           @confirm="confirmTone = null"

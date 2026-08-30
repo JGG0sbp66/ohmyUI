@@ -1,4 +1,14 @@
 <script setup lang="ts">
+import {
+  ChartLine,
+  FilePenLine,
+  FilePlus2,
+  Files,
+  Handshake,
+  MessageSquareText,
+  Settings,
+  ShieldAlert,
+} from "@lucide/vue";
 import { computed, ref } from "vue";
 
 import type { ComboboxOption, ComboboxValue } from "@/components/combobox/combobox.types";
@@ -11,7 +21,6 @@ import ComponentDocsSection from "../../components/ComponentDocsSection.vue";
 import SpecimenCase from "../../components/SpecimenCase.vue";
 import SpecimenPair from "../../components/SpecimenPair.vue";
 import AsyncComboboxPreview from "./AsyncComboboxPreview.vue";
-import PreviewSelectIcon from "./PreviewSelectIcon.vue";
 
 const LANGUAGE_OPTIONS = [
   { value: "plaintext", label: "纯文本", textValue: "plaintext text txt" },
@@ -33,48 +42,56 @@ const DESTINATION_OPTIONS = [
     label: "文章管理",
     textValue: "posts content p",
     description: "查看、筛选与编辑全部文章",
+    icon: Files,
   },
   {
     value: "new-post",
     label: "新建文章",
     textValue: "new post compose n",
     description: "打开一个空白编辑器",
+    icon: FilePlus2,
   },
   {
     value: "drafts",
     label: "草稿箱",
     textValue: "drafts unfinished d",
     description: "继续最近未完成的写作",
+    icon: FilePenLine,
   },
   {
     value: "comments",
     label: "评论审核",
     textValue: "comments moderation c",
     description: "处理待审核与举报内容",
+    icon: MessageSquareText,
   },
   {
     value: "friends",
     label: "友链管理",
     textValue: "friends links f",
     description: "维护站点与伙伴链接",
+    icon: Handshake,
   },
   {
     value: "analytics",
     label: "访问分析",
     textValue: "analytics traffic a",
     description: "浏览近期阅读趋势",
+    icon: ChartLine,
   },
   {
     value: "settings",
     label: "系统设置",
     textValue: "settings system s",
     description: "配置站点、邮件与安全策略",
+    icon: Settings,
   },
   {
     value: "danger-zone",
     label: "危险区域",
     textValue: "danger zone",
     description: "当前账户没有访问权限",
+    icon: ShieldAlert,
     disabled: true,
   },
 ] satisfies readonly ComboboxOption[];
@@ -219,7 +236,12 @@ const COMBOBOX_API = [
           panel-class="w-80"
         >
           <template #option="{ option }">
-            <PreviewSelectIcon class="size-4 shrink-0 text-accent" aria-hidden="true" />
+            <component
+              :is="option.icon"
+              v-if="option.icon"
+              aria-hidden="true"
+              class="size-4 shrink-0 text-accent"
+            />
             <span class="min-w-0 flex-1">
               <span class="block truncate font-medium">{{ option.label }}</span>
               <span class="mt-0.5 block truncate text-xs text-fg-muted">

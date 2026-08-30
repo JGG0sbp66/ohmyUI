@@ -1,5 +1,7 @@
 <!-- src/views/overlays/Overlays.page.vue -->
 <script setup lang="ts">
+import { Info } from "@lucide/vue";
+
 import ButtonSecondary from "@/components/button/ButtonSecondary.vue";
 import HelpTooltip from "@/components/overlay/tooltip/HelpTooltip.vue";
 import Tooltip from "@/components/overlay/tooltip/Tooltip.vue";
@@ -113,7 +115,11 @@ const HELP_TOOLTIP_API = [
                 label="查看下方提示"
                 content="也可以将下方作为首选方向。"
                 placement="bottom"
-              />
+              >
+                <template #icon>
+                  <Info aria-hidden="true" class="size-4" />
+                </template>
+              </HelpTooltip>
             </span>
 
             <span class="inline-flex items-center gap-1.5 text-sm font-medium text-fg-muted">

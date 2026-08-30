@@ -1,5 +1,6 @@
 <!-- src/views/navigation/Navigation.page.vue -->
 <script setup lang="ts">
+import { Archive, ArrowLeft, ArrowRight, Flag, Inbox, Mail } from "@lucide/vue";
 import { computed, ref } from "vue";
 
 import type { FilterTabOption, FilterTabValue } from "@/components/navigation/filter-tabs.types";
@@ -28,10 +29,10 @@ const REVIEW_STATUS_OPTIONS = [
 ] as const satisfies readonly FilterTabOption[];
 
 const QUEUE_OPTIONS = [
-  { value: "all", label: "全部", count: 36 },
-  { value: "unread", label: "未读", count: 12 },
-  { value: "flagged", label: "已标记", count: 3 },
-  { value: "archived", label: "已归档", count: 21 },
+  { value: "all", label: "全部", count: 36, icon: Inbox },
+  { value: "unread", label: "未读", count: 12, icon: Mail },
+  { value: "flagged", label: "已标记", count: 3, icon: Flag },
+  { value: "archived", label: "已归档", count: 21, icon: Archive },
 ] as const satisfies readonly FilterTabOption[];
 
 const LONG_FILTER_OPTIONS = [
@@ -232,7 +233,14 @@ const PAGINATION_API = [
               next-label="下一页"
               :total-pages="20"
               compact
-            />
+            >
+              <template #previous>
+                <ArrowLeft aria-hidden="true" class="size-4" />
+              </template>
+              <template #next>
+                <ArrowRight aria-hidden="true" class="size-4" />
+              </template>
+            </Pagination>
           </div>
         </SpecimenCase>
 

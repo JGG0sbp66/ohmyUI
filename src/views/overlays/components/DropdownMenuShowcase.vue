@@ -1,6 +1,6 @@
 <!-- src/views/overlays/components/DropdownMenuShowcase.vue -->
 <script setup lang="ts">
-import { ChevronDown } from "@lucide/vue";
+import { Archive, ChevronDown, Copy, Eye, Pencil, Trash2 } from "@lucide/vue";
 import { reactive, ref } from "vue";
 
 import ButtonSecondary from "@/components/button/ButtonSecondary.vue";
@@ -71,31 +71,35 @@ const DROPDOWN_API = [
 
           <DropdownMenuGroup label="视图">
             <DropdownMenuItem text="预览文章" @select="selection[tone] = '已打开预览'">
-              <template #icon><span class="size-2 rounded-full bg-accent" /></template>
+              <template #icon><Eye aria-hidden="true" class="size-4" /></template>
               <template #suffix>
                 <kbd class="font-mono text-[10px] text-fg-muted">P</kbd>
               </template>
             </DropdownMenuItem>
             <DropdownMenuItem text="编辑内容" active @select="selection[tone] = '已进入编辑'">
-              <template #icon><span class="size-2 rounded-full bg-fg-muted" /></template>
+              <template #icon><Pencil aria-hidden="true" class="size-4" /></template>
               <template #suffix>
                 <span class="text-[10px] text-fg-muted">当前</span>
               </template>
             </DropdownMenuItem>
             <DropdownMenuItem text="复制草稿" disabled>
-              <template #icon><span class="size-2 rounded-full bg-fg-muted/40" /></template>
+              <template #icon><Copy aria-hidden="true" class="size-4" /></template>
             </DropdownMenuItem>
           </DropdownMenuGroup>
 
           <DropdownMenuSeparator />
 
           <DropdownMenuGroup label="管理">
-            <DropdownMenuItem text="归档文章" @select="selection[tone] = '文章已归档'" />
+            <DropdownMenuItem text="归档文章" @select="selection[tone] = '文章已归档'">
+              <template #icon><Archive aria-hidden="true" class="size-4" /></template>
+            </DropdownMenuItem>
             <DropdownMenuItem
               text="移至回收站"
               danger
               @select="selection[tone] = '文章已移至回收站'"
-            />
+            >
+              <template #icon><Trash2 aria-hidden="true" class="size-4" /></template>
+            </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenu>
 
