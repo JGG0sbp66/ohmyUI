@@ -222,7 +222,7 @@ watch(
               <div class="h-1 w-10 rounded-full bg-fg-muted/25" />
             </div>
 
-            <div v-if="hasHeader" :id="internalTitleId" class="mb-3">
+            <div v-if="hasHeader" :id="internalTitleId" class="mb-2">
               <slot
                 name="header"
                 :close="close"
@@ -265,14 +265,20 @@ watch(
               </slot>
             </div>
 
+            <!--
+              滚动视口负责裁剪，内容层负责布局间距：横向保留原 16px 对齐，
+              上下 4px 容纳设计系统最宽的外扩 focus ring / outline。
+            -->
             <div
               data-ohmyui-bottom-sheet-content
-              class="min-h-0 flex-1 overflow-y-auto overscroll-contain"
+              class="-mx-4 min-h-0 flex-1 scroll-py-1 overflow-y-auto overscroll-contain"
             >
-              <slot :close="close" :expanded="motion.isExpanded.value" />
+              <div data-ohmyui-bottom-sheet-content-inner class="px-4 py-1">
+                <slot :close="close" :expanded="motion.isExpanded.value" />
+              </div>
             </div>
 
-            <div v-if="slots.footer" class="shrink-0 pt-3">
+            <div v-if="slots.footer" class="shrink-0 pt-2">
               <slot name="footer" :close="close" :expanded="motion.isExpanded.value" />
             </div>
           </section>
