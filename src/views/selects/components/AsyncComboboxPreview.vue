@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 
-import ButtonTertiary from "@/components/button/ButtonTertiary.vue";
+import ButtonThird from "@/components/button/ButtonThird.vue";
 import type { ComboboxOption, ComboboxValue } from "@/components/combobox/combobox.types";
 import Combobox from "@/components/combobox/Combobox.vue";
 
@@ -196,7 +196,7 @@ onBeforeUnmount(() => {
       panel-class="w-80"
     />
     <p class="mt-2 text-xs/5 text-fg-muted">{{ statusText }}</p>
-    <ButtonTertiary text="运行 A → AB 乱序" class="mt-1 -ml-2" @click="runOutOfOrderFixture" />
+    <ButtonThird text="运行 A → AB 乱序" class="mt-1 -ml-1" @click="runOutOfOrderFixture" />
     <p class="mt-1 text-xs/5 text-fg-soft">
       按钮会稳定产生晚到响应；输入
       <code class="font-mono text-fg">error</code> 验证失败反馈。

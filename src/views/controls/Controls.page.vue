@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import ButtonTertiary from "@/components/button/ButtonTertiary.vue";
+import ButtonThird from "@/components/button/ButtonThird.vue";
 import Checkbox from "@/components/control/Checkbox.vue";
 import type { SegmentedControlOption } from "@/components/control/control.types";
 import SegmentedControl from "@/components/control/SegmentedControl.vue";
@@ -134,7 +134,7 @@ const PROPS = {
             <span class="text-xs text-fg-muted" aria-live="polite">
               {{ mixed ? "mixed" : String(mixedValue) }}
             </span>
-            <ButtonTertiary text="重置" @click="resetMixed" />
+            <ButtonThird text="重置" @click="resetMixed" />
           </div>
         </SpecimenCase>
       </SpecimenPair>

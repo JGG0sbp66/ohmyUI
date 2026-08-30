@@ -6,7 +6,7 @@ import { ref } from "vue";
 import ButtonIcon from "@/components/button/ButtonIcon.vue";
 import ButtonPrimary from "@/components/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/button/ButtonSecondary.vue";
-import ButtonTertiary from "@/components/button/ButtonTertiary.vue";
+import ButtonThird from "@/components/button/ButtonThird.vue";
 
 import ApiTable from "../components/ApiTable.vue";
 import ComponentDocsSection from "../components/ComponentDocsSection.vue";
@@ -22,6 +22,7 @@ const ICON = {
   check: "m5 13 4 4L19 7",
   close: "M18 6 6 18M6 6l12 12",
   menu: "M4 6h16M4 12h16M4 18h16",
+  chevron: "m6 9 6 6 6-6",
 } as const;
 
 const PROPS = {
@@ -41,12 +42,18 @@ const PROPS = {
     ["block", "boolean", "false", "撑满父容器宽度"],
     ["align", '"center" | "start"', '"center"', "内容对齐，菜单项用 start"],
   ],
-  ButtonTertiary: [
-    ["text", "string", "必填", "按钮文字"],
+  ButtonThird: [
+    ["text", "string", "必填", "按钮文字。纯图标场景用 ButtonIcon"],
     ["isActive", "boolean", "未传", "可选切换态；传入时同步 aria-pressed"],
     ["disabled", "boolean", "false", "禁用"],
     ["danger", "boolean", "false", "低强调破坏性操作"],
-    ["type", '"button" | "submit" | "reset"', '"button"', "原生按钮类型"],
+    ["href", "string", "未传", "外链地址，传入后默认渲染成 a"],
+    ["target", "string", "未传", "外链 target"],
+    ["rel", "string", "未传", "外链 rel"],
+    ["as", "string | Component", "未传", "覆盖渲染标签，站内跳转传 RouterLink"],
+    ["type", '"button" | "submit" | "reset"', '"button"', "仅渲染 button 时生效"],
+    ["default", "slot", "—", "文字前的图标"],
+    ["suffix", "slot", "—", "文字后的尾随内容"],
   ],
   ButtonIcon: [
     ["label", "string", "必填", "无障碍名称，渲染为 aria-label"],
@@ -154,21 +161,61 @@ const PROPS = {
       <ApiTable caption="ButtonSecondary Props" :rows="PROPS.ButtonSecondary" />
     </ComponentDocsSection>
 
-    <!-- ButtonTertiary -->
-    <ComponentDocsSection title="ButtonTertiary" class="mt-16">
+    <!-- ButtonThird -->
+    <ComponentDocsSection title="ButtonThird" class="mt-16">
       <template #description>
-        最低层级的辅助动作。没有按钮面，常驻短轨负责提示可点击；hover
-        或键盘聚焦时，强调轨从中心展开。
+        最低层级的辅助动作，页脚链接、「忘记密码」这类。没有按钮面，只有文字色，hover
+        时一条细线从左侧展开。字号不写死，跟随所在上下文继承。
       </template>
 
       <SpecimenPair class="mt-6">
         <SpecimenCase label="状态" class="mt-4">
           <div class="flex flex-wrap items-center gap-2">
-            <ButtonTertiary text="稍后处理" />
-            <ButtonTertiary text="恢复默认" />
-            <ButtonTertiary text="当前选择" is-active />
-            <ButtonTertiary text="移除标签" danger />
-            <ButtonTertiary text="不可用" disabled />
+            <ButtonThird text="稍后处理" />
+            <ButtonThird text="恢复默认" />
+            <ButtonThird text="当前选择" is-active />
+            <ButtonThird text="移除标签" danger />
+            <ButtonThird text="不可用" disabled />
+          </div>
+        </SpecimenCase>
+
+        <SpecimenCase label="左右插槽" class="mt-5">
+          <div class="flex flex-wrap items-center gap-2">
+            <ButtonThird text="仅左侧">
+              <PreviewIcon :d="ICON.plus" />
+            </ButtonThird>
+            <ButtonThird text="仅右侧">
+              <template #suffix>
+                <PreviewIcon :d="ICON.check" />
+              </template>
+            </ButtonThird>
+            <ButtonThird text="两侧都有">
+              <PreviewIcon :d="ICON.menu" />
+              <template #suffix>
+                <PreviewIcon :d="ICON.chevron" />
+              </template>
+            </ButtonThird>
+          </div>
+        </SpecimenCase>
+
+        <SpecimenCase label="外链" class="mt-5">
+          <div class="flex flex-wrap items-center gap-2">
+            <ButtonThird
+              text="Tailwind 文档 ↗"
+              href="https://tailwindcss.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+            <ButtonThird text="链接也能禁用" href="https://tailwindcss.com" disabled />
+          </div>
+        </SpecimenCase>
+
+        <SpecimenCase label="字号跟随上下文" class="mt-5">
+          <div class="flex flex-wrap items-baseline gap-2 text-xs">
+            <ButtonThird text="12px" />
+            <span class="text-base">
+              <ButtonThird text="16px" />
+            </span>
           </div>
         </SpecimenCase>
 
@@ -176,12 +223,12 @@ const PROPS = {
           <div class="flex flex-wrap items-center gap-2">
             <ButtonPrimary text="发布" />
             <ButtonSecondary text="保存草稿" />
-            <ButtonTertiary text="稍后" />
+            <ButtonThird text="稍后" />
           </div>
         </SpecimenCase>
       </SpecimenPair>
 
-      <ApiTable caption="ButtonTertiary Props" :rows="PROPS.ButtonTertiary" />
+      <ApiTable caption="ButtonThird Props" :rows="PROPS.ButtonThird" />
     </ComponentDocsSection>
 
     <!-- ButtonIcon -->
