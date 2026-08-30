@@ -85,7 +85,7 @@ defineSlots<{
         :title="toggleLabel"
         :aria-label="toggleLabel"
         :aria-pressed="passwordVisible"
-        class="mr-3 shrink-0 p-1 text-fg-soft transition-colors duration-150 enabled:cursor-pointer enabled:hover:text-fg-subtle disabled:cursor-not-allowed motion-reduce:transition-none"
+        class="mr-3 shrink-0 p-1 text-fg-soft transition-colors enabled:cursor-pointer enabled:hover:text-fg-subtle disabled:cursor-not-allowed motion-reduce:transition-none"
         @mousedown.prevent
         @click="togglePasswordVisible"
       >

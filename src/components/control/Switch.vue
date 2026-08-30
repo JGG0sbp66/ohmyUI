@@ -42,15 +42,15 @@ const model = defineModel<boolean>({ default: false });
     <!-- 关闭态轨道负责布局；开启态独立淡入，避免主题 hue 变化被 transition-colors 拖慢。 -->
     <span
       aria-hidden="true"
-      class="h-7 w-12 rounded-full bg-fg-subtle/20 transition-[box-shadow] duration-200 peer-focus-visible:ring-2 peer-focus-visible:ring-accent peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-bg motion-reduce:transition-none"
+      class="h-7 w-12 rounded-full bg-fg-subtle/20 transition-[box-shadow] peer-focus-visible:ring-2 peer-focus-visible:ring-accent peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-bg motion-reduce:transition-none"
     />
     <span
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-full bg-accent opacity-0 transition-opacity duration-300 peer-checked:opacity-100 motion-reduce:transition-none"
+      class="pointer-events-none absolute inset-0 rounded-full bg-accent opacity-0 transition-opacity peer-checked:opacity-100 motion-reduce:transition-none"
     />
     <span
       aria-hidden="true"
-      class="pointer-events-none absolute top-1 left-1 h-5 w-5 rounded-full bg-white shadow-md transition-transform duration-300 peer-checked:translate-x-5 motion-reduce:transition-none"
+      class="pointer-events-none absolute top-1 left-1 h-5 w-5 rounded-full bg-white shadow-md transition-transform peer-checked:translate-x-5 motion-reduce:transition-none"
     />
   </label>
 </template>

@@ -28,7 +28,7 @@ const toggle = () => {
     :aria-label="props.label"
     :aria-checked="props.indeterminate ? 'mixed' : model"
     :disabled="props.disabled"
-    class="group relative flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-full transition-transform duration-300 select-none enabled:active:scale-90 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
+    class="group relative flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-full transition-[scale,box-shadow] select-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg focus:ring-accent enabled:active:scale-90 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
     @click="toggle"
   >
     <!-- 状态背景分层做透明度过渡，切换 hue 时不让旧颜色追着新颜色补间。 -->
@@ -38,21 +38,21 @@ const toggle = () => {
     />
     <span
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-full bg-bg-muted/80 opacity-0 transition-opacity duration-300 motion-reduce:transition-none"
+      class="pointer-events-none absolute inset-0 rounded-full bg-bg-muted/80 opacity-0 transition-opacity motion-reduce:transition-none"
       :class="!props.disabled ? 'group-hover:opacity-100' : ''"
     />
     <span
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-full bg-accent shadow-md transition-opacity duration-300 motion-reduce:transition-none"
+      class="pointer-events-none absolute inset-0 rounded-full bg-accent shadow-md transition-opacity motion-reduce:transition-none"
       :class="model || props.indeterminate ? 'opacity-100' : 'opacity-0'"
     />
 
     <Transition
       mode="out-in"
-      enter-active-class="transition-[opacity,transform] ease-out duration-200 motion-reduce:transition-none"
+      enter-active-class="transition-[opacity,scale] ease-out motion-reduce:transition-none"
       enter-from-class="opacity-0 scale-50"
       enter-to-class="opacity-100 scale-100"
-      leave-active-class="transition-[opacity,transform] ease-in duration-100 motion-reduce:transition-none"
+      leave-active-class="transition-[opacity,scale] ease-in motion-reduce:transition-none"
       leave-from-class="opacity-100 scale-100"
       leave-to-class="opacity-0 scale-50"
     >

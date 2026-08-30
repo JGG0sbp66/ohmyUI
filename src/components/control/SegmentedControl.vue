@@ -127,7 +127,7 @@ const handleKeydown = (event: KeyboardEvent, index: number) => {
     <div
       v-if="indicatorStyle"
       aria-hidden="true"
-      class="absolute top-1 bottom-1 left-1 rounded-lg bg-bg-card shadow-sm ring-1 ring-border/50 transition-transform duration-200 ease-in-out motion-reduce:transition-none"
+      class="absolute top-1 bottom-1 left-1 rounded-lg bg-bg-card shadow-sm ring-1 ring-border/50 transition-transform ease-in-out motion-reduce:transition-none"
       :style="indicatorStyle"
     />
 
@@ -140,7 +140,7 @@ const handleKeydown = (event: KeyboardEvent, index: number) => {
       :aria-checked="props.modelValue === option.value"
       :disabled="props.disabled || option.disabled"
       :tabindex="index === tabStopIndex ? 0 : -1"
-      class="relative z-10 flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition-colors duration-200 enabled:hover:text-fg disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
+      class="relative z-10 flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition-colors enabled:hover:text-fg disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
       :class="props.modelValue === option.value ? 'text-fg' : 'text-fg-soft'"
       @click="selectOption(option)"
       @keydown="handleKeydown($event, index)"

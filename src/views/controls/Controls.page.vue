@@ -144,8 +144,8 @@ const PROPS = {
 
     <ComponentDocsSection title="Switch" class="mt-16">
       <template #description>
-        48 × 28px 布尔开关。保留原来的轨道、白色滑块和 300ms 位移动画，真实交互由原生 checkbox
-        承担。
+        48 × 28px 布尔开关。保留原来的轨道与白色滑块，动画统一使用项目默认时长，真实交互由原生
+        checkbox 承担。
       </template>
 
       <SpecimenPair class="mt-6">

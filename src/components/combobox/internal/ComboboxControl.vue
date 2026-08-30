@@ -59,7 +59,7 @@ defineSlots<{
   >
     <span
       aria-hidden="true"
-      class="ml-3 size-4 shrink-0 text-fg-soft transition-colors duration-150 group-focus-within/combobox:text-fg-subtle motion-reduce:transition-none"
+      class="ml-3 size-4 shrink-0 text-fg-soft transition-colors group-focus-within/combobox:text-fg-subtle motion-reduce:transition-none"
     >
       <slot name="prefix"><Search aria-hidden="true" class="size-4" /></slot>
     </span>

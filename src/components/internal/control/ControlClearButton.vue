@@ -23,7 +23,7 @@ defineSlots<{ default?(): unknown }>();
     :disabled="props.disabled"
     :title="props.label"
     :aria-label="props.label"
-    class="shrink-0 rounded-md p-1 text-fg-soft transition-colors duration-150 enabled:cursor-pointer enabled:hover:text-fg-subtle disabled:cursor-not-allowed motion-reduce:transition-none"
+    class="shrink-0 rounded-md p-1 text-fg-soft transition-colors enabled:cursor-pointer enabled:hover:text-fg-subtle disabled:cursor-not-allowed motion-reduce:transition-none"
     @mousedown.prevent
     @click="emit('clear')"
   >

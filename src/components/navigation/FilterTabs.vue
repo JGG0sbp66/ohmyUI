@@ -238,7 +238,7 @@ const BUTTON_BASE = `
 
           <span
             v-if="option.count !== undefined"
-            class="inline-flex items-center overflow-hidden transition-all duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none"
+            class="inline-flex items-center overflow-hidden transition-all ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none"
             :class="
               isCountVisible(option) ? 'ml-1.5 max-w-8 opacity-100' : 'ml-0 max-w-0 opacity-0'
             "
@@ -261,7 +261,7 @@ const BUTTON_BASE = `
 
       <span
         aria-hidden="true"
-        class="absolute right-1 -bottom-3 left-1 h-0.75 rounded-t-sm transition-colors duration-200 motion-reduce:transition-none"
+        class="absolute right-1 -bottom-3 left-1 h-0.75 rounded-t-sm transition-colors motion-reduce:transition-none"
         :class="isSelected(option) ? 'bg-accent' : 'bg-transparent'"
       />
     </div>
