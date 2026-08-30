@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 
+import type { SelectionDensity } from "../../internal/selection/selection.types";
+import SelectionOptionRow from "../../internal/selection/SelectionOptionRow.vue";
 import type { SelectFocusIntent, SelectGroup, SelectOption, SelectValue } from "../select.types";
 
 interface RenderEntry {
@@ -30,7 +32,7 @@ const props = withDefaults(
     clearLabel?: string;
     emptyLabel?: string;
     disabled?: boolean;
-    density?: "compact" | "touch";
+    density?: SelectionDensity;
     ariaLabel?: string;
     ariaLabelledby?: string;
     ariaRequired?: boolean;
@@ -261,24 +263,17 @@ defineExpose({ focusInitial });
     @focus="syncActive"
     @keydown="handleKeydown"
   >
-    <div
+    <SelectionOptionRow
       v-if="collection.clearEntry"
       :id="collection.clearEntry.id"
       role="option"
       :aria-selected="isSelected(collection.clearEntry)"
       :aria-disabled="collection.clearEntry.disabled || undefined"
       :data-select-index="collection.clearEntry.index"
-      :class="[
-        'relative isolate flex w-full items-center justify-start gap-2.5 overflow-hidden rounded-lg bg-transparent text-left text-sm outline-none select-none',
-        'before:absolute before:inset-0 before:-z-10 before:scale-90 before:rounded-[inherit] before:bg-bg-muted before:opacity-0 before:transition-[opacity,scale] before:content-[\'\']',
-        props.density === 'touch' ? 'min-h-11 px-3 py-2' : 'min-h-10 px-2.5 py-2',
-        collection.clearEntry.index === activeIndex || isSelected(collection.clearEntry)
-          ? 'text-fg-subtle before:scale-100 before:opacity-100'
-          : 'text-fg',
-        collection.clearEntry.disabled
-          ? 'cursor-not-allowed text-fg-muted opacity-50'
-          : 'cursor-pointer transition-[opacity,scale] active:scale-90 active:opacity-80',
-      ]"
+      :active="collection.clearEntry.index === activeIndex"
+      :selected="isSelected(collection.clearEntry)"
+      :disabled="collection.clearEntry.disabled"
+      :density="props.density"
       @pointerdown="handlePointerDown"
       @pointermove="!collection.clearEntry.disabled && setActive(collection.clearEntry)"
       @click="selectEntry(collection.clearEntry)"
@@ -298,20 +293,7 @@ defineExpose({ focusInitial });
         <path d="M10 18h4" />
       </svg>
       <span class="min-w-0 flex-1 truncate">{{ collection.clearEntry.label }}</span>
-      <svg
-        v-if="isSelected(collection.clearEntry)"
-        class="size-4 shrink-0 text-accent"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-      >
-        <path d="m5 12 4 4L19 6" />
-      </svg>
-    </div>
+    </SelectionOptionRow>
 
     <div
       v-for="group in collection.groups"
@@ -331,7 +313,7 @@ defineExpose({ focusInitial });
       </div>
 
       <div class="flex flex-col gap-1">
-        <div
+        <SelectionOptionRow
           v-for="entry in group.entries"
           :id="entry.id"
           :key="entry.key"
@@ -339,17 +321,10 @@ defineExpose({ focusInitial });
           :aria-selected="isSelected(entry)"
           :aria-disabled="entry.disabled || undefined"
           :data-select-index="entry.index"
-          :class="[
-            'relative isolate flex w-full items-center justify-start gap-2.5 overflow-hidden rounded-lg bg-transparent text-left text-sm outline-none select-none',
-            'before:absolute before:inset-0 before:-z-10 before:scale-90 before:rounded-[inherit] before:bg-bg-muted before:opacity-0 before:transition-[opacity,scale] before:content-[\'\']',
-            props.density === 'touch' ? 'min-h-11 px-3 py-2' : 'min-h-10 px-2.5 py-2',
-            entry.index === activeIndex || isSelected(entry)
-              ? 'text-fg-subtle before:scale-100 before:opacity-100'
-              : 'text-fg',
-            entry.disabled
-              ? 'cursor-not-allowed text-fg-muted opacity-50'
-              : 'cursor-pointer transition-[opacity,scale] active:scale-90 active:opacity-80',
-          ]"
+          :active="entry.index === activeIndex"
+          :selected="isSelected(entry)"
+          :disabled="entry.disabled"
+          :density="props.density"
           @pointerdown="handlePointerDown"
           @pointermove="!entry.disabled && setActive(entry)"
           @click="selectEntry(entry)"
@@ -369,20 +344,7 @@ defineExpose({ focusInitial });
               {{ entry.option.description }}
             </span>
           </span>
-          <svg
-            v-if="isSelected(entry)"
-            class="size-4 shrink-0 text-accent"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="m5 12 4 4L19 6" />
-          </svg>
-        </div>
+        </SelectionOptionRow>
       </div>
     </div>
 

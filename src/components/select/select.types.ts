@@ -1,23 +1,19 @@
-import type { Component, HTMLAttributes } from "vue";
+import type { HTMLAttributes } from "vue";
 
+import type {
+  AdaptivePresentation,
+  SelectionOption,
+  SelectionValue,
+} from "../internal/selection/selection.types";
 import type { AnchoredPlacement } from "../overlay/internal/anchored-position.types";
 
-export type SelectValue = string | number;
+export type SelectValue = SelectionValue;
 
-export type SelectPresentation = "auto" | "popover" | "sheet";
+export type SelectPresentation = AdaptivePresentation;
+
+export type SelectOption = SelectionOption;
 
 export type SelectFocusIntent = "selected" | "first" | "last";
-
-export interface SelectOption {
-  value: SelectValue;
-  label: string;
-  /** typeahead 使用的文本；未传时使用 label。 */
-  textValue?: string;
-  description?: string;
-  icon?: Component;
-  iconClass?: HTMLAttributes["class"];
-  disabled?: boolean;
-}
 
 export interface SelectGroup {
   key: string;

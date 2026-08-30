@@ -11,6 +11,8 @@ import {
 } from "vue";
 
 import ButtonSecondary from "../../button/ButtonSecondary.vue";
+import ChevronDownIcon from "../../internal/icon/ChevronDownIcon.vue";
+import { useAdaptivePresentation } from "../../internal/selection/use-adaptive-presentation";
 import BottomSheet from "../../overlay/bottom-sheet/BottomSheet.vue";
 import Popover from "../../overlay/popover/Popover.vue";
 import type {
@@ -21,7 +23,6 @@ import type {
   SelectValue,
 } from "../select.types";
 import SelectListbox from "./SelectListbox.vue";
-import { useSelectPresentation } from "./use-select-presentation";
 
 defineOptions({ inheritAttrs: false });
 
@@ -64,7 +65,7 @@ const popoverRef = ref<{
 const listboxRef = ref<SelectListboxExpose | null>(null);
 let focusIntent: SelectFocusIntent = "selected";
 
-const { isSheet } = useSelectPresentation(() => props.presentation);
+const { isSheet } = useAdaptivePresentation(() => props.presentation);
 const triggerId = computed(() =>
   typeof attrs.id === "string" && attrs.id ? attrs.id : `select-${generatedId}`,
 );
@@ -257,19 +258,10 @@ watch(
           <path d="M10 18h4" />
         </svg>
         <template #suffix>
-          <svg
+          <ChevronDownIcon
             class="size-3.5 transition-transform motion-reduce:transition-none"
             :class="open ? 'rotate-180' : ''"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
+          />
         </template>
       </ButtonSecondary>
     </template>
@@ -326,19 +318,10 @@ watch(
         <path d="M10 18h4" />
       </svg>
       <template #suffix>
-        <svg
+        <ChevronDownIcon
           class="size-3.5 transition-transform motion-reduce:transition-none"
           :class="open ? 'rotate-180' : ''"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <path d="m6 9 6 6 6-6" />
-        </svg>
+        />
       </template>
     </ButtonSecondary>
 
