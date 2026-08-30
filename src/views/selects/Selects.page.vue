@@ -10,6 +10,7 @@ import ApiTable from "../components/ApiTable.vue";
 import ComponentDocsSection from "../components/ComponentDocsSection.vue";
 import SpecimenCase from "../components/SpecimenCase.vue";
 import SpecimenPair from "../components/SpecimenPair.vue";
+import ComboboxDocs from "./components/ComboboxDocs.vue";
 import PreviewSelectIcon from "./components/PreviewSelectIcon.vue";
 
 const statusOptions = [
@@ -218,6 +219,8 @@ const GROUPED_SELECT_API = [
 
       <ApiTable caption="GroupedSelect Props" :rows="GROUPED_SELECT_API" />
     </ComponentDocsSection>
+
+    <ComboboxDocs />
 
     <ComponentDocsSection title="InputField 组合" class="mt-16">
       <template #description>

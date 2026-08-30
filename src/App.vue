@@ -28,7 +28,7 @@ const PAGES = [
   { key: "buttons", label: "按钮", count: 4, component: ButtonsPage },
   { key: "controls", label: "控件", count: 3, component: ControlsPage },
   { key: "inputs", label: "输入框", count: 6, component: InputsPage },
-  { key: "selects", label: "选择器", count: 2, component: SelectsPage },
+  { key: "selects", label: "选择器", count: 3, component: SelectsPage },
   { key: "navigation", label: "导航", count: 2, component: NavigationPage },
   { key: "cards", label: "卡片", count: 1, component: CardsPage },
   { key: "tags", label: "标签", count: 1, component: TagsPage },
