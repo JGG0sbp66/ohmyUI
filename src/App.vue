@@ -17,6 +17,7 @@ import FeedbackPage from "./views/feedback/Feedback.page.vue";
 import InputsPage from "./views/inputs/Inputs.page.vue";
 import NavigationPage from "./views/navigation/Navigation.page.vue";
 import OverlaysPage from "./views/overlays/Overlays.page.vue";
+import SelectsPage from "./views/selects/Selects.page.vue";
 import TagsPage from "./views/tags/Tags.page.vue";
 import TokensPage from "./views/tokens/Tokens.page.vue";
 
@@ -26,6 +27,7 @@ const PAGES = [
   { key: "buttons", label: "按钮", component: ButtonsPage },
   { key: "controls", label: "控件", component: ControlsPage },
   { key: "inputs", label: "输入框", component: InputsPage },
+  { key: "selects", label: "选择器", component: SelectsPage },
   { key: "navigation", label: "导航", component: NavigationPage },
   { key: "cards", label: "卡片", component: CardsPage },
   { key: "tags", label: "标签", component: TagsPage },
