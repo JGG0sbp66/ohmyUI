@@ -7,7 +7,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import ButtonSecondary from "./components/button/ButtonSecondary.vue";
+import type { FilterTabOption, FilterTabValue } from "./components/navigation/filter-tabs.types";
+import FilterTabs from "./components/navigation/FilterTabs.vue";
 import ButtonsPage from "./views/buttons/Buttons.page.vue";
 import CardsPage from "./views/cards/Cards.page.vue";
 import HueControl from "./views/components/HueControl.vue";
@@ -21,22 +22,35 @@ import SelectsPage from "./views/selects/Selects.page.vue";
 import TagsPage from "./views/tags/Tags.page.vue";
 import TokensPage from "./views/tokens/Tokens.page.vue";
 
-/** 新增分类页时在这里加一条，导航自动跟着长 */
+/** 新增分类或公共组件时同步 count；顶部分类由 FilterTabs 自举。 */
 const PAGES = [
-  { key: "tokens", label: "设计 token", component: TokensPage },
-  { key: "buttons", label: "按钮", component: ButtonsPage },
-  { key: "controls", label: "控件", component: ControlsPage },
-  { key: "inputs", label: "输入框", component: InputsPage },
-  { key: "selects", label: "选择器", component: SelectsPage },
-  { key: "navigation", label: "导航", component: NavigationPage },
-  { key: "cards", label: "卡片", component: CardsPage },
-  { key: "tags", label: "标签", component: TagsPage },
-  { key: "feedback", label: "反馈", component: FeedbackPage },
-  { key: "overlays", label: "浮层", component: OverlaysPage },
+  { key: "tokens", label: "设计 token", count: 0, component: TokensPage },
+  { key: "buttons", label: "按钮", count: 4, component: ButtonsPage },
+  { key: "controls", label: "控件", count: 3, component: ControlsPage },
+  { key: "inputs", label: "输入框", count: 6, component: InputsPage },
+  { key: "selects", label: "选择器", count: 2, component: SelectsPage },
+  { key: "navigation", label: "导航", count: 2, component: NavigationPage },
+  { key: "cards", label: "卡片", count: 1, component: CardsPage },
+  { key: "tags", label: "标签", count: 1, component: TagsPage },
+  { key: "feedback", label: "反馈", count: 2, component: FeedbackPage },
+  { key: "overlays", label: "浮层", count: 12, component: OverlaysPage },
 ] as const;
 
-const activeKey = ref<(typeof PAGES)[number]["key"]>("tokens");
+type PageKey = (typeof PAGES)[number]["key"];
+
+const PAGE_OPTIONS = PAGES.map(({ key, label, count }) => ({
+  value: key,
+  label,
+  count,
+})) satisfies readonly FilterTabOption[];
+
+const activeKey = ref<PageKey>("tokens");
 const activePage = () => PAGES.find((page) => page.key === activeKey.value)!.component;
+
+const setActivePage = (value: FilterTabValue) => {
+  const page = PAGES.find((candidate) => Object.is(candidate.key, value));
+  if (page) activeKey.value = page.key;
+};
 </script>
 
 <template>
@@ -54,33 +68,16 @@ const activePage = () => PAGES.find((page) => page.key === activeKey.value)!.com
 
         <HueControl class="mt-8" />
 
-        <!-- 分类增多后保持单行横滑；焦点进入屏外按钮时浏览器会自动滚入。 -->
-        <nav
-          class="mt-10 overflow-x-auto overscroll-x-contain border-b border-border/40"
-          aria-label="预览页面"
-        >
-          <div class="flex min-w-max gap-1">
-            <!-- pb-2 撑出按钮与分隔线之间的空隙，指示器 bottom-0 正好落在分隔线上 -->
-            <div
-              v-for="page in PAGES"
-              :key="page.key"
-              class="relative flex shrink-0 items-center pb-2"
-            >
-              <ButtonSecondary
-                :text="page.label"
-                :is-active="activeKey === page.key"
-                :aria-current="activeKey === page.key ? 'page' : undefined"
-                class="whitespace-nowrap"
-                @click="activeKey = page.key"
-              />
-              <!-- 绝对定位：不占按钮高度，也不影响兄弟元素布局 -->
-              <div
-                class="absolute right-1 bottom-0 left-1 h-0.75 rounded-t-sm bg-accent transition-opacity"
-                :class="activeKey === page.key ? 'opacity-100' : 'opacity-0'"
-              />
-            </div>
-          </div>
-        </nav>
+        <!-- 展示站直接使用自身的分类筛选；count 是每类文档化的公共组件入口数。 -->
+        <div class="mt-10 border-b border-border/40 pb-3">
+          <FilterTabs
+            :model-value="activeKey"
+            :options="PAGE_OPTIONS"
+            label="组件预览分类"
+            class="-mb-4"
+            @update:model-value="setActivePage"
+          />
+        </div>
       </header>
 
       <main class="mt-10">
