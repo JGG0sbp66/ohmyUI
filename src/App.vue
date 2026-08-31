@@ -32,7 +32,7 @@ const PAGES = [
   { key: "navigation", label: "导航", count: 2, component: NavigationPage },
   { key: "cards", label: "卡片", count: 1, component: CardsPage },
   { key: "tags", label: "标签", count: 1, component: TagsPage },
-  { key: "feedback", label: "反馈", count: 2, component: FeedbackPage },
+  { key: "feedback", label: "反馈", count: 3, component: FeedbackPage },
   { key: "overlays", label: "浮层", count: 12, component: OverlaysPage },
 ] as const;
 
